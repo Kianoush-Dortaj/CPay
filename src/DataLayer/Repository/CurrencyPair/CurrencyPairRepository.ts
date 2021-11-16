@@ -165,8 +165,8 @@ export default class CurrencyPairRepository implements ICurrencyPairRepository {
             let coinsSelectModel: GetPairsForUpdateCurrencyPair[] = [];
 
             const getCurrencyPairById = await CurrencyPairEntitie.findById({ _id: id })
-            .where("isPublish")
-            .equals(true);
+                .where("isPublish")
+                .equals(true);
 
             if (!getCurrencyPairById) {
 
