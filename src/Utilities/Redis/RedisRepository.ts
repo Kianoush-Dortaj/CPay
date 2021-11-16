@@ -78,6 +78,12 @@ export class RedisManager {
     this.client.on("connect", function () {
       console.log("Redis client connected");
     });
+
+    this.client.on("message", function (message: any) {
+      console.log(message);
+    });
+
+    this.client.subscribe("update-price");
   }
 }
 
