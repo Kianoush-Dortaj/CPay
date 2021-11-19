@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
 export interface ICurrencyPairDoc extends mongoose.Document {
-    coinId: string;
-    exchangeId: string;
-    pairs: string[];
+    coinId: any;
+    exchangeId: any;
+    pairs: any;
     isPublish:boolean;
 }

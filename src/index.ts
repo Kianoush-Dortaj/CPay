@@ -8,6 +8,8 @@ import nodeMailer from './Utilities/Email/NodeMailer';
 import UnitOfWork from './DataLayer/Repository/UnitOfWork/UnitOfWork';
 import swaggerUi from 'swagger-ui-express'
 import * as swaggerDocument from './swagger.json';
+import { ListenType } from './Utilities/Websocket/Pattern/listen-type';
+import { Listen } from './Utilities/Websocket/Pattern/listen-chanel';
 
 export default new class Startup {
     app = express();
@@ -29,6 +31,11 @@ export default new class Startup {
         })
 
         UnitOfWork.websocket.InitialWebsocket();
+
+        new Listen(ListenType.UpdateCurrencyPairs).listen({
+            data: '',
+            userId: ''
+        });
 
     }
     /**

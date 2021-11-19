@@ -10,6 +10,9 @@ import { ICurrencyPairRepository } from './ICurrencyPairRepository';
 import { FilterViewModel } from '../../../DTO/Common/FilterViewModel';
 import { GetAllCurrencyPairFilter } from '../../../DTO/CurrencyPair/GetAllCurrencyPairFilter';
 import UnitOfWork from '../UnitOfWork/UnitOfWork';
+import { GetAllCurrencyPairList } from '../../../DTO/CurrencyPair/GetAllCurrencyPairList';
+import { Listen } from '../../../Utilities/Websocket/Pattern/listen-chanel';
+import { ListenType } from '../../../Utilities/Websocket/Pattern/listen-type';
 
 export default class CurrencyPairRepository implements ICurrencyPairRepository {
 
@@ -31,6 +34,11 @@ export default class CurrencyPairRepository implements ICurrencyPairRepository {
                 });
 
             await CurrencyPair.save();
+
+            new Listen(ListenType.UpdateCurrencyPairs).listen({
+                data: '',
+                userId: ''
+            });
 
             return OperationResult.BuildSuccessResult("Success Create CurrencyPair", true);
 
@@ -62,6 +70,11 @@ export default class CurrencyPairRepository implements ICurrencyPairRepository {
                     }
                 });
 
+            new Listen(ListenType.UpdateCurrencyPairs).listen({
+                data: '',
+                userId: ''
+            });
+
             return OperationResult.BuildSuccessResult("Success Update CurrencyPair", true);
 
         } catch (error: any) {
@@ -83,6 +96,11 @@ export default class CurrencyPairRepository implements ICurrencyPairRepository {
                 { _id: id },
                 { $set: { isDelete: true } }
             );
+
+            new Listen(ListenType.UpdateCurrencyPairs).listen({
+                data: '',
+                userId: ''
+            });
 
             return OperationResult.BuildSuccessResult("Success Delete CurrencyPair", true);
 
@@ -202,6 +220,51 @@ export default class CurrencyPairRepository implements ICurrencyPairRepository {
 
             return OperationResult.BuildFailur(error.message);
         }
+
+    }
+
+    /****
+    *
+    * Get Currency Pairs
+    *
+    ****/
+
+    async GetAllCurrencyPairs(): Promise<OperationResult<GetAllCurrencyPairList[]>> {
+
+
+        try {
+
+            let pairs: GetAllCurrencyPairList[] = [];
+
+            const currencyPairs = await CurrencyPairEntitie
+                .find({})
+                .populate("coinId")
+                .populate("exchangeId")
+                .populate("pairs");
+
+            currencyPairs.forEach(element => {
+                if (element.isPublish === true && element.coinId.isPublish) {
+                    element.pairs.forEach((data: any) => {
+                        if (data.isPublish && data.isDelete === false) {
+
+                            const pairName = element.coinId.symbol + '/' + data.symbol;
+                            pairs.push({
+                                exchange: 'BINANCE',
+                                fromName: element.coinId.name,
+                                symbol: pairName,
+                                toName: data.name
+                            });
+                        }
+                    })
+                }
+            })
+
+            return OperationResult.BuildSuccessResult("", pairs);
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+
+        }
+
 
     }
 }

@@ -5,6 +5,7 @@ export enum ListenType {
     Request = 3,
     Notification = 4,
     ReciveMessage = 5,
-    IsTyping=6,
-    ReadAllDirectMessage=7
+    IsTyping = 6,
+    ReadAllDirectMessage = 7,
+    UpdateCurrencyPairs = 8
 }

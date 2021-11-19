@@ -1,5 +1,6 @@
 import { ListenDataModel } from "../../../DTO/Websocket/listen-data-model";
 import { ListenType } from "./listen-type";
+import { CurrencyPairClient } from "./Observer/CurrencyPairClient";
 import { IsTypingClient } from "./Observer/IsTypingClient";
 import { MessageClient } from "./Observer/MessageClient";
 import { NotificationClient } from "./Observer/NotificationClient";
@@ -13,7 +14,9 @@ export class Listen {
     messageSubject: Observable;
     typingSubject: Observable;
     readAllMessageSubject: Observable;
+    currencyPairSubject: Observable;
 
+    currencyPairClient: CurrencyPairClient;
     messageClient: MessageClient;
     typingClient: IsTypingClient;
     readAllMessageClient: ReadAllMessageDirectClient;
@@ -26,9 +29,14 @@ export class Listen {
         this.messageSubject = new Observable();
         this.typingSubject = new Observable();
         this.readAllMessageSubject = new Observable();
+        this.currencyPairSubject = new Observable();
+
 
         this.messageClient = new MessageClient();
         this.messageSubject.attach(this.messageClient);
+
+        this.currencyPairClient = new CurrencyPairClient();
+        this.currencyPairSubject.attach(this.currencyPairClient);
 
         this.typingClient = new IsTypingClient();
         this.typingSubject.attach(this.typingClient);
@@ -42,6 +50,11 @@ export class Listen {
         switch (this.listenType) {
 
             case ListenType.Initial:
+                break;
+            case ListenType.UpdateCurrencyPairs:
+                // data.data.senderId = data.userId;
+                this.currencyPairClient.update('');
+                this.currencyPairSubject.notify();
                 break;
             case ListenType.ReciveMessage:
                 data.data.senderId = data.userId;

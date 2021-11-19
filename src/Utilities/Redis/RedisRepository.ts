@@ -1,9 +1,12 @@
 import redis from "redis";
 import OperationResult from "../../core/Operation/OperationResult";
+import UnitOfWork from "./../../DataLayer/Repository/UnitOfWork/UnitOfWork";
+
 
 export class RedisManager {
 
   client: any;
+  subscriber: any;
 
   /*******
    * Set Value on Redis
@@ -73,17 +76,24 @@ export class RedisManager {
   }
 
   Connet() {
+
     this.client = redis.createClient(6379, "127.0.0.1");
+
+    this.subscriber = redis.createClient(6379, "127.0.0.1");
 
     this.client.on("connect", function () {
       console.log("Redis client connected");
     });
 
-    this.client.on("message", function (message: any) {
-      console.log(message);
+    this.subscriber.on("message", (channel: string, message: any) => {
+      UnitOfWork.websocket.emit(message);
     });
 
-    this.client.subscribe("update-price");
+    this.subscriber.subscribe("update-price");
+  }
+
+  Subscribe(data: any): void {
+    this.client.publish("update-prices-list", JSON.stringify(data));
   }
 }
 

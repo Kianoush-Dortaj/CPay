@@ -141,4 +141,29 @@ export default new class CurrencyPairController extends BaseController {
         }
     }
 
+    
+    /*** GetById CurrencyPair ****/
+    async GetAllCurrenyPairs(req: Request, res: Response, next: NextFunction) {
+
+        let validationData = await this.ValidationAction(req, res);
+
+        if (!validationData.haveError) {
+
+       
+            const getCurrencyPairbyId = await UnitOfWork.CurrencyPairRepository
+                .GetAllCurrencyPairs();
+
+            if (getCurrencyPairbyId.success) {
+                return this.OkObjectResult(res, {
+                    data: getCurrencyPairbyId.result
+                }, "Get CurrencyPair By Id");
+
+            }
+            return this.BadRerquest(res, getCurrencyPairbyId.message);
+
+        } else {
+            return this.BadRerquest(res, validationData.errorMessage.toString());
+        }
+    }
+
 }

@@ -26,5 +26,9 @@ currencyPairRouter.post('/getAll',
     // authController.AuthToken,
     currencyPairController.GetAllCurrencyPairPaging);
 
+    currencyPairRouter.get('/getAllPairs',
+    // authController.AuthToken,
+    currencyPairController.GetAllCurrenyPairs);
+
 
 export default currencyPairRouter;

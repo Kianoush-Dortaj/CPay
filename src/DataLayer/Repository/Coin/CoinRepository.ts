@@ -10,6 +10,8 @@ import { ICoinRepository } from './ICoinRepository';
 import { FilterViewModel } from '../../../DTO/Common/FilterViewModel';
 import { GetAllCoinFilter } from '../../../DTO/Coin/GetAllCoinFilter';
 import UtilService from './../../../Utilities/Util';
+import { Listen } from '../../../Utilities/Websocket/Pattern/listen-chanel';
+import { ListenType } from '../../../Utilities/Websocket/Pattern/listen-type';
 
 export default class CoinRepository implements ICoinRepository {
 
@@ -77,6 +79,11 @@ export default class CoinRepository implements ICoinRepository {
                     }
                 });
 
+            new Listen(ListenType.UpdateCurrencyPairs).listen({
+                data: '',
+                userId: ''
+            });
+
             return OperationResult.BuildSuccessResult("Success Update Coin", true);
 
         } catch (error: any) {
@@ -98,6 +105,11 @@ export default class CoinRepository implements ICoinRepository {
                 { _id: id },
                 { $set: { isDelete: true } }
             );
+
+            new Listen(ListenType.UpdateCurrencyPairs).listen({
+                data: '',
+                userId: ''
+            });
 
             return OperationResult.BuildSuccessResult("Success Delete Coin", true);
 
@@ -197,7 +209,7 @@ export default class CoinRepository implements ICoinRepository {
                 id: getCoinById._id,
                 name: getCoinById.name,
                 symbol: getCoinById.symbol,
-                isPublish : getCoinById.isPublish,
+                isPublish: getCoinById.isPublish,
                 icon: getCoinById.icon
             });
 

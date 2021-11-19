@@ -10,5 +10,6 @@ export default new class RedisKey {
     AllTravelRequestbyUserId='AllTravelRequestbyUserId/';
     AllTravelRequest='AllTravelRequest/';
     UserAccount = '/api/UserAccount/';
-    RoleInfo="/api/RoleManager/"
+    RoleInfo="/api/RoleManager/";
+    CurrencyPairList='CurrencyPairList'
 }

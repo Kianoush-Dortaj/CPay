@@ -2,6 +2,7 @@ import OperationResult from "../../../core/Operation/OperationResult";
 import { FilterViewModel } from "../../../DTO/Common/FilterViewModel";
 import { AddCurrencyPairModel } from "../../../DTO/CurrencyPair/AddCurrencyPair";
 import { GetAllCurrencyPairFilter } from "../../../DTO/CurrencyPair/GetAllCurrencyPairFilter";
+import { GetAllCurrencyPairList } from "../../../DTO/CurrencyPair/GetAllCurrencyPairList";
 import { GetCurrencyPairInfoModel } from "../../../DTO/CurrencyPair/GetCurrencyPairInfo";
 import { UpdateCurrencyPairModel } from "../../../DTO/CurrencyPair/UpdateCurrencyPair";
 import { GetAllPagingModel } from "../../../DTO/Share/GetAllPaging";
@@ -16,4 +17,5 @@ export interface ICurrencyPairRepository {
     GetAllCurrencyPairSelect(): Promise<OperationResult<ICurrencyPairDoc[]>>;
     GetAllCurrencyPairPaging(items: FilterViewModel<GetAllCurrencyPairFilter>): Promise<OperationResult<GetAllPagingModel<ICurrencyPairDoc>>>;
     GetByIdCurrencyPair(id: string): Promise<OperationResult<GetCurrencyPairInfoModel>>;
+    GetAllCurrencyPairs(): Promise<OperationResult<GetAllCurrencyPairList[]>>;
 }
