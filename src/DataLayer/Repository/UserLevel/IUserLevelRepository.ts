@@ -14,5 +14,6 @@ export interface IUserLevelRepository {
     DeleteUserLevel(id: string): Promise<OperationResult<boolean>>;
     GetAllUserLevelSelect(): Promise<OperationResult<IUserLevelDoc[]>>;
     GetAllUserLevelPaging(items: FilterViewModel<GetAllUserLevelFilter>): Promise<OperationResult<GetAllPagingModel<any>>>;
-    GetByIdUserLevel(id: string): Promise<OperationResult<GetUserLevelInfoModel>> ;
+    GetByIdUserLevel(id: string): Promise<OperationResult<GetUserLevelInfoModel>>;
+
 }

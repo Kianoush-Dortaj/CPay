@@ -8,6 +8,8 @@ import { IUserLevelRepository } from './IUserLevelRepository';
 import { GetUserLevelInfoModel } from '../../../DTO/UserLevel/GetUserLevelInfo';
 import { FilterViewModel } from '../../../DTO/Common/FilterViewModel';
 import { GetAllUserLevelFilter } from '../../../DTO/UserLevel/GetAllUserLevelFilter';
+import RedisRepository from '../../../Utilities/Redis/RedisRepository';
+import RedisKey from '../../../Utilities/Redis/RedisKey';
 
 
 export default class UserLevelRepository implements IUserLevelRepository {
@@ -39,6 +41,14 @@ export default class UserLevelRepository implements IUserLevelRepository {
                 });
 
             await userLevel.save();
+
+            if (item.isDefault === true) {
+                await RedisRepository.Set(RedisKey.UserGroup,
+                    {
+                        name: item.name,
+                        id: userLevel._id,
+                    });
+            }
 
             return OperationResult.BuildSuccessResult("Success Create UserLevel", true);
 
@@ -75,6 +85,14 @@ export default class UserLevelRepository implements IUserLevelRepository {
                         isPublish: item.isPublish
                     }
                 });
+
+            if (item.isDefault) {
+                await RedisRepository.ResetSingleItem(RedisKey.UserGroup,
+                    {
+                        name: item.name,
+                        id: item.id,
+                    })
+            }
 
             return OperationResult.BuildSuccessResult("Success Update UserLevel", true);
 

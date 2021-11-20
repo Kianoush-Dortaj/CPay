@@ -11,5 +11,6 @@ export default new class RedisKey {
     AllTravelRequest='AllTravelRequest/';
     UserAccount = '/api/UserAccount/';
     RoleInfo="/api/RoleManager/";
-    CurrencyPairList='CurrencyPairList'
+    CurrencyPairList='CurrencyPairList';
+    UserGroup="UserGroupDefault";
 }

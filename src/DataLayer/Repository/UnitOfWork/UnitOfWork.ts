@@ -1,6 +1,8 @@
 import Websocket from '../../../Utilities/Websocket/Websocket';
 import CoinRepository from '../Coin/CoinRepository';
 import { ICoinRepository } from '../Coin/ICoinRepository';
+import ComissionRepository from '../Comission/ComissionRepository';
+import { IComissionRepository } from '../Comission/IComissionRepository';
 import CurrencyPairRepository from '../CurrencyPair/CurrencyPairRepository';
 import { ICurrencyPairRepository } from '../CurrencyPair/ICurrencyPairRepository';
 import ExchangeRepository from '../Exchange/ExchangeRepository';
@@ -46,6 +48,7 @@ export default new class UnitOfWork implements IUnitOfWork {
     CurrencyPairRepository: ICurrencyPairRepository;
     UserActivityRepositiry: IUserActivityRepository;
     UserLevelRepository: IUserLevelRepository;
+    ComissionRepository : IComissionRepository;
     websocket: Websocket;
 
     constructor() {
@@ -65,7 +68,7 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.ExchangeRepository = new ExchangeRepository();
         this.UserActivityRepositiry = new UserActivityRepository();
         this.UserLevelRepository = new UserLevelRepository();
-
+        this.ComissionRepository = new ComissionRepository();
 
     }
 

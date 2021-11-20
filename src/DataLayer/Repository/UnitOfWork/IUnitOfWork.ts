@@ -1,6 +1,7 @@
 
 import Websocket from "../../../Utilities/Websocket/Websocket";
 import { ICoinRepository } from "../Coin/ICoinRepository";
+import { IComissionRepository } from "../Comission/IComissionRepository";
 import { ICurrencyPairRepository } from "../CurrencyPair/ICurrencyPairRepository";
 import { IExchangeRepository } from "../Exchange/IExchangeRepository";
 import { IJWTRepository } from "../JWT/IJWTRepository";
@@ -32,5 +33,6 @@ export interface IUnitOfWork {
     UserActivityRepositiry: IUserActivityRepository;
     UserLevelRepository: IUserLevelRepository;
     websocket: Websocket;
+    ComissionRepository : IComissionRepository;
 
 }
