@@ -22,6 +22,10 @@ import { ISettingRepository } from '../Setting/ISettingRepository';
 import SettingRepository from '../Setting/SettingRepository';
 import IUserRepository from '../User/IUserRepository';
 import { UserRepository } from '../User/UserRepository';
+import { IUserActivityRepository } from '../UserActivity/IUserActivityRepository';
+import UserActivityRepository from '../UserActivity/UserActivityRepository';
+import { IUserLevelRepository } from '../UserLevel/IUserLevelRepository';
+import UserLevelRepository from '../UserLevel/UserLevelRepository';
 import { IUserRoleRepository } from '../UserRole/IUserRoleRepository';
 import UserRoleRepository from '../UserRole/UserRoleRepository';
 import { IUnitOfWork } from './IUnitOfWork';
@@ -40,6 +44,8 @@ export default new class UnitOfWork implements IUnitOfWork {
     SettingRepository: ISettingRepository;
     CoinRepository: ICoinRepository;
     CurrencyPairRepository: ICurrencyPairRepository;
+    UserActivityRepositiry: IUserActivityRepository;
+    UserLevelRepository: IUserLevelRepository;
     websocket: Websocket;
 
     constructor() {
@@ -57,6 +63,9 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.CoinRepository = new CoinRepository();
         this.CurrencyPairRepository = new CurrencyPairRepository();
         this.ExchangeRepository = new ExchangeRepository();
+        this.UserActivityRepositiry = new UserActivityRepository();
+        this.UserLevelRepository = new UserLevelRepository();
+
 
     }
 

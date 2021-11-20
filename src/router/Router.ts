@@ -7,6 +7,9 @@ import settingRouter from './Setting/Setting.router';
 import exchangeRouter from './Exchange/exchange.router';
 import coinRouter from './Coin/coin.router';
 import currencyPairRouter from './CurrencyPair/coin.router';
+import userActivityPairRouter from './UserActivity/user-activity.router';
+import userLevelRouter from './UserLevel/userLevel.router';
+
 
 
 const router = Router();
@@ -27,7 +30,9 @@ router.use('/api/coin', coinRouter);
 
 router.use('/api/currencyPair', currencyPairRouter);
 
+router.use('/api/userActivity', userActivityPairRouter);
 
+router.use('/api/userLevel', userLevelRouter);
 
 
 export default router;
