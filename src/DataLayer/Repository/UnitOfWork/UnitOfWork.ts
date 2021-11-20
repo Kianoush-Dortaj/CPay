@@ -12,6 +12,8 @@ import { IJWTRepository } from '../JWT/IJWTRepository';
 import JWTRepository from '../JWT/JWTRepository';
 import { ILoginRepository } from '../Login/ILoginRepository';
 import LoginRepository from '../Login/LoginRepository';
+import { INetworkRepository } from '../Network/INetworkRepository';
+import NetworkRepository from '../Network/NetworkRepository';
 import { INotificationRepository } from '../Notification/INotificationRepository';
 import { NotificationRepository } from '../Notification/NotificationRepository';
 import { IPermissionRepository } from '../Permission/IPermissionRepository';
@@ -49,6 +51,7 @@ export default new class UnitOfWork implements IUnitOfWork {
     UserActivityRepositiry: IUserActivityRepository;
     UserLevelRepository: IUserLevelRepository;
     ComissionRepository : IComissionRepository;
+    NetworkRepository:INetworkRepository;
     websocket: Websocket;
 
     constructor() {
@@ -69,7 +72,7 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.UserActivityRepositiry = new UserActivityRepository();
         this.UserLevelRepository = new UserLevelRepository();
         this.ComissionRepository = new ComissionRepository();
-
+        this.NetworkRepository = new NetworkRepository();
     }
 
 }

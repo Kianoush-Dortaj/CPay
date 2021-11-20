@@ -6,6 +6,7 @@ import { ICurrencyPairRepository } from "../CurrencyPair/ICurrencyPairRepository
 import { IExchangeRepository } from "../Exchange/IExchangeRepository";
 import { IJWTRepository } from "../JWT/IJWTRepository";
 import { ILoginRepository } from "../Login/ILoginRepository";
+import { INetworkRepository } from "../Network/INetworkRepository";
 import { INotificationRepository } from "../Notification/INotificationRepository";
 import { IPermissionRepository } from "../Permission/IPermissionRepository";
 import { IRoleRepository } from "../Role/IRoleRepository";
@@ -34,5 +35,6 @@ export interface IUnitOfWork {
     UserLevelRepository: IUserLevelRepository;
     websocket: Websocket;
     ComissionRepository : IComissionRepository;
+    NetworkRepository:INetworkRepository;
 
 }

@@ -10,6 +10,7 @@ import currencyPairRouter from './CurrencyPair/coin.router';
 import userActivityPairRouter from './UserActivity/user-activity.router';
 import userLevelRouter from './UserLevel/userLevel.router';
 import comissionRouter from './Comission/comission.router';
+import networkRouter from './Network/network.router';
 
 const router = Router();
 
@@ -34,5 +35,8 @@ router.use('/api/userActivity', userActivityPairRouter);
 router.use('/api/userLevel', userLevelRouter);
 
 router.use('/api/comission', comissionRouter);
+
+router.use('/api/network', networkRouter);
+
 
 export default router;

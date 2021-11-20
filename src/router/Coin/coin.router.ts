@@ -3,25 +3,30 @@ import express, { Express, Router, NextFunction, Request, Response } from 'expre
 import coinController from '../../Controllers/CoinController/CoinController';
 import authController from '../../Utilities/Middllware/Authorization';
 import UploadCoinIcon from "../../Utilities/Multer/CoinIcon";
+import coinValidator from './CoinValidator';
 
 const coinRouter = express.Router();
 
 coinRouter.post('/create',
     // authController.AuthToken,
     UploadCoinIcon.single("icon"),
+    coinValidator.CreateHandle(),
     coinController.CreateCoin);
 
 coinRouter.put('/update/:id',
     // authController.AuthToken,
     UploadCoinIcon.single("icon"),
+    coinValidator.UpdateHandle(),
     coinController.UpdateCoin);
 
 coinRouter.delete('/delete/:id',
     // authController.AuthToken,
+    coinValidator.GetItemByIdHandle(),
     coinController.DeleteCoin);
 
 coinRouter.get('/getById/:id',
     // authController.AuthToken,
+    coinValidator.GetItemByIdHandle(),
     coinController.GetByIdCoin);
 
 coinRouter.get('/select',
@@ -34,6 +39,7 @@ coinRouter.post('/getAll',
 
     coinRouter.get('/getCoinImage/:id',
     // authController.AuthToken,
+    coinValidator.GetItemByIdHandle(),
     coinController.GetCoinImage);
 
 export default coinRouter;
