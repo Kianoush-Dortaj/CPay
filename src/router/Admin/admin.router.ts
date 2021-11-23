@@ -11,40 +11,40 @@ adminRouter.post('/create',
     adminController.Create);
 
 adminRouter.put('/personalInfo/:id',
-    authController.AuthToken,
+    // authController.AuthToken,
     UploadHanlder.single("avatar"),
     adminController.Update);
 
 adminRouter.put('/accountInfo/:id',
-    authController.AuthToken,
+    // authController.AuthToken,
     adminController.EditAccountInfoUser);
 
 adminRouter.put('/changeUserRole/:id',
-    authController.AuthToken,
+    // authController.AuthToken,
     adminController.ChangeUseRole);
 
 adminRouter.put('/changePassword/:id',
-    authController.AuthToken,
+    // authController.AuthToken,
     adminController.ChangePassword);
 
 adminRouter.get('/getPersonalInformation/:id',
-    authController.AuthToken,
+    // authController.AuthToken,
     adminController.GetUserPersonalInformation);
 
 adminRouter.get('/getAccountInformation/:id',
-    authController.AuthToken,
+    // authController.AuthToken,
     adminController.GetUserInfoAccount);
 
 adminRouter.get('/getUserRoles/:id',
-    authController.AuthToken,
+    // authController.AuthToken,
     adminController.GetUserRoles);
 
 adminRouter.get('/getUserImage/:id',
-    authController.AuthToken,
+    // authController.AuthToken,
     adminController.GetUserImage);
 
 adminRouter.post('/getUserPaging',
-    authController.AuthToken,
+    // authController.AuthToken,
     adminController.GetAllManagerPaging);
 
 

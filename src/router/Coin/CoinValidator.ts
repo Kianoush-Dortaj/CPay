@@ -61,8 +61,8 @@ export default new class CoinValidation {
             query("id").custom(async (value, { req }) => {
                 if (req.params) {
 
-                    let data = await unitofWotk.NetworkRepository
-                        .GetByIdNetwork(req.params.id);
+                    let data = await unitofWotk.CoinRepository
+                        .GetByIdCoin(req.params.id);
 
                     if (!data.success) {
                         return Promise.reject(

@@ -42,8 +42,14 @@ export default new class Startup {
      * Config Midllware
      */
     ConfigMidllware(): void {
+
+        const corsOptions = {
+            origin: 'https://adminpay.vercel.app',
+            optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+          }
+
         this.app.use(express.json());
-        this.app.use(cros())
+        this.app.use(cros(corsOptions))
         this.app.use(router);
         this.app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
         nodeMailer.Config();

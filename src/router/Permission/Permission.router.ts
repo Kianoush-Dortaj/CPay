@@ -6,23 +6,23 @@ import authController from './../../Utilities/Middllware/Authorization';
 const permissionRouter = express.Router();
 
 permissionRouter.post('/create', 
-authController.AuthToken,
+// authController.AuthToken,
 permissionController.CreatePermission);
 
 permissionRouter.put('/update/:id',
-authController.AuthToken,
+// authController.AuthToken,
 permissionController.UpdatePermission);
 
 permissionRouter.delete('/delete/:id',
-authController.AuthToken,
+// authController.AuthToken,
 permissionController.DeletePermission);
 
 permissionRouter.get('/getById/:id',
-authController.AuthToken,
+// authController.AuthToken,
 permissionController.GetByIdPermission);
 
 permissionRouter.get('/getAll',
-authController.AuthToken,
+// authController.AuthToken,
 permissionController.GetAllPermission);
 
 export default permissionRouter;

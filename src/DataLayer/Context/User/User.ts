@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 import uniqueString from 'unique-string';
 import { IUserAttrs } from './IUserAttr';
-import { IUserDoc } from './iUserDock';
+import { IUserDoc } from './IUserDock';
 import { IUserModel } from './IUserModel'
 
 const UserSchema = new mongoose.Schema({

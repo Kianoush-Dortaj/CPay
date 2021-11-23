@@ -6,27 +6,27 @@ import authController from './../../Utilities/Middllware/Authorization';
 const roleRouter = express.Router();
 
 roleRouter.post('/create',
-    authController.AuthToken,
+    // authController.AuthToken,
     roleController.CreateRole);
 
 roleRouter.put('/update/:id',
-    authController.AuthToken,
+    // authController.AuthToken,
     roleController.UpdateRole);
 
 roleRouter.delete('/delete/:id',
-    authController.AuthToken,
+    // authController.AuthToken,
     roleController.DeleteRole);
 
 roleRouter.get('/getById/:id',
-    authController.AuthToken,
+    // authController.AuthToken,
     roleController.GetByIdRole);
 
 roleRouter.get('/select',
-    authController.AuthToken,
+    // authController.AuthToken,
     roleController.GetAllRoleSelect);
 
 roleRouter.get('/getAll',
-    authController.AuthToken,
+    // authController.AuthToken,
     roleController.GetAllRolePaging);
 
 export default roleRouter;
