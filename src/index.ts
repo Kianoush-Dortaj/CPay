@@ -27,15 +27,15 @@ export default new class Startup {
     CreateServer(): void {
 
         this.app.listen(this.port, () => {
-            console.log(`Profile is listening on port ${this.port}`);
+            console.log(`Cpay is listening on port ${this.port}`);
         })
 
         UnitOfWork.websocket.InitialWebsocket();
 
-        new Listen(ListenType.UpdateCurrencyPairs).listen({
-            data: '',
-            userId: ''
-        });
+        // new Listen(ListenType.UpdateCurrencyPairs).listen({
+        //     data: '',
+        //     userId: ''
+        // });
 
     }
     /**
@@ -45,7 +45,7 @@ export default new class Startup {
 
         const corsOptions = {
             origin: 'https://adminpay.vercel.app',
-            optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+            optionsSuccessStatus: 200 
           }
 
         this.app.use(express.json());

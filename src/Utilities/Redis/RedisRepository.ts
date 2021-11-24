@@ -77,19 +77,23 @@ export class RedisManager {
 
   Connet() {
 
-    this.client = redis.createClient(6379, "127.0.0.1");
+    this.client = redis.createClient({
+      host:'tommy.iran.liara.ir',
+      port:32537,
+      password:'fS01mgQfKgvMkc7oeR8tKZpn'
+    });
 
-    this.subscriber = redis.createClient(6379, "127.0.0.1");
+    // this.subscriber = redis.createClient(32537, "redis://:fS01mgQfKgvMkc7oeR8tKZpn@tommy.iran.liara.ir:32537/0");
 
     this.client.on("connect", function () {
       console.log("Redis client connected");
     });
 
-    this.subscriber.on("message", (channel: string, message: any) => {
-      UnitOfWork.websocket.emit(message);
-    });
+    // this.subscriber.on("message", (channel: string, message: any) => {
+    //   UnitOfWork.websocket.emit(message);
+    // });
 
-    this.subscriber.subscribe("update-price");
+    // this.subscriber.subscribe("update-price");
   }
 
   Subscribe(data: any): void {

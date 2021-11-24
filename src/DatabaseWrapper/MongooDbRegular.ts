@@ -5,18 +5,19 @@ export default class MongooDbRegular implements IRegular {
 
 
     connect(): void {
-        const databaseUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017';
         const databaseName = process.env.DB_NAME || 'CPAY';
+        const databaseUrl = process.env.MONGO_URL || `mongodb://root:d5zh6QsjAZxqm6sTwUAAYNSF@cpay-db-mongo:27017/${databaseName}?authSource=admin`;
 
-        const dataBaseUrl = (databaseUrl + '/' + databaseName).toString();
+        const dataBaseUrl = (databaseUrl).toString();
 
         mongoose.connect(dataBaseUrl, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            useCreateIndex: true
-        }, () => [
+            useCreateIndex: true,
+            authSource: 'admin'
+        }, () => {
             console.log(`Connecto To Database : ${dataBaseUrl}`)
-        ])
+        })
 
     }
 
