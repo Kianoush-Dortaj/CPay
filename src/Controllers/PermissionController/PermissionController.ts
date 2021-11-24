@@ -129,7 +129,7 @@ export default new class PermissionController extends BaseController {
 
             if (getPermissionById.success) {
                 return this.OkObjectResult(res, {
-                    data: getPermissionById
+                    data: getPermissionById.result
                 }, "Get Permission By Id");
 
             }

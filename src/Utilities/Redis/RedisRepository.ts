@@ -78,9 +78,9 @@ export class RedisManager {
   Connet() {
 
     this.client = redis.createClient({
-      host:'tommy.iran.liara.ir',
-      port:32537,
-      password:'fS01mgQfKgvMkc7oeR8tKZpn'
+      host: 'tommy.iran.liara.ir',
+      port: 32537,
+      password: 'fS01mgQfKgvMkc7oeR8tKZpn'
     });
 
     // this.subscriber = redis.createClient(32537, "redis://:fS01mgQfKgvMkc7oeR8tKZpn@tommy.iran.liara.ir:32537/0");
