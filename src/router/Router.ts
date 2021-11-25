@@ -6,7 +6,7 @@ import adminRouter from './Admin/admin.router';
 import settingRouter from './Setting/Setting.router';
 import exchangeRouter from './Exchange/exchange.router';
 import coinRouter from './Coin/coin.router';
-import currencyPairRouter from './CurrencyPair/coin.router';
+import currencyPairRouter from './CurrencyPair/currencyPair.router';
 import userActivityPairRouter from './UserActivity/user-activity.router';
 import userLevelRouter from './UserLevel/userLevel.router';
 import comissionRouter from './Comission/comission.router';

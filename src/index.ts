@@ -44,9 +44,9 @@ export default new class Startup {
     ConfigMidllware(): void {
 
         const corsOptions = {
-            origin: 'https://adminpay.vercel.app',
+            origin: ['https://adminpay.vercel.app','http://localhost:3000'],
             optionsSuccessStatus: 200 
-          }
+          };
 
         this.app.use(express.json());
         this.app.use(cros(corsOptions))

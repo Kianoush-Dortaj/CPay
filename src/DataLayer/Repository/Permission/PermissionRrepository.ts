@@ -122,6 +122,9 @@ export default class PermissionRepository implements IPermissionRepository {
                 .equals(false)
                 .select("name permissionId parentId ");
 
+            if (!getAllPermission) {
+                return OperationResult.BuildFailur("We Can not find this Record");
+            }
             return OperationResult.BuildSuccessResult("Success Set Permission", getAllPermission);
 
         } catch (error: any) {

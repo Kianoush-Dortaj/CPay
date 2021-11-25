@@ -15,8 +15,8 @@ export default new class NodeMailer {
         this.transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'kiadr9372@gmail.com',
-                pass: 'k720228d' // naturally, replace both with your real credentials or an application-specific password
+                user: 'cpay.payment.crypto@gmail.com',
+                pass: 'k123456789d' 
             }
         });
     }

@@ -100,8 +100,6 @@ export default class ExchangeRepository implements IExchangeRepository {
             const getAllExchange = await ExchangeEntitie.find({})
                 .where("isDelete")
                 .equals(false)
-                .where("isPublish")
-                .equals(true)
                 .select("name symbol");
 
             return OperationResult.BuildSuccessResult("Get All Exchanges", getAllExchange);
@@ -178,7 +176,7 @@ export default class ExchangeRepository implements IExchangeRepository {
                 id: getExchangeById._id,
                 name: getExchangeById.name,
                 symbol: getExchangeById.symbol,
-                isPublish : getExchangeById.isPublish
+                isPublish: getExchangeById.isPublish
             });
 
         } catch (error: any) {

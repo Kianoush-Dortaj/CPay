@@ -240,7 +240,7 @@ export default class UserLevelRepository implements IUserLevelRepository {
                 .equals(false);
             if (!getUserLevelById) {
 
-                return OperationResult.BuildFailur("Can not find this Role");
+                return OperationResult.BuildFailur("Can not find this Recored");
 
             }
 

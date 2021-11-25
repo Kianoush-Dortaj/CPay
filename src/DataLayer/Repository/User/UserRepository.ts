@@ -68,7 +68,7 @@ export class UserRepository implements IUserRepository {
 
             await RedisManager.Set(RedisKey.UserInfo + registerUser._id, registerUser);
             await this.GenerateActivationCode(RedisKey.RegisterConfirm + registerUser.email, hashCode);
-            await emailRepo.sendActivationCodeEmail(registerUser.email, 'Truvel Budy Configm Email', displayName, hashCode);
+            await emailRepo.sendActivationCodeEmail(registerUser.email, 'CPay Configm Email', displayName, hashCode);
 
             return new OperationResult<IUserDoc>(true, "We Are Sent Activatoin to Your Email");
 
