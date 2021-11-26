@@ -14,7 +14,6 @@ import { ChangePassword } from "../../../DTO/User/ChangePasswordModel";
 import { InfoForLoginModel } from "./InfoForLoginModel";
 import { GetProfileInfoModel } from "../../../DTO/User/UserInfoProfile";
 import UnitOfWork from "../UnitOfWork/UnitOfWork";
-import { register } from "ts-node";
 import { UpdateUserAccountViewModel } from "../../../DTO/User/UserAccountviewModel";
 import { GetAdminAccountInfoModel } from "../../../DTO/User/GetAdminAccountInfoModel";
 import { GetAdminInformationModel } from "../../../DTO/User/GetAdminInformatinoModel";

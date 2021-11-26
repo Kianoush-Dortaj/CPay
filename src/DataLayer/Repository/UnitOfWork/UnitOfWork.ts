@@ -10,6 +10,8 @@ import { IExchangeRepository } from '../Exchange/IExchangeRepository';
 
 import { IJWTRepository } from '../JWT/IJWTRepository';
 import JWTRepository from '../JWT/JWTRepository';
+import { ILanguageRepository } from '../Language/ILanguageRepository';
+import LanguageRepository from '../Language/LanguageRepository';
 import { ILoginRepository } from '../Login/ILoginRepository';
 import LoginRepository from '../Login/LoginRepository';
 import { INetworkRepository } from '../Network/INetworkRepository';
@@ -52,6 +54,7 @@ export default new class UnitOfWork implements IUnitOfWork {
     UserLevelRepository: IUserLevelRepository;
     ComissionRepository : IComissionRepository;
     NetworkRepository:INetworkRepository;
+    LanguageRepository:ILanguageRepository;
     websocket: Websocket;
 
     constructor() {
@@ -73,6 +76,8 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.UserLevelRepository = new UserLevelRepository();
         this.ComissionRepository = new ComissionRepository();
         this.NetworkRepository = new NetworkRepository();
+        this.LanguageRepository = new LanguageRepository();
+
     }
 
 }

@@ -11,6 +11,7 @@ import userActivityPairRouter from './UserActivity/user-activity.router';
 import userLevelRouter from './UserLevel/userLevel.router';
 import comissionRouter from './Comission/comission.router';
 import networkRouter from './Network/network.router';
+import langaugeRouter from './Langauge/Langauge.router';
 
 const router = Router();
 
@@ -37,6 +38,8 @@ router.use('/api/userLevel', userLevelRouter);
 router.use('/api/comission', comissionRouter);
 
 router.use('/api/network', networkRouter);
+
+router.use('/api/language', langaugeRouter);
 
 
 export default router;

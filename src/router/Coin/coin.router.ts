@@ -1,7 +1,6 @@
 
 import express, { Express, Router, NextFunction, Request, Response } from 'express';
 import coinController from '../../Controllers/CoinController/CoinController';
-import authController from '../../Utilities/Middllware/Authorization';
 import UploadCoinIcon from "../../Utilities/Multer/CoinIcon";
 import coinValidator from './CoinValidator';
 
