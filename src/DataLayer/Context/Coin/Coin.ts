@@ -1,7 +1,8 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { ICoinAttrs } from './ICoinAttrs';
 import { ICoinDoc } from './ICoinDoc';
 import { ICoinModel } from './ICoinModel';
+import { ICoinLocalItem } from './ICoinLocalItems';
 
 const CoinSchema = new mongoose.Schema({
     name: {
@@ -17,7 +18,13 @@ const CoinSchema = new mongoose.Schema({
     icon: {
         type: String,
         required: true
-    }
+    },
+    locals:
+        [{
+            name: { type: String },
+            langId: { type: Schema.Types.ObjectId },
+            langSeoCode: { type: String }
+        }]
 }, {
     toJSON: { virtuals: true },
 })

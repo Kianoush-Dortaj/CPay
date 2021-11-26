@@ -1,6 +1,5 @@
-import express, { Express, Router, NextFunction, Request, Response } from 'express';
+import express from 'express';
 import AuthController from '../../Controllers/Auth/AuthController';
-import UserValidation from './UserValidation';
 import LoginController from '../../Controllers/Auth/Logincontroller';
 
 const usersRouter = express.Router();

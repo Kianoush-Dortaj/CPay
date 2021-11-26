@@ -28,13 +28,15 @@ export default class CoinRepository implements ICoinRepository {
                 `${item.icon.destination}/${item.icon.originalname}`
             );
 
+            console.log(...item.locals)
             const Coin = await CoinEntitie.
                 build({
                     name: item.name,
                     isDelete: false,
                     symbol: item.symbol,
                     isPublish: item.isPublish,
-                    icon: avatarUrl
+                    icon: avatarUrl,
+                    locals: [...item.locals]
                 });
 
             await Coin.save();
@@ -75,7 +77,8 @@ export default class CoinRepository implements ICoinRepository {
                         name: item.name,
                         symbol: item.symbol,
                         icon: avatarUrl,
-                        isPublish: item.isPublish
+                        isPublish: item.isPublish,
+                        locals: [...item.locals]
                     }
                 });
 
@@ -192,8 +195,6 @@ export default class CoinRepository implements ICoinRepository {
 
         try {
 
-            let getAllPermission: FileNode[] = [];
-
             const getCoinById = await CoinEntitie.findById({ _id: id })
                 .where("isDelete")
                 .equals(false);
@@ -204,13 +205,13 @@ export default class CoinRepository implements ICoinRepository {
 
             }
 
-
             return OperationResult.BuildSuccessResult("Get All Coins", {
                 id: getCoinById._id,
                 name: getCoinById.name,
                 symbol: getCoinById.symbol,
                 isPublish: getCoinById.isPublish,
-                icon: getCoinById.icon
+                icon: getCoinById.icon,
+                locals: getCoinById.locals
             });
 
         } catch (error: any) {

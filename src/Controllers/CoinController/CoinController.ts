@@ -16,15 +16,16 @@ export default new class CoinController extends BaseController {
 
         let validationData = await this.ValidationAction(req, res);
 
-        const { name, symbol , isPublish } = req.body;
+        const { name, symbol , isPublish ,locals } = req.body;
 
         if (!validationData.haveError) {
-
+           console.log(req.body) 
             const createCoin = await UnitOfWork.CoinRepository.CreateCoin({
                 name,
                 symbol,
                 isPublish,
-                icon: req.file
+                icon: req.file,
+                locals :locals
             });
 
             if (createCoin.success) {
@@ -47,7 +48,7 @@ export default new class CoinController extends BaseController {
         if (!validationData.haveError) {
 
             const CoinId = req.params.id;
-            const { name, symbol , isPublish } = req.body;
+            const { name, symbol , isPublish ,locals } = req.body;
 
             const updateCoin = await UnitOfWork.CoinRepository.UpdateCoin(
                 {
@@ -55,7 +56,8 @@ export default new class CoinController extends BaseController {
                     name,
                     symbol,
                     isPublish,
-                    icon: req.file
+                    icon: req.file,
+                    locals :locals
                 }
             );
 

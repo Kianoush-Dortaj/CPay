@@ -1,3 +1,4 @@
+import { ICoinLocalItem } from "../../DataLayer/Context/Coin/ICoinLocalItems";
 
 export interface UpdateCoinModel {
     id: string;
@@ -5,4 +6,5 @@ export interface UpdateCoinModel {
     symbol: string;
     isPublish: boolean;
     icon: any;
+    locals: ICoinLocalItem[]
 }

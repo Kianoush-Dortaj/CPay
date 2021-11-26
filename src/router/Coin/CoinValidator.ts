@@ -12,14 +12,13 @@ export default new class CoinValidation {
             check("symbol").notEmpty().withMessage("Symbol Can not be Empty"),
             check("icon").custom(async (value, { req }) => {
                 if (req.file) {
-                    if (!value) {
-                        throw new Error(" Please Add Icon");
-                    } else {
-                        const fileExe = [".png", ".jpg", ".jepg", ".svg"];
-                        if (!fileExe.includes(path.extname(value).toLowerCase())) {
-                            throw new Error("file is not Image , Please Select the Image File");
-                        }
+                    const fileExe = [".png", ".jpg", ".jepg", ".svg"];
+                    if (!fileExe.includes(path.extname(req.file.filename).toLowerCase())) {
+                        throw new Error("file is not Image , Please Select the Image File");
                     }
+                } else {
+                    throw new Error(" Please Add icon");
+
                 }
             }),
             check("isPublish").notEmpty().withMessage("isPublish Can not be Empty")
@@ -44,12 +43,14 @@ export default new class CoinValidation {
             check("name").notEmpty().withMessage("Name Can not be Empty"),
             check("symbol").notEmpty().withMessage("Symbol Can not be Empty"),
             check("icon").custom(async (value, { req }) => {
-                console.log(req.file)
                 if (req.file) {
                     const fileExe = [".png", ".jpg", ".jepg", ".svg"];
-                    if (!fileExe.includes(path.extname(value).toLowerCase())) {
+                    if (!fileExe.includes(path.extname(req.file.filename).toLowerCase())) {
                         throw new Error("file is not Image , Please Select the Image File");
                     }
+                } else {
+                    throw new Error(" Please Add icon");
+
                 }
             }),
             check("isPublish").notEmpty().withMessage("isPublish Can not be Empty")
