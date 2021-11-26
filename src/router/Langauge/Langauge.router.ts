@@ -1,10 +1,9 @@
 
 import express, { Express, Router, NextFunction, Request, Response } from 'express';
-import langaugeController from '../../Controllers/LanguageController/langaugeController';
+import langaugeController from '../../Controllers/LanguageController/LangaugeController';
 import authController from '../../Utilities/Middllware/Authorization';
 import UploadlangaugeIcon from "../../Utilities/Multer/languageFlag";
 import langaugeValidator from './LangaugeValidator';
-import UploadLanguageIcon from "../../Utilities/Multer/languageFlag";
 
 const langaugeRouter = express.Router();
 
