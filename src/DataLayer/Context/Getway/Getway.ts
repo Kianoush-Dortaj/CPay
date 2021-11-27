@@ -23,7 +23,8 @@ const GetwaySchema = new mongoose.Schema({
             lang: { type: String },
             value: {
                 name: { type: String },
-                description: { type: Schema.Types.ObjectId }
+                description: { type: String },
+                langId: { type: Schema.Types.ObjectId }
             }
         }]
 }, {

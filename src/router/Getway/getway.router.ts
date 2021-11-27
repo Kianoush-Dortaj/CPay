@@ -1,44 +1,44 @@
 
 import express, { Express, Router, NextFunction, Request, Response } from 'express';
-import coinController from '../../Controllers/CoinController/CoinController';
-import UploadCoinIcon from "../../Utilities/Multer/CoinIcon";
-import coinValidator from './GetwayValidator';
+import getwayController from '../../Controllers/GetwayController/GetwayController';
+import UploadGetwayIcon from "../../Utilities/Multer/Getway";
+import getwayValidator from './GetwayValidator';
 
-const coinRouter = express.Router();
+const getwayRouter = express.Router();
 
-coinRouter.post('/create',
+getwayRouter.post('/create',
     // authController.AuthToken,
-    UploadCoinIcon.single("icon"),
-    coinValidator.CreateHandle(),
-    coinController.CreateCoin);
+    UploadGetwayIcon.single("icon"),
+    getwayValidator.CreateHandle(),
+    getwayController.CreateGetway);
 
-coinRouter.put('/update/:id',
+getwayRouter.put('/update/:id',
     // authController.AuthToken,
-    UploadCoinIcon.single("icon"),
-    coinValidator.UpdateHandle(),
-    coinController.UpdateCoin);
+    UploadGetwayIcon.single("icon"),
+    getwayValidator.UpdateHandle(),
+    getwayController.UpdateGetway);
 
-coinRouter.delete('/delete/:id',
+getwayRouter.delete('/delete/:id',
     // authController.AuthToken,
-    coinValidator.GetItemByIdHandle(),
-    coinController.DeleteCoin);
+    getwayValidator.GetItemByIdHandle(),
+    getwayController.DeleteGetway);
 
-coinRouter.get('/getById/:id',
+getwayRouter.get('/getById/:id',
     // authController.AuthToken,
-    coinValidator.GetItemByIdHandle(),
-    coinController.GetByIdCoin);
+    getwayValidator.GetItemByIdHandle(),
+    getwayController.GetByIdGetway);
 
-coinRouter.get('/select',
+getwayRouter.get('/select',
     // authController.AuthToken,
-    coinController.GetAllCoinSelect);
+    getwayController.GetAllGetwaySelect);
 
-coinRouter.post('/getAll',
+getwayRouter.post('/getAll',
     // authController.AuthToken,
-    coinController.GetAllCoinPaging);
+    getwayController.GetAllGetwayPaging);
 
-    coinRouter.get('/getCoinImage/:id',
+    getwayRouter.get('/getGetwayImage/:id',
     // authController.AuthToken,
-    coinValidator.GetItemByIdHandle(),
-    coinController.GetCoinImage);
+    getwayValidator.GetItemByIdHandle(),
+    getwayController.GetGetwayImage);
 
-export default coinRouter;
+export default getwayRouter;

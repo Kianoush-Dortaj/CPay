@@ -48,9 +48,6 @@ export default new class CoinValidation {
                     if (!fileExe.includes(path.extname(req.file.filename).toLowerCase())) {
                         throw new Error("file is not Image , Please Select the Image File");
                     }
-                } else {
-                    throw new Error(" Please Add icon");
-
                 }
             }),
             check("isPublish").notEmpty().withMessage("isPublish Can not be Empty")

@@ -128,7 +128,7 @@ export default class GetwayRepository implements IGetwayRepository {
                 .equals(false)
                 .where("isPublish")
                 .equals(true)
-                .select("name symbol icon locals");
+                .select("name description  icon locals");
 
             getAllGetway.forEach(data => {
 

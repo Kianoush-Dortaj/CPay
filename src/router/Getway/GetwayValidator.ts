@@ -30,8 +30,8 @@ export default new class CoinValidation {
             query("id").custom(async (value, { req }) => {
                 if (req.params) {
 
-                    let data = await unitofWotk.CoinRepository
-                        .GetByIdCoin(req.params.id);
+                    let data = await unitofWotk.GetwayRepository
+                        .GetByIdGetway(req.params.id);
 
                     if (!data.success) {
                         return Promise.reject(
@@ -48,10 +48,7 @@ export default new class CoinValidation {
                     if (!fileExe.includes(path.extname(req.file.filename).toLowerCase())) {
                         throw new Error("file is not Image , Please Select the Image File");
                     }
-                } else {
-                    throw new Error(" Please Add icon");
-
-                }
+                } 
             }),
             check("isPublish").notEmpty().withMessage("isPublish Can not be Empty")
         ];

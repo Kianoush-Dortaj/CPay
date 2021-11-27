@@ -1,7 +1,7 @@
 
 import express, { Express, Router, NextFunction, Request, Response } from 'express';
 import getwayController from '../../Controllers/CoinController/CoinController';
-import UploadCoinIcon from "../../Utilities/Multer/Getway";
+import UploadCoinIcon from "../../Utilities/Multer/CoinIcon";
 import getwayValidator from './CoinValidator';
 
 const getwayRouter = express.Router();
