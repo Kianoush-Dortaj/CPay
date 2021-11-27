@@ -3,7 +3,9 @@ import { BaseController } from "../../core/Controller/BaseController";
 import { CoinEntitie } from '../../DataLayer/Context/Coin/Coin';
 import UnitOfWork from '../../DataLayer/Repository/UnitOfWork/UnitOfWork';
 import * as fs from 'fs';
-
+import { ICoinLocalItem } from '../../DataLayer/Context/Coin/ICoinLocalItems';
+import { MultiLanguageSelect } from '../../DTO/Common/MultiSelectLang';
+import utilService from './../../Utilities/Util';
 
 export default new class CoinController extends BaseController {
 
@@ -16,16 +18,32 @@ export default new class CoinController extends BaseController {
 
         let validationData = await this.ValidationAction(req, res);
 
-        const { name, symbol , isPublish ,locals } = req.body;
+        const { name, symbol, isPublish } = req.body;
+
+        let coinLocalItem: MultiLanguageSelect<ICoinLocalItem>[] = [];
+
+        for (var i = 0; i < Infinity; i++) {
+            if (req.body[`locals[${i}].lang`]) {
+                coinLocalItem.push({
+                    lang: req.body[`locals[${i}].lang`],
+                    value: {
+                        name: req.body[`locals[${i}].value.name`],
+                        langId: req.body[`locals[${i}].value.langId`]
+                    }
+                });
+            } else {
+                break;
+            }
+        }
 
         if (!validationData.haveError) {
-           console.log(req.body) 
+
             const createCoin = await UnitOfWork.CoinRepository.CreateCoin({
                 name,
                 symbol,
                 isPublish,
                 icon: req.file,
-                locals :locals
+                locals: coinLocalItem
             });
 
             if (createCoin.success) {
@@ -48,7 +66,23 @@ export default new class CoinController extends BaseController {
         if (!validationData.haveError) {
 
             const CoinId = req.params.id;
-            const { name, symbol , isPublish ,locals } = req.body;
+            const { name, symbol, isPublish } = req.body;
+
+            let coinLocalItem: MultiLanguageSelect<ICoinLocalItem>[] = [];
+
+            for (var i = 0; i < Infinity; i++) {
+                if (req.body[`locals[${i}].lang`]) {
+                    coinLocalItem.push({
+                        lang: req.body[`locals[${i}].lang`],
+                        value: {
+                            name: req.body[`locals[${i}].value.name`],
+                            langId: req.body[`locals[${i}].value.langId`]
+                        }
+                    });
+                } else {
+                    break;
+                }
+            }
 
             const updateCoin = await UnitOfWork.CoinRepository.UpdateCoin(
                 {
@@ -57,12 +91,12 @@ export default new class CoinController extends BaseController {
                     symbol,
                     isPublish,
                     icon: req.file,
-                    locals :locals
+                    locals: coinLocalItem
                 }
             );
 
             if (updateCoin.success) {
-              return  this.Ok(res, "Update Coin");
+                return this.Ok(res, "Update Coin");
 
             }
             return this.BadRerquest(res, updateCoin.message);
@@ -95,28 +129,55 @@ export default new class CoinController extends BaseController {
     /*** GetAll Coin Paging ****/
     async GetAllCoinPaging(req: Request, res: Response, next: NextFunction) {
 
-
         let validationData = await this.ValidationAction(req, res);
+        let lang: string = '';
 
         if (!validationData.haveError) {
 
-            const getAllCoinPagingCoin = await UnitOfWork.CoinRepository
-                .GetAllCoinPaging(req.body);
+            if (req.headers['accept-language']) {
+                lang = req.headers['accept-language'];
+            } else {
 
-            if (getAllCoinPagingCoin.success) {
-                return this.OkObjectResultPager(res, {
-                    count: getAllCoinPagingCoin.result ? getAllCoinPagingCoin.result?.count : 0,
-                    data: getAllCoinPagingCoin.result?.data
-                }, "Get All Coin Paging");
+                const defaultItem = await UnitOfWork.LanguageRepository.
+                    GetDefulatLanguage();
 
+                if (defaultItem.success) {
+
+                    lang = defaultItem.success ?
+                        defaultItem.result ?
+                            defaultItem.result?.uniqueSeoCode : 'en' : 'en';
+                }
             }
-            return this.BadRerquest(res, getAllCoinPagingCoin.message);
 
-        } else {
-            return this.BadRerquest(res, validationData.errorMessage.toString());
+            const findLangInfo = await UnitOfWork.LanguageRepository.
+                FindLanguageByUniSeoCode(lang);
+
+            if (findLangInfo.success && findLangInfo.result !== undefined) {
+
+                const getAllCoinPagingCoin = await UnitOfWork.CoinRepository
+                    .GetAllCoinPaging(req.body, {
+                        langId: findLangInfo.result?.id,
+                        name: findLangInfo.result?.name
+                    });
+
+                if (getAllCoinPagingCoin.success) {
+                    return this.OkObjectResultPager(res, {
+                        count: getAllCoinPagingCoin.result ? getAllCoinPagingCoin.result?.count : 0,
+                        data: getAllCoinPagingCoin.result?.data
+                    }, "Get All Coin Paging");
+
+                }
+
+                return this.BadRerquest(res, getAllCoinPagingCoin.message);
+
+            } else if (!findLangInfo.success) {
+                return this.BadRerquest(res, "we can not find your langauge selector");
+            } else {
+                return this.BadRerquest(res, validationData.errorMessage.toString());
+            }
         }
     }
-
+    
     /*** GetAll Coin Select ****/
     async GetAllCoinSelect(req: Request, res: Response, next: NextFunction) {
 
@@ -125,8 +186,10 @@ export default new class CoinController extends BaseController {
 
         if (!validationData.haveError) {
 
+            let lang = await utilService.getAcceptLang(req);
+
             const getAllCoinSelectCoin = await UnitOfWork.CoinRepository
-                .GetAllCoinSelect();
+                .GetAllCoinSelect(lang);
 
             if (getAllCoinSelectCoin.success) {
                 return this.OkObjectResult(res, {

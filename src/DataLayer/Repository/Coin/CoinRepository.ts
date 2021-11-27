@@ -12,6 +12,9 @@ import { GetAllCoinFilter } from '../../../DTO/Coin/GetAllCoinFilter';
 import UtilService from './../../../Utilities/Util';
 import { Listen } from '../../../Utilities/Websocket/Pattern/listen-chanel';
 import { ListenType } from '../../../Utilities/Websocket/Pattern/listen-type';
+import { ICoinLocalItem } from '../../Context/Coin/ICoinLocalItems';
+import { MultiLanguageSelect } from '../../../DTO/Common/MultiSelectLang';
+import { GetAllCoinSelect } from '../../../DTO/Coin/GetAllCoinSelect';
 
 export default class CoinRepository implements ICoinRepository {
 
@@ -27,8 +30,6 @@ export default class CoinRepository implements ICoinRepository {
             let avatarUrl = UtilService.getDirectoryImage(
                 `${item.icon.destination}/${item.icon.originalname}`
             );
-
-            console.log(...item.locals)
             const Coin = await CoinEntitie.
                 build({
                     name: item.name,
@@ -127,18 +128,31 @@ export default class CoinRepository implements ICoinRepository {
     * GetAll Permission
     *
     ****/
-    async GetAllCoinSelect(): Promise<OperationResult<ICoinDoc[]>> {
+    async GetAllCoinSelect(lang?: string): Promise<OperationResult<GetAllCoinSelect[]>> {
 
         try {
+
+            const getSelectedCoin: GetAllCoinSelect[] = [];
 
             const getAllCoin = await CoinEntitie.find({})
                 .where("isDelete")
                 .equals(false)
                 .where("isPublish")
                 .equals(true)
-                .select("name symbol icon");
+                .select("name symbol icon locals");
 
-            return OperationResult.BuildSuccessResult("Get All Coins", getAllCoin);
+            getAllCoin.forEach(data => {
+                getSelectedCoin.push({
+                    id:data.id,
+                    icon: data.icon,
+                    symbol: data.symbol,
+                    name: lang ?
+                        data.locals.find(x => x.lang === lang)?.value.name :
+                        data.name
+                });
+            });
+
+            return OperationResult.BuildSuccessResult("Get All Select Coin Coins", getSelectedCoin);
 
         } catch (error: any) {
 
@@ -151,8 +165,8 @@ export default class CoinRepository implements ICoinRepository {
     * GetAll Coin Paging
     *
     ****/
-    async GetAllCoinPaging(items: FilterViewModel<GetAllCoinFilter>): Promise<OperationResult<GetAllPagingModel<ICoinDoc>>> {
-
+    async GetAllCoinPaging(items: FilterViewModel<GetAllCoinFilter>, lang: ICoinLocalItem): Promise<OperationResult<GetAllPagingModel<ICoinDoc>>> {
+        console.log(lang)
         try {
 
             const query: any = [];
@@ -166,7 +180,8 @@ export default class CoinRepository implements ICoinRepository {
                 }
             });
 
-            let exchnageList = await CoinEntitie.find(...query).skip((items.page - 1) * items.pageSize)
+            let exchnageList = await CoinEntitie.find(...query)
+                .skip((items.page - 1) * items.pageSize)
                 .limit(items.pageSize)
 
             let count = await CoinEntitie.find({})

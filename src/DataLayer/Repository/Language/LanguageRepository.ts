@@ -23,8 +23,10 @@ export default class LanguageRepository implements ILanguageRepository {
         try {
 
             if (item.isDefault == true) {
-                console.log(item)
-                const changeIsDefulatItem = await this.FindIsDefulatItemAndChangeIt();
+
+                const changeIsDefulatItem = await this
+                    .FindIsDefulatItemAndChangeIt();
+
                 if (!changeIsDefulatItem.success) {
                     return OperationResult.BuildFailur(changeIsDefulatItem.message);
 
@@ -263,6 +265,78 @@ export default class LanguageRepository implements ILanguageRepository {
             return OperationResult.BuildFailur(error.message);
         }
 
+    }
+    /****
+    *
+    * Get Defualt
+    *
+    ****/
+    async GetDefulatLanguage(): Promise<OperationResult<GetLanguageInfoModel>> {
+
+        try {
+
+            const getLanguageById = await LanguageEntitie.findOne({})
+                .where("isDelete")
+                .equals(false)
+                .where("isDefault")
+                .equals(true);
+
+            if (!getLanguageById) {
+
+                return OperationResult.BuildFailur("Can not find this Language");
+
+            }
+
+            return OperationResult.BuildSuccessResult("Get All Language", {
+                id: getLanguageById._id,
+                displayOrder: getLanguageById.displayOrder,
+                flagImageFileName: getLanguageById.flagImageFileName,
+                isDefault: getLanguageById.isDefault,
+                isPublish: getLanguageById.isPublish,
+                name: getLanguageById.name,
+                rtl: getLanguageById.rtl,
+                uniqueSeoCode: getLanguageById.uniqueSeoCode
+            });
+
+        } catch (error: any) {
+
+            return OperationResult.BuildFailur(error.message);
+        }
+
+    }
+    /****
+      *
+      * Get Langauge By UniSeo Code
+      *
+      ****/
+    async FindLanguageByUniSeoCode(code: string): Promise<OperationResult<GetLanguageInfoModel>> {
+        try {
+
+            const getLanguageById = await LanguageEntitie.findOne({ uniqueSeoCode: code })
+                .where("isDelete")
+                .equals(false);
+
+            if (!getLanguageById) {
+
+                return OperationResult.BuildFailur("Can not find this Language");
+
+            }
+
+            return OperationResult.BuildSuccessResult("Get All Languages", {
+                id: getLanguageById._id,
+                displayOrder: getLanguageById.displayOrder,
+                flagImageFileName: getLanguageById.flagImageFileName,
+                isDefault: getLanguageById.isDefault,
+                isPublish: getLanguageById.isPublish,
+                name: getLanguageById.name,
+                rtl: getLanguageById.rtl,
+                uniqueSeoCode: getLanguageById.uniqueSeoCode
+            });
+
+        } catch (error: any) {
+
+            return OperationResult.BuildFailur(error.message);
+        }
     }
 
 }

@@ -1,3 +1,4 @@
+import { MultiLanguageSelect } from "../../../DTO/Common/MultiSelectLang";
 import { ICoinLocalItem } from "./ICoinLocalItems";
 
 export interface ICoinAttrs {
@@ -6,6 +7,6 @@ export interface ICoinAttrs {
     symbol: string;
     isPublish: boolean;
     icon: string;
-    locals: ICoinLocalItem[];
+    locals: MultiLanguageSelect<ICoinLocalItem>[];
 }
 

@@ -16,6 +16,6 @@ export interface ICurrencyPairRepository {
     DeleteCurrencyPair(id: string): Promise<OperationResult<boolean>>;
     GetAllCurrencyPairSelect(): Promise<OperationResult<ICurrencyPairDoc[]>>;
     GetAllCurrencyPairPaging(items: FilterViewModel<GetAllCurrencyPairFilter>): Promise<OperationResult<GetAllPagingModel<ICurrencyPairDoc>>>;
-    GetByIdCurrencyPair(id: string): Promise<OperationResult<GetCurrencyPairInfoModel>>;
+    GetByIdCurrencyPair(id: string, lang: string): Promise<OperationResult<GetCurrencyPairInfoModel>>;
     GetAllCurrencyPairs(): Promise<OperationResult<GetAllCurrencyPairList[]>>;
 }

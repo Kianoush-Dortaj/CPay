@@ -1,4 +1,5 @@
 import { ICoinLocalItem } from "../../DataLayer/Context/Coin/ICoinLocalItems";
+import { MultiLanguageSelect } from "../Common/MultiSelectLang";
 
 export interface UpdateCoinModel {
     id: string;
@@ -6,5 +7,5 @@ export interface UpdateCoinModel {
     symbol: string;
     isPublish: boolean;
     icon: any;
-    locals: ICoinLocalItem[]
+    locals: MultiLanguageSelect<ICoinLocalItem>[];
 }

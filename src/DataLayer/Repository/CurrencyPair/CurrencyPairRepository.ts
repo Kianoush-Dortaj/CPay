@@ -176,13 +176,14 @@ export default class CurrencyPairRepository implements ICurrencyPairRepository {
     * Get ById
     *
     ****/
-    async GetByIdCurrencyPair(id: string): Promise<OperationResult<GetCurrencyPairInfoModel>> {
+    async GetByIdCurrencyPair(id: string, lang: string): Promise<OperationResult<GetCurrencyPairInfoModel>> {
 
         try {
 
             let coinsSelectModel: GetPairsForUpdateCurrencyPair[] = [];
 
-            const getCurrencyPairById = await CurrencyPairEntitie.findById({ _id: id })
+            const getCurrencyPairById = await CurrencyPairEntitie
+                .findById({ _id: id })
                 .where("isPublish")
                 .equals(true);
 
@@ -193,17 +194,18 @@ export default class CurrencyPairRepository implements ICurrencyPairRepository {
             }
 
             const coinsSelect = await UnitOfWork.CoinRepository.
-                GetAllCoinSelect();
+                GetAllCoinSelect(lang);
 
             coinsSelect.result?.forEach((data: any) => {
 
                 getCurrencyPairById.pairs.forEach((element: any) => {
-                    coinsSelectModel.push({
-                        id: data.id,
-                        isSelected: data.id.toString() === element.toString(),
-                        symbol: data.symbol,
-                        name: data.name
-                    })
+             
+                        coinsSelectModel.push({
+                            id: data.id,
+                            isSelected: data.id.toString() === element.toString(),
+                            symbol: data.symbol,
+                            name: data.name
+                        })
                 })
 
             })

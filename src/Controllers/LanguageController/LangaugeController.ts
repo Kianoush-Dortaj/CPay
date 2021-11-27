@@ -166,6 +166,7 @@ export default new class LanguageController extends BaseController {
             return this.BadRerquest(res, validationData.errorMessage.toString());
         }
     }
+    
 
     /***
     * Get User Image

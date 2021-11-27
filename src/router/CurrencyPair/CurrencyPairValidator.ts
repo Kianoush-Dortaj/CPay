@@ -44,7 +44,7 @@ export default new class CurrencyPairValidation {
                 if (req.params) {
 
                     let data = await unitofWotk.CurrencyPairRepository
-                        .GetByIdCurrencyPair(req.params.id);
+                        .GetByIdCurrencyPair(req.params.id,'');
 
                     if (!data.success) {
                         return Promise.reject(

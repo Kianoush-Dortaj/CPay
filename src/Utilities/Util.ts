@@ -1,3 +1,4 @@
+import UnitOfWork from "../DataLayer/Repository/UnitOfWork/UnitOfWork";
 import { GetAllUserActivityModel } from "../DTO/UserActivity/GetAllUserActivityModel";
 
 export default new class UtilService {
@@ -30,6 +31,29 @@ export default new class UtilService {
         }
 
         return map;
+    }
+
+    async getAcceptLang(req: any): Promise<string> {
+
+        let lang = null;
+
+        if (req.headers['accept-language']) {
+            lang = req.headers['accept-language'];
+        } else {
+
+            const defaultItem = await UnitOfWork.LanguageRepository.
+                GetDefulatLanguage();
+
+            if (defaultItem.success) {
+
+                lang = defaultItem.success ?
+                    defaultItem.result ?
+                        defaultItem.result?.uniqueSeoCode : 'en' : 'en';
+            } else {
+                lang = null;
+            }
+        }
+        return lang;
     }
 
 }

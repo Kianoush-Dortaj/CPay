@@ -15,4 +15,7 @@ export interface ILanguageRepository {
     GetAllLanguageSelect(): Promise<OperationResult<ILanguageDoc[]>>;
     GetAllLangaugePaging(items: FilterViewModel<GetAllLanguageFilter>): Promise<OperationResult<ILanguageDoc[]>>;
     GetByIdLanguage(id: string): Promise<OperationResult<GetLanguageInfoModel>> ;
+    GetDefulatLanguage(): Promise<OperationResult<GetLanguageInfoModel>>;
+    FindLanguageByUniSeoCode(code:string): Promise<OperationResult<GetLanguageInfoModel>>;
+
 }

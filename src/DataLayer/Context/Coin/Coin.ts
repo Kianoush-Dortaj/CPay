@@ -21,9 +21,11 @@ const CoinSchema = new mongoose.Schema({
     },
     locals:
         [{
-            name: { type: String },
-            langId: { type: Schema.Types.ObjectId },
-            langSeoCode: { type: String }
+            lang: { type: String },
+            value: {
+                name: { type: String },
+                langId: { type: Schema.Types.ObjectId }
+            }
         }]
 }, {
     toJSON: { virtuals: true },

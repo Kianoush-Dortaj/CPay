@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { BaseController } from "../../core/Controller/BaseController";
 import { CurrencyPairEntitie } from '../../DataLayer/Context/CurrencyPair/CurrencyPair';
 import UnitOfWork from '../../DataLayer/Repository/UnitOfWork/UnitOfWork';
-import * as fs from 'fs';
-
+import utilService from './../../Utilities/Util';
 
 export default new class CurrencyPairController extends BaseController {
 
@@ -20,12 +19,13 @@ export default new class CurrencyPairController extends BaseController {
 
         if (!validationData.haveError) {
 
-            const createCurrencyPair = await UnitOfWork.CurrencyPairRepository.CreateCurrencyPair({
-                coinId,
-                exchangeId,
-                pairs,
-                isPublish
-            });
+            const createCurrencyPair = await UnitOfWork.CurrencyPairRepository
+                .CreateCurrencyPair({
+                    coinId,
+                    exchangeId,
+                    pairs,
+                    isPublish
+                });
 
             if (createCurrencyPair.success) {
                 return this.Ok(res, "Success Create CurrencyPair");
@@ -50,15 +50,15 @@ export default new class CurrencyPairController extends BaseController {
             const { coinId, exchangeId, pairs, isPublish } = req.body;
 
             const updateCurrencyPair = await UnitOfWork.CurrencyPairRepository
-            .UpdateCurrencyPair(
-                {
-                    id: CurrencyPairId,
-                    coinId,
-                    exchangeId,
-                    pairs,
-                    isPublish
-                }
-            );
+                .UpdateCurrencyPair(
+                    {
+                        id: CurrencyPairId,
+                        coinId,
+                        exchangeId,
+                        pairs,
+                        isPublish
+                    }
+                );
 
             if (updateCurrencyPair.success) {
                 return this.Ok(res, "Update CurrencyPair");
@@ -124,9 +124,10 @@ export default new class CurrencyPairController extends BaseController {
         if (!validationData.haveError) {
 
             const CurrencyPairId = req.params.id;
+            let lang = await utilService.getAcceptLang(req);
 
             const getCurrencyPairbyId = await UnitOfWork.CurrencyPairRepository
-                .GetByIdCurrencyPair(CurrencyPairId);
+                .GetByIdCurrencyPair(CurrencyPairId, lang);
 
             if (getCurrencyPairbyId.success) {
                 return this.OkObjectResult(res, {
@@ -141,7 +142,7 @@ export default new class CurrencyPairController extends BaseController {
         }
     }
 
-    
+
     /*** GetById CurrencyPair ****/
     async GetAllCurrenyPairs(req: Request, res: Response, next: NextFunction) {
 
@@ -149,7 +150,7 @@ export default new class CurrencyPairController extends BaseController {
 
         if (!validationData.haveError) {
 
-       
+
             const getCurrencyPairbyId = await UnitOfWork.CurrencyPairRepository
                 .GetAllCurrencyPairs();
 

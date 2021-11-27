@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { MultiLanguageSelect } from '../../../DTO/Common/MultiSelectLang';
 import { ICoinLocalItem } from './ICoinLocalItems';
 
 export interface ICoinDoc extends mongoose.Document {
@@ -7,5 +8,5 @@ export interface ICoinDoc extends mongoose.Document {
     symbol: string;
     isPublish:boolean;
     icon:string;
-    locals: ICoinLocalItem[];
+    locals:  MultiLanguageSelect<ICoinLocalItem>[];
 }
