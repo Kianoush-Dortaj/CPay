@@ -185,6 +185,20 @@ export class UserRepository implements IUserRepository {
         }
     }
 
+    async FindUserById(id: string): Promise<OperationResult<IUserDoc>> {
+
+        try {
+
+            let user = await UserEntite.findById(id);
+            if (user) {
+                return new OperationResult<IUserDoc>(true, "User Find", user);
+            }
+            return new OperationResult<IUserDoc>(false, "User can Not find");
+        } catch (error: any) {
+            return new OperationResult<IUserDoc>(false, error.message);
+        }
+    }
+
     async FindUserByEmailForLogin(email: string): Promise<OperationResult<any>> {
 
         try {

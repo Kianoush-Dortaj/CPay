@@ -26,17 +26,18 @@ export default class LoginRepository implements ILoginRepository {
         if (user.success) {
 
             const permissions: string[] = [];
+
             const isBlocked = new ValidateBlocked();
             const isEmailComfirmed = new ValidateEmailConfrim();
             const isValidatePassword = new ValidatePassword(password);
             const isenavledtowfactor = new ValidateTowFactor();
-
+  
             isValidatePassword.setNext(isBlocked)
                 .setNext(isEmailComfirmed).setNext(isenavledtowfactor);
 
             let result = await this.ValidationManagerForLogin(isValidatePassword, user.result);
-
-            if (result.HaveError) {
+            console.log(result)
+            if (result .HaveError) {
                 return OperationResult.BuildFailur(result.Message)
             }
 
