@@ -17,6 +17,6 @@ export interface ICoinRepository {
     UpdateCoin(item: UpdateCoinModel): Promise<OperationResult<boolean>>;
     DeleteCoin(id: string): Promise<OperationResult<boolean>>;
     GetAllCoinSelect(lang: string): Promise<OperationResult<GetAllCoinSelect[]>>;
-    GetAllCoinPaging(items: FilterViewModel<GetAllCoinFilter>, lang: ICoinLocalItem): Promise<OperationResult<GetAllPagingModel<ICoinDoc>>>;
+    GetAllCoinPaging(items: FilterViewModel<GetAllCoinFilter>): Promise<OperationResult<GetAllPagingModel<ICoinDoc>>>;
     GetByIdCoin(id: string): Promise<OperationResult<GetCoinInfoModel>>;
 }

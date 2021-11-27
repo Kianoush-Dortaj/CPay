@@ -1,48 +1,47 @@
 import OperationResult from '../../../core/Operation/OperationResult';
-import { FileNode } from '../../../DTO/Permission/file-node';
-import { AddCoinModel } from '../../../DTO/Coin/AddCoin';
-import { GetCoinInfoModel } from '../../../DTO/Coin/GetCoinInfo';
-import { UpdateCoinModel } from '../../../DTO/Coin/UpdateCoin';
+import { AddGetwayModel } from '../../../DTO/Getway/AddGetway';
+import { GetGetwayInfoModel } from '../../../DTO/Getway/GetGetwayInfo';
+import { UpdateGetwayModel } from '../../../DTO/Getway/UpdateGetway';
 import { GetAllPagingModel } from '../../../DTO/Share/GetAllPaging';
-import { ICoinDoc } from '../../Context/Coin/ICoinDoc';
-import { CoinEntitie } from '../../Context/Coin/Coin';
-import { ICoinRepository } from './ICoinRepository';
+import { IGetwayDoc } from '../../Context/Getway/IGetwayDoc';
+import { GetwayEntitie } from '../../Context/Getway/Getway';
+import { IGetwayRepository } from './IGetwayRepository';
 import { FilterViewModel } from '../../../DTO/Common/FilterViewModel';
-import { GetAllCoinFilter } from '../../../DTO/Coin/GetAllCoinFilter';
-import UtilService from './../../../Utilities/Util';
+import { GetAllGetwayFilter } from '../../../DTO/Getway/GetAllGetwayFilter';
+import UtilService from '../../../Utilities/Util';
 import { Listen } from '../../../Utilities/Websocket/Pattern/listen-chanel';
 import { ListenType } from '../../../Utilities/Websocket/Pattern/listen-type';
-import { ICoinLocalItem } from '../../Context/Coin/ICoinLocalItems';
+import { IGetwayLocalItem } from '../../Context/Getway/IGetwayLocalItems';
 import { MultiLanguageSelect } from '../../../DTO/Common/MultiSelectLang';
-import { GetAllCoinSelect } from '../../../DTO/Coin/GetAllCoinSelect';
+import { GetAllGetwaySelect } from '../../../DTO/Getway/GetAllGetwaySelect';
 
-export default class CoinRepository implements ICoinRepository {
+export default class GetwayRepository implements IGetwayRepository {
 
     /****
       *
-      * Create Coin
+      * Create Getway
       *
       ****/
-    async CreateCoin(item: AddCoinModel): Promise<OperationResult<boolean>> {
+    async CreateGetway(item: AddGetwayModel): Promise<OperationResult<boolean>> {
 
         try {
 
             let avatarUrl = UtilService.getDirectoryImage(
                 `${item.icon.destination}/${item.icon.originalname}`
             );
-            const Coin = await CoinEntitie.
+            const Getway = await GetwayEntitie.
                 build({
                     name: item.name,
                     isDelete: false,
-                    symbol: item.symbol,
+                    description: item.description,
                     isPublish: item.isPublish,
                     icon: avatarUrl,
                     locals: [...item.locals]
                 });
 
-            await Coin.save();
+            await Getway.save();
 
-            return OperationResult.BuildSuccessResult("Success Create Coin", true);
+            return OperationResult.BuildSuccessResult("Success Create Getway", true);
 
         } catch (error: any) {
 
@@ -53,10 +52,10 @@ export default class CoinRepository implements ICoinRepository {
 
     /****
       *
-      * Set Coin
+      * Set Getway
       *
       ****/
-    async UpdateCoin(item: UpdateCoinModel): Promise<OperationResult<boolean>> {
+    async UpdateGetway(item: UpdateGetwayModel): Promise<OperationResult<boolean>> {
         try {
 
             let avatarUrl;
@@ -67,28 +66,23 @@ export default class CoinRepository implements ICoinRepository {
                     `${item.icon.destination}/${item.icon.originalname}`
                 );
             } else {
-                const coinItem = await this.GetByIdCoin(item.id);
+                const coinItem = await this.GetByIdGetway(item.id);
                 avatarUrl = coinItem.result?.icon;
             }
 
-            await CoinEntitie.updateOne(
+            await GetwayEntitie.updateOne(
                 { _id: item.id },
                 {
                     $set: {
                         name: item.name,
-                        symbol: item.symbol,
+                        description: item.description,
                         icon: avatarUrl,
                         isPublish: item.isPublish,
                         locals: [...item.locals]
                     }
                 });
 
-            new Listen(ListenType.UpdateCurrencyPairs).listen({
-                data: '',
-                userId: ''
-            });
-
-            return OperationResult.BuildSuccessResult("Success Update Coin", true);
+            return OperationResult.BuildSuccessResult("Success Update Getway", true);
 
         } catch (error: any) {
 
@@ -98,24 +92,19 @@ export default class CoinRepository implements ICoinRepository {
 
     /****
      *
-     * Delete Coin
+     * Delete Getway
      *
      ****/
-    async DeleteCoin(id: string): Promise<OperationResult<boolean>> {
+    async DeleteGetway(id: string): Promise<OperationResult<boolean>> {
 
         try {
 
-            await CoinEntitie.updateOne(
+            await GetwayEntitie.updateOne(
                 { _id: id },
                 { $set: { isDelete: true } }
             );
 
-            new Listen(ListenType.UpdateCurrencyPairs).listen({
-                data: '',
-                userId: ''
-            });
-
-            return OperationResult.BuildSuccessResult("Success Delete Coin", true);
+            return OperationResult.BuildSuccessResult("Success Delete Getway", true);
 
         } catch (error: any) {
 
@@ -128,32 +117,37 @@ export default class CoinRepository implements ICoinRepository {
     * GetAll Permission
     *
     ****/
-    async GetAllCoinSelect(lang?: string): Promise<OperationResult<GetAllCoinSelect[]>> {
+    async GetAllGetwaySelect(lang?: string): Promise<OperationResult<GetAllGetwaySelect[]>> {
 
         try {
 
-            const getSelectedCoin: GetAllCoinSelect[] = [];
+            const getSelectedGetway: GetAllGetwaySelect[] = [];
 
-            const getAllCoin = await CoinEntitie.find({})
+            const getAllGetway = await GetwayEntitie.find({})
                 .where("isDelete")
                 .equals(false)
                 .where("isPublish")
                 .equals(true)
                 .select("name symbol icon locals");
 
-            getAllCoin.forEach(data => {
+            getAllGetway.forEach(data => {
+
                 const name = data.locals.find(x => x.lang === lang)?.value.name;
-                getSelectedCoin.push({
-                    id:data.id,
+                const description = data.locals.find(x => x.lang === lang)?.value.description;
+
+                getSelectedGetway.push({
+                    id: data.id,
                     icon: data.icon,
-                    symbol: data.symbol,
+                    description: description ?
+                        data.locals.find(x => x.lang === lang)?.value.description :
+                        data.description,
                     name: name ?
                         data.locals.find(x => x.lang === lang)?.value.name :
                         data.name
                 });
             });
 
-            return OperationResult.BuildSuccessResult("Get All Select Coin Coins", getSelectedCoin);
+            return OperationResult.BuildSuccessResult("Get All Select Getway Getways", getSelectedGetway);
 
         } catch (error: any) {
 
@@ -163,28 +157,29 @@ export default class CoinRepository implements ICoinRepository {
 
     /****
     *
-    * GetAll Coin Paging
+    * GetAll Getway Paging
     *
     ****/
-    async GetAllCoinPaging(items: FilterViewModel<GetAllCoinFilter>): Promise<OperationResult<GetAllPagingModel<ICoinDoc>>> {
+    async GetAllGetwayPaging(items: FilterViewModel<GetAllGetwayFilter>): Promise<OperationResult<GetAllPagingModel<IGetwayDoc>>> {
+ 
         try {
 
             const query: any = [];
 
             Object.keys(items.filters).forEach(key => {
-                const value = items.filters[key as keyof GetAllCoinFilter];
+                const value = items.filters[key as keyof GetAllGetwayFilter];
                 if (key === 'name' && value) {
                     query.push({ name: { $regex: `(.*)${value}(.*)` } });
-                } else if (key === 'symbol' && value) {
-                    query.push({ symbol: { $regex: `(.*)${value}(.*)` } });
+                } else {
+                    query.push({ [key]: value });
                 }
             });
 
-            let exchnageList = await CoinEntitie.find(...query)
+            let exchnageList = await GetwayEntitie.find(...query)
                 .skip((items.page - 1) * items.pageSize)
                 .limit(items.pageSize)
 
-            let count = await CoinEntitie.find({})
+            let count = await GetwayEntitie.find({})
                 .where("isDelete")
                 .equals(false)
                 .estimatedDocumentCount();
@@ -206,27 +201,27 @@ export default class CoinRepository implements ICoinRepository {
     * Get ById
     *
     ****/
-    async GetByIdCoin(id: string): Promise<OperationResult<GetCoinInfoModel>> {
+    async GetByIdGetway(id: string): Promise<OperationResult<GetGetwayInfoModel>> {
 
         try {
 
-            const getCoinById = await CoinEntitie.findById({ _id: id })
+            const getGetwayById = await GetwayEntitie.findById({ _id: id })
                 .where("isDelete")
                 .equals(false);
 
-            if (!getCoinById) {
+            if (!getGetwayById) {
 
-                return OperationResult.BuildFailur("Can not find this Coin");
+                return OperationResult.BuildFailur("Can not find this Getway");
 
             }
 
-            return OperationResult.BuildSuccessResult("Get All Coins", {
-                id: getCoinById._id,
-                name: getCoinById.name,
-                symbol: getCoinById.symbol,
-                isPublish: getCoinById.isPublish,
-                icon: getCoinById.icon,
-                locals: getCoinById.locals
+            return OperationResult.BuildSuccessResult("Get All Getways", {
+                id: getGetwayById._id,
+                name: getGetwayById.name,
+                description: getGetwayById.description,
+                isPublish: getGetwayById.isPublish,
+                icon: getGetwayById.icon,
+                locals: getGetwayById.locals
             });
 
         } catch (error: any) {

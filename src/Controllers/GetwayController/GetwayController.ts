@@ -1,34 +1,34 @@
 import { Request, Response, NextFunction } from 'express';
 import { BaseController } from "../../core/Controller/BaseController";
-import { CoinEntitie } from '../../DataLayer/Context/Coin/Coin';
+import { GetwayEntitie } from '../../DataLayer/Context/Getway/Getway';
 import UnitOfWork from '../../DataLayer/Repository/UnitOfWork/UnitOfWork';
 import * as fs from 'fs';
-import { ICoinLocalItem } from '../../DataLayer/Context/Coin/ICoinLocalItems';
+import { IGetwayLocalItem } from '../../DataLayer/Context/Getway/IGetwayLocalItems';
 import { MultiLanguageSelect } from '../../DTO/Common/MultiSelectLang';
-import utilService from './../../Utilities/Util';
+import utilService from '../../Utilities/Util';
 
-export default new class CoinController extends BaseController {
+export default new class GetwayController extends BaseController {
 
     constructor() {
         super();
     }
 
-    /*** Create Coin ****/
-    async CreateCoin(req: Request, res: Response, next: NextFunction) {
+    /*** Create Getway ****/
+    async CreateGetway(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
 
-        const { name, symbol, isPublish } = req.body;
+        const { name, description, isPublish } = req.body;
 
-        let coinLocalItem: MultiLanguageSelect<ICoinLocalItem>[] = [];
+        let getwayLocalItem: MultiLanguageSelect<IGetwayLocalItem>[] = [];
 
         for (var i = 0; i < Infinity; i++) {
             if (req.body[`locals[${i}].lang`]) {
-                coinLocalItem.push({
+                getwayLocalItem.push({
                     lang: req.body[`locals[${i}].lang`],
                     value: {
                         name: req.body[`locals[${i}].value.name`],
-                        langId: req.body[`locals[${i}].value.langId`]
+                        description: req.body[`locals[${i}].value.description`]
                     }
                 });
             } else {
@@ -38,45 +38,45 @@ export default new class CoinController extends BaseController {
 
         if (!validationData.haveError) {
 
-            const createCoin = await UnitOfWork.CoinRepository.CreateCoin({
+            const createGetway = await UnitOfWork.GetwayRepository.CreateGetway({
                 name,
-                symbol,
+                description,
                 isPublish,
                 icon: req.file,
-                locals: coinLocalItem
+                locals: getwayLocalItem
             });
 
-            if (createCoin.success) {
-                return this.Ok(res, "Success Create Coin");
+            if (createGetway.success) {
+                return this.Ok(res, "Success Create Getway");
 
             }
 
-            return this.BadRerquest(res, createCoin.message);
+            return this.BadRerquest(res, createGetway.message);
 
         } else {
             return this.BadRerquest(res, validationData.errorMessage.toString());
         }
     }
 
-    /*** UpdateCoin ****/
-    async UpdateCoin(req: Request, res: Response, next: NextFunction) {
+    /*** UpdateGetway ****/
+    async UpdateGetway(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
 
         if (!validationData.haveError) {
 
-            const CoinId = req.params.id;
-            const { name, symbol, isPublish } = req.body;
+            const GetwayId = req.params.id;
+            const { name, description, isPublish } = req.body;
 
-            let coinLocalItem: MultiLanguageSelect<ICoinLocalItem>[] = [];
+            let getwayLocalItem: MultiLanguageSelect<IGetwayLocalItem>[] = [];
 
             for (var i = 0; i < Infinity; i++) {
                 if (req.body[`locals[${i}].lang`]) {
-                    coinLocalItem.push({
+                    getwayLocalItem.push({
                         lang: req.body[`locals[${i}].lang`],
                         value: {
                             name: req.body[`locals[${i}].value.name`],
-                            langId: req.body[`locals[${i}].value.langId`]
+                            description: req.body[`locals[${i}].value.description`]
                         }
                     });
                 } else {
@@ -84,50 +84,50 @@ export default new class CoinController extends BaseController {
                 }
             }
 
-            const updateCoin = await UnitOfWork.CoinRepository.UpdateCoin(
+            const updateGetway = await UnitOfWork.GetwayRepository.UpdateGetway(
                 {
-                    id: CoinId,
+                    id: GetwayId,
                     name,
-                    symbol,
+                    description,
                     isPublish,
                     icon: req.file,
-                    locals: coinLocalItem
+                    locals: getwayLocalItem
                 }
             );
 
-            if (updateCoin.success) {
-                return this.Ok(res, "Update Coin");
+            if (updateGetway.success) {
+                return this.Ok(res, "Update Getway");
 
             }
-            return this.BadRerquest(res, updateCoin.message);
+            return this.BadRerquest(res, updateGetway.message);
 
         } else {
             return this.BadRerquest(res, validationData.errorMessage.toString());
         }
     }
 
-    /*** Delete Coin ****/
-    async DeleteCoin(req: Request, res: Response, next: NextFunction) {
+    /*** Delete Getway ****/
+    async DeleteGetway(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
 
         if (!validationData.haveError) {
 
-            const deleteCoin = await UnitOfWork.CoinRepository.DeleteCoin(req.params.id)
+            const deleteGetway = await UnitOfWork.GetwayRepository.DeleteGetway(req.params.id)
 
-            if (deleteCoin.success) {
-                return this.Ok(res, "Success Delete Coin");
+            if (deleteGetway.success) {
+                return this.Ok(res, "Success Delete Getway");
 
             }
-            return this.BadRerquest(res, deleteCoin.message);
+            return this.BadRerquest(res, deleteGetway.message);
 
         } else {
             return this.BadRerquest(res, validationData.errorMessage.toString());
         }
     }
 
-    /*** GetAll Coin Paging ****/
-    async GetAllCoinPaging(req: Request, res: Response, next: NextFunction) {
+    /*** GetAll Getway Paging ****/
+    async GetAllGetwayPaging(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
         let lang: string = '';
@@ -154,18 +154,18 @@ export default new class CoinController extends BaseController {
 
             if (findLangInfo.success && findLangInfo.result !== undefined) {
 
-                const getAllCoinPagingCoin = await UnitOfWork.CoinRepository
-                    .GetAllCoinPaging(req.body);
+                const getAllGetwayPagingGetway = await UnitOfWork.GetwayRepository
+                    .GetAllGetwayPaging(req.body);
 
-                if (getAllCoinPagingCoin.success) {
+                if (getAllGetwayPagingGetway.success) {
                     return this.OkObjectResultPager(res, {
-                        count: getAllCoinPagingCoin.result ? getAllCoinPagingCoin.result?.count : 0,
-                        data: getAllCoinPagingCoin.result?.data
-                    }, "Get All Coin Paging");
+                        count: getAllGetwayPagingGetway.result ? getAllGetwayPagingGetway.result?.count : 0,
+                        data: getAllGetwayPagingGetway.result?.data
+                    }, "Get All Getway Paging");
 
                 }
 
-                return this.BadRerquest(res, getAllCoinPagingCoin.message);
+                return this.BadRerquest(res, getAllGetwayPagingGetway.message);
 
             } else if (!findLangInfo.success) {
                 return this.BadRerquest(res, "we can not find your langauge selector");
@@ -175,8 +175,8 @@ export default new class CoinController extends BaseController {
         }
     }
 
-    /*** GetAll Coin Select ****/
-    async GetAllCoinSelect(req: Request, res: Response, next: NextFunction) {
+    /*** GetAll Getway Select ****/
+    async GetAllGetwaySelect(req: Request, res: Response, next: NextFunction) {
 
 
         let validationData = await this.ValidationAction(req, res);
@@ -185,50 +185,50 @@ export default new class CoinController extends BaseController {
 
             let lang = await utilService.getAcceptLang(req);
 
-            const getAllCoinSelectCoin = await UnitOfWork.CoinRepository
-                .GetAllCoinSelect(lang);
+            const getAllGetwaySelectGetway = await UnitOfWork.GetwayRepository
+                .GetAllGetwaySelect(lang);
 
-            if (getAllCoinSelectCoin.success) {
+            if (getAllGetwaySelectGetway.success) {
                 return this.OkObjectResult(res, {
-                    data: getAllCoinSelectCoin.result
-                }, "Get All Coin Paging");
+                    data: getAllGetwaySelectGetway.result
+                }, "Get All Getway Paging");
 
             }
-            return this.BadRerquest(res, getAllCoinSelectCoin.message);
+            return this.BadRerquest(res, getAllGetwaySelectGetway.message);
 
         } else {
             return this.BadRerquest(res, validationData.errorMessage.toString());
         }
     }
 
-    /*** GetById Coin ****/
-    async GetByIdCoin(req: Request, res: Response, next: NextFunction) {
+    /*** GetById Getway ****/
+    async GetByIdGetway(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
 
         if (!validationData.haveError) {
 
-            const CoinId = req.params.id;
+            const GetwayId = req.params.id;
 
-            const getCoinbyId = await UnitOfWork.CoinRepository
-                .GetByIdCoin(CoinId);
+            const getGetwaybyId = await UnitOfWork.GetwayRepository
+                .GetByIdGetway(GetwayId);
 
-            if (getCoinbyId.success) {
+            if (getGetwaybyId.success) {
                 return this.OkObjectResult(res, {
-                    data: getCoinbyId.result
-                }, "Get Coin By Id");
+                    data: getGetwaybyId.result
+                }, "Get Getway By Id");
 
             }
-            return this.BadRerquest(res, getCoinbyId.message);
+            return this.BadRerquest(res, getGetwaybyId.message);
 
         } else {
             return this.BadRerquest(res, validationData.errorMessage.toString());
         }
     }
 
-    async GetCoinImage(req: Request, res: Response, next: NextFunction) {
+    async GetGetwayImage(req: Request, res: Response, next: NextFunction) {
 
-        let manager = await UnitOfWork.CoinRepository.GetByIdCoin(req.params.id);
+        let manager = await UnitOfWork.GetwayRepository.GetByIdGetway(req.params.id);
 
         if (manager) {
 
