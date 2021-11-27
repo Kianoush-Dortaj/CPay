@@ -142,11 +142,12 @@ export default class CoinRepository implements ICoinRepository {
                 .select("name symbol icon locals");
 
             getAllCoin.forEach(data => {
+                const name = data.locals.find(x => x.lang === lang)?.value.name;
                 getSelectedCoin.push({
                     id:data.id,
                     icon: data.icon,
                     symbol: data.symbol,
-                    name: lang ?
+                    name: name ?
                         data.locals.find(x => x.lang === lang)?.value.name :
                         data.name
                 });

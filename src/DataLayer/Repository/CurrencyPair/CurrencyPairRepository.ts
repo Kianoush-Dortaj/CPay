@@ -198,14 +198,17 @@ export default class CurrencyPairRepository implements ICurrencyPairRepository {
 
             coinsSelect.result?.forEach((data: any) => {
 
+                let selected = false;
                 getCurrencyPairById.pairs.forEach((element: any) => {
-             
-                        coinsSelectModel.push({
-                            id: data.id,
-                            isSelected: data.id.toString() === element.toString(),
-                            symbol: data.symbol,
-                            name: data.name
-                        })
+                    if (data.id.toString() === element.toString()) {
+                        selected = true;
+                    }
+                })
+                coinsSelectModel.push({
+                    id: data.id,
+                    isSelected: selected,
+                    symbol: data.symbol,
+                    name: data.name
                 })
 
             })
