@@ -18,7 +18,7 @@ export default new class CoinController extends BaseController {
 
         let validationData = await this.ValidationAction(req, res);
 
-        const { name, symbol, isPublish } = req.body;
+        const { name, symbol, networks, isPublish } = req.body;
 
         let coinLocalItem: MultiLanguageSelect<ICoinLocalItem>[] = [];
 
@@ -43,6 +43,7 @@ export default new class CoinController extends BaseController {
                 symbol,
                 isPublish,
                 icon: req.file,
+                networks: networks,
                 locals: coinLocalItem
             });
 
@@ -66,7 +67,7 @@ export default new class CoinController extends BaseController {
         if (!validationData.haveError) {
 
             const CoinId = req.params.id;
-            const { name, symbol, isPublish } = req.body;
+            const { name, symbol, networks, isPublish } = req.body;
 
             let coinLocalItem: MultiLanguageSelect<ICoinLocalItem>[] = [];
 
@@ -91,6 +92,7 @@ export default new class CoinController extends BaseController {
                     symbol,
                     isPublish,
                     icon: req.file,
+                    networks: networks,
                     locals: coinLocalItem
                 }
             );

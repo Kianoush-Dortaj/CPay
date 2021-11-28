@@ -15,6 +15,8 @@ import { ListenType } from '../../../Utilities/Websocket/Pattern/listen-type';
 import { ICoinLocalItem } from '../../Context/Coin/ICoinLocalItems';
 import { MultiLanguageSelect } from '../../../DTO/Common/MultiSelectLang';
 import { GetAllCoinSelect } from '../../../DTO/Coin/GetAllCoinSelect';
+import UnitOfWork from '../UnitOfWork/UnitOfWork';
+import { GetNetworksForUpdateCurrencyPair } from '../../../DTO/Coin/GetNetworksForUpdateCurrencyPair';
 
 export default class CoinRepository implements ICoinRepository {
 
@@ -30,6 +32,14 @@ export default class CoinRepository implements ICoinRepository {
             let avatarUrl = UtilService.getDirectoryImage(
                 `${item.icon.destination}/${item.icon.originalname}`
             );
+
+            const checkValidNetwork = await this.checkExsistNetwork(item.networks);
+
+            if (!checkValidNetwork.success) {
+                return OperationResult.BuildFailur(checkValidNetwork.message);
+
+            }
+
             const Coin = await CoinEntitie.
                 build({
                     name: item.name,
@@ -37,6 +47,7 @@ export default class CoinRepository implements ICoinRepository {
                     symbol: item.symbol,
                     isPublish: item.isPublish,
                     icon: avatarUrl,
+                    networks: [...item.networks],
                     locals: [...item.locals]
                 });
 
@@ -51,6 +62,37 @@ export default class CoinRepository implements ICoinRepository {
 
     }
 
+    async checkExsistNetwork(networks: string[]): Promise<OperationResult<boolean>> {
+        try {
+            let hasError = false;
+            const mapLoop = async () => {
+
+                const get = networks.map(async (res: string) => {
+
+                    const data = await UnitOfWork.NetworkRepository.GetByIdNetwork(res);
+
+                    if (!data.success) {
+                        hasError = true;
+                    }
+                });
+
+                const network = await Promise.all(get);
+            }
+
+            await mapLoop();
+
+            if (hasError) {
+                return OperationResult.BuildFailur("we can not fidn the newtork");
+
+            }
+            return OperationResult.BuildSuccessResult("web can not find network selected", true);
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+
+        }
+    }
+
     /****
       *
       * Set Coin
@@ -60,6 +102,13 @@ export default class CoinRepository implements ICoinRepository {
         try {
 
             let avatarUrl;
+
+            const checkValidNetwork = await this.checkExsistNetwork(item.networks);
+
+            if (!checkValidNetwork.success) {
+                return OperationResult.BuildFailur(checkValidNetwork.message);
+
+            }
 
             if (item.icon) {
 
@@ -71,6 +120,8 @@ export default class CoinRepository implements ICoinRepository {
                 avatarUrl = coinItem.result?.icon;
             }
 
+
+
             await CoinEntitie.updateOne(
                 { _id: item.id },
                 {
@@ -78,6 +129,7 @@ export default class CoinRepository implements ICoinRepository {
                         name: item.name,
                         symbol: item.symbol,
                         icon: avatarUrl,
+                        networks: [...item.networks],
                         isPublish: item.isPublish,
                         locals: [...item.locals]
                     }
@@ -144,7 +196,7 @@ export default class CoinRepository implements ICoinRepository {
             getAllCoin.forEach(data => {
                 const name = data.locals.find(x => x.lang === lang)?.value.name;
                 getSelectedCoin.push({
-                    id:data.id,
+                    id: data.id,
                     icon: data.icon,
                     symbol: data.symbol,
                     name: name ?
@@ -210,6 +262,8 @@ export default class CoinRepository implements ICoinRepository {
 
         try {
 
+            let networkSelectModel: GetNetworksForUpdateCurrencyPair[] = [];
+
             const getCoinById = await CoinEntitie.findById({ _id: id })
                 .where("isDelete")
                 .equals(false);
@@ -220,12 +274,32 @@ export default class CoinRepository implements ICoinRepository {
 
             }
 
+            const networkSelectSelect = await UnitOfWork.NetworkRepository.
+                GetAllNetworkSelect();
+
+            networkSelectSelect.result?.forEach((data: any) => {
+
+                let selected = false;
+                getCoinById.networks.forEach((element: any) => {
+                    if (data.id.toString() === element.toString()) {
+                        selected = true;
+                    }
+                })
+                networkSelectModel.push({
+                    id: data.id,
+                    isSelected: selected,
+                    name: data.name
+                })
+
+            });
+
             return OperationResult.BuildSuccessResult("Get All Coins", {
                 id: getCoinById._id,
                 name: getCoinById.name,
                 symbol: getCoinById.symbol,
                 isPublish: getCoinById.isPublish,
                 icon: getCoinById.icon,
+                networks: networkSelectModel,
                 locals: getCoinById.locals
             });
 

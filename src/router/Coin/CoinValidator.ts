@@ -9,6 +9,7 @@ export default new class CoinValidation {
         return [
 
             check("name").notEmpty().withMessage("Name Can not be Empty"),
+            check("networks").notEmpty().withMessage("networks Can not be Empty"),
             check("symbol").notEmpty().withMessage("Symbol Can not be Empty"),
             check("icon").custom(async (value, { req }) => {
                 if (req.file) {
@@ -41,6 +42,7 @@ export default new class CoinValidation {
                 }
             }),
             check("name").notEmpty().withMessage("Name Can not be Empty"),
+            check("networks").notEmpty().withMessage("networks Can not be Empty"),
             check("symbol").notEmpty().withMessage("Symbol Can not be Empty"),
             check("icon").custom(async (value, { req }) => {
                 if (req.file) {

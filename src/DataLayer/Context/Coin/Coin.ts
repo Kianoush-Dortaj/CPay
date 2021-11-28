@@ -19,6 +19,10 @@ const CoinSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    networks: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Network',
+    }],
     locals:
         [{
             lang: { type: String },

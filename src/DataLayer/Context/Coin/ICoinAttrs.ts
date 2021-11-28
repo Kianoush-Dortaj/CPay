@@ -7,6 +7,7 @@ export interface ICoinAttrs {
     symbol: string;
     isPublish: boolean;
     icon: string;
+    networks: string[];
     locals: MultiLanguageSelect<ICoinLocalItem>[];
 }
 

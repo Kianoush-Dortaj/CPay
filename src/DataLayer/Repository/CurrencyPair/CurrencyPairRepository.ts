@@ -211,7 +211,7 @@ export default class CurrencyPairRepository implements ICurrencyPairRepository {
                     name: data.name
                 })
 
-            })
+            });
 
             return OperationResult.BuildSuccessResult("Get All CurrencyPairs", {
                 id: getCurrencyPairById._id,

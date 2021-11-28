@@ -5,6 +5,7 @@ export interface AddCoinModel {
     name: string;
     symbol: string;
     isPublish: boolean;
+    networks: string[];
     icon: any;
     locals: MultiLanguageSelect<ICoinLocalItem>[];
 }

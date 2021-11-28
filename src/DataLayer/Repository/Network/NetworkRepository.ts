@@ -167,17 +167,16 @@ export default class NetworkRepository implements INetworkRepository {
     async GetByIdNetwork(id: string): Promise<OperationResult<GetNetworkInfoModel>> {
 
         try {
-
             const getNetworkById = await NetworkEntitie.findById({ _id: id })
-                .where("isDelete")
-                .equals(false);
+            .where("isDelete")
+            .equals(false);
+            console.log(id)
 
             if (!getNetworkById) {
 
                 return OperationResult.BuildFailur("Can not find this Network");
 
             }
-
 
             return OperationResult.BuildSuccessResult("Get All Networks", {
                 id: getNetworkById._id,

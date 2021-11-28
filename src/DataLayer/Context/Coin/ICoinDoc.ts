@@ -6,6 +6,7 @@ export interface ICoinDoc extends mongoose.Document {
     name: string;
     isDelete: boolean;
     symbol: string;
+    networks: string[];
     isPublish:boolean;
     icon:string;
     locals:  MultiLanguageSelect<ICoinLocalItem>[];
