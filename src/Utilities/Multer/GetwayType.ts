@@ -6,7 +6,7 @@ const GetDirectory = () => {
     let year = new Date().getFullYear();
     let month = new Date().getMonth();
     let day = new Date().getDay();
-    return `src/public/uploads/getway/${year}/${month}/${day}`;
+    return `src/public/uploads/getwayType/${year}/${month}/${day}`;
 };
 
 const coinStorage = multe.diskStorage({
@@ -30,9 +30,9 @@ const fileFilter = (req: any, file: any, cb: any) => {
     }
 }
 
-const UploadGetwayIcon = multe({
+const UploadGetwayTypeIcon = multe({
     storage: coinStorage,
     fileFilter: fileFilter
 });
 
-export default UploadGetwayIcon;
+export default UploadGetwayTypeIcon;

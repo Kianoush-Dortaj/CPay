@@ -16,13 +16,14 @@ export default new class NetworkController extends BaseController {
 
         let validationData = await this.ValidationAction(req, res);
 
-        const { name, symbol , isPublish } = req.body;
+        const { name, symbol , comission , isPublish } = req.body;
 
         if (!validationData.haveError) {
 
             const createNetwork = await UnitOfWork.NetworkRepository.CreateNetwork({
                 name,
                 symbol,
+                comission,
                 isPublish
             });
 
@@ -46,13 +47,14 @@ export default new class NetworkController extends BaseController {
         if (!validationData.haveError) {
 
             const NetworkId = req.params.id;
-            const { name, symbol , isPublish } = req.body;
+            const { name, symbol , comission , isPublish } = req.body;
 
             const updateNetwork = await UnitOfWork.NetworkRepository.UpdateNetwork(
                 {
                     id: NetworkId,
                     name,
                     symbol,
+                    comission,
                     isPublish
                 }
             );

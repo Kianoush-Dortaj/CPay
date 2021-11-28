@@ -4,7 +4,7 @@ import { ICoinRepository } from "../Coin/ICoinRepository";
 import { IComissionRepository } from "../Comission/IComissionRepository";
 import { ICurrencyPairRepository } from "../CurrencyPair/ICurrencyPairRepository";
 import { IExchangeRepository } from "../Exchange/IExchangeRepository";
-import { IGetwayRepository } from "../Getway/IGetwayRepository";
+import { IGetwayTypeRepository } from "../GetwayType/IGetwayTypeRepository";
 import { IJWTRepository } from "../JWT/IJWTRepository";
 import { ILanguageRepository } from "../Language/ILanguageRepository";
 import { ILoginRepository } from "../Login/ILoginRepository";
@@ -38,7 +38,7 @@ export interface IUnitOfWork {
     ComissionRepository: IComissionRepository;
     NetworkRepository: INetworkRepository;
     LanguageRepository: ILanguageRepository;
-    GetwayRepository: IGetwayRepository;
+    GetwayTypeRepository: IGetwayTypeRepository;
     websocket: Websocket;
 
 }

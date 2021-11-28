@@ -7,9 +7,8 @@ import CurrencyPairRepository from '../CurrencyPair/CurrencyPairRepository';
 import { ICurrencyPairRepository } from '../CurrencyPair/ICurrencyPairRepository';
 import ExchangeRepository from '../Exchange/ExchangeRepository';
 import { IExchangeRepository } from '../Exchange/IExchangeRepository';
-import GetwayRepository from '../Getway/GetwayRepository';
-import { IGetwayRepository } from '../Getway/IGetwayRepository';
-
+import GetwayTypeRepository from '../GetwayType/GetwayTypeRepository';
+import { IGetwayTypeRepository } from '../GetwayType/IGetwayTypeRepository';
 import { IJWTRepository } from '../JWT/IJWTRepository';
 import JWTRepository from '../JWT/JWTRepository';
 import { ILanguageRepository } from '../Language/ILanguageRepository';
@@ -57,7 +56,7 @@ export default new class UnitOfWork implements IUnitOfWork {
     ComissionRepository : IComissionRepository;
     NetworkRepository:INetworkRepository;
     LanguageRepository:ILanguageRepository;
-    GetwayRepository:IGetwayRepository;
+    GetwayTypeRepository:IGetwayTypeRepository;
     websocket: Websocket;
 
     constructor() {
@@ -80,7 +79,7 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.ComissionRepository = new ComissionRepository();
         this.NetworkRepository = new NetworkRepository();
         this.LanguageRepository = new LanguageRepository();
-        this.GetwayRepository = new GetwayRepository();
+        this.GetwayTypeRepository = new GetwayTypeRepository();
     }
 
 }

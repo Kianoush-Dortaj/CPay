@@ -1,26 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import { BaseController } from "../../core/Controller/BaseController";
-import { GetwayEntitie } from '../../DataLayer/Context/Getway/Getway';
 import UnitOfWork from '../../DataLayer/Repository/UnitOfWork/UnitOfWork';
 import * as fs from 'fs';
-import { IGetwayLocalItem } from '../../DataLayer/Context/Getway/IGetwayLocalItems';
+import { IGetwayTypeLocalItem } from '../../DataLayer/Context/GetwayType/IGetwayTypeLocalItems';
 import { MultiLanguageSelect } from '../../DTO/Common/MultiSelectLang';
 import utilService from '../../Utilities/Util';
 
-export default new class GetwayController extends BaseController {
+export default new class GetwayTypeController extends BaseController {
 
     constructor() {
         super();
     }
 
-    /*** Create Getway ****/
-    async CreateGetway(req: Request, res: Response, next: NextFunction) {
+    /*** Create GetwayType ****/
+    async CreateGetwayType(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
 
-        const { name, description, isPublish } = req.body;
+        const { name, description, comission , isPublish } = req.body;
 
-        let getwayLocalItem: MultiLanguageSelect<IGetwayLocalItem>[] = [];
+        let getwayLocalItem: MultiLanguageSelect<IGetwayTypeLocalItem>[] = [];
 
         for (var i = 0; i < Infinity; i++) {
             if (req.body[`locals[${i}].lang`]) {
@@ -38,37 +37,38 @@ export default new class GetwayController extends BaseController {
 
         if (!validationData.haveError) {
 
-            const createGetway = await UnitOfWork.GetwayRepository.CreateGetway({
+            const createGetwayType = await UnitOfWork.GetwayTypeRepository.CreateGetwayType({
                 name,
                 description,
                 isPublish,
+                comission,
                 icon: req.file,
                 locals: getwayLocalItem
             });
 
-            if (createGetway.success) {
-                return this.Ok(res, "Success Create Getway");
+            if (createGetwayType.success) {
+                return this.Ok(res, "Success Create GetwayType");
 
             }
 
-            return this.BadRerquest(res, createGetway.message);
+            return this.BadRerquest(res, createGetwayType.message);
 
         } else {
             return this.BadRerquest(res, validationData.errorMessage.toString());
         }
     }
 
-    /*** UpdateGetway ****/
-    async UpdateGetway(req: Request, res: Response, next: NextFunction) {
+    /*** UpdateGetwayType ****/
+    async UpdateGetwayType(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
 
         if (!validationData.haveError) {
 
-            const GetwayId = req.params.id;
-            const { name, description, isPublish } = req.body;
+            const GetwayTypeId = req.params.id;
+            const { name, description, comission , isPublish } = req.body;
 
-            let getwayLocalItem: MultiLanguageSelect<IGetwayLocalItem>[] = [];
+            let getwayLocalItem: MultiLanguageSelect<IGetwayTypeLocalItem>[] = [];
 
             for (var i = 0; i < Infinity; i++) {
                 if (req.body[`locals[${i}].lang`]) {
@@ -84,50 +84,51 @@ export default new class GetwayController extends BaseController {
                 }
             }
 
-            const updateGetway = await UnitOfWork.GetwayRepository.UpdateGetway(
+            const updateGetwayType = await UnitOfWork.GetwayTypeRepository.UpdateGetwayType(
                 {
-                    id: GetwayId,
+                    id: GetwayTypeId,
                     name,
                     description,
                     isPublish,
+                    comission,
                     icon: req.file,
                     locals: getwayLocalItem
                 }
             );
 
-            if (updateGetway.success) {
-                return this.Ok(res, "Update Getway");
+            if (updateGetwayType.success) {
+                return this.Ok(res, "Update GetwayType");
 
             }
-            return this.BadRerquest(res, updateGetway.message);
+            return this.BadRerquest(res, updateGetwayType.message);
 
         } else {
             return this.BadRerquest(res, validationData.errorMessage.toString());
         }
     }
 
-    /*** Delete Getway ****/
-    async DeleteGetway(req: Request, res: Response, next: NextFunction) {
+    /*** Delete GetwayType ****/
+    async DeleteGetwayType(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
 
         if (!validationData.haveError) {
 
-            const deleteGetway = await UnitOfWork.GetwayRepository.DeleteGetway(req.params.id)
+            const deleteGetwayType = await UnitOfWork.GetwayTypeRepository.DeleteGetwayType(req.params.id)
 
-            if (deleteGetway.success) {
-                return this.Ok(res, "Success Delete Getway");
+            if (deleteGetwayType.success) {
+                return this.Ok(res, "Success Delete GetwayType");
 
             }
-            return this.BadRerquest(res, deleteGetway.message);
+            return this.BadRerquest(res, deleteGetwayType.message);
 
         } else {
             return this.BadRerquest(res, validationData.errorMessage.toString());
         }
     }
 
-    /*** GetAll Getway Paging ****/
-    async GetAllGetwayPaging(req: Request, res: Response, next: NextFunction) {
+    /*** GetAll GetwayType Paging ****/
+    async GetAllGetwayTypePaging(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
         let lang: string = '';
@@ -154,18 +155,18 @@ export default new class GetwayController extends BaseController {
 
             if (findLangInfo.success && findLangInfo.result !== undefined) {
 
-                const getAllGetwayPagingGetway = await UnitOfWork.GetwayRepository
-                    .GetAllGetwayPaging(req.body);
+                const getAllGetwayTypePagingGetwayType = await UnitOfWork.GetwayTypeRepository
+                    .GetAllGetwayTypePaging(req.body);
 
-                if (getAllGetwayPagingGetway.success) {
+                if (getAllGetwayTypePagingGetwayType.success) {
                     return this.OkObjectResultPager(res, {
-                        count: getAllGetwayPagingGetway.result ? getAllGetwayPagingGetway.result?.count : 0,
-                        data: getAllGetwayPagingGetway.result?.data
-                    }, "Get All Getway Paging");
+                        count: getAllGetwayTypePagingGetwayType.result ? getAllGetwayTypePagingGetwayType.result?.count : 0,
+                        data: getAllGetwayTypePagingGetwayType.result?.data
+                    }, "Get All GetwayType Paging");
 
                 }
 
-                return this.BadRerquest(res, getAllGetwayPagingGetway.message);
+                return this.BadRerquest(res, getAllGetwayTypePagingGetwayType.message);
 
             } else if (!findLangInfo.success) {
                 return this.BadRerquest(res, "we can not find your langauge selector");
@@ -175,8 +176,8 @@ export default new class GetwayController extends BaseController {
         }
     }
 
-    /*** GetAll Getway Select ****/
-    async GetAllGetwaySelect(req: Request, res: Response, next: NextFunction) {
+    /*** GetAll GetwayType Select ****/
+    async GetAllGetwayTypeSelect(req: Request, res: Response, next: NextFunction) {
 
 
         let validationData = await this.ValidationAction(req, res);
@@ -185,50 +186,50 @@ export default new class GetwayController extends BaseController {
 
             let lang = await utilService.getAcceptLang(req);
 
-            const getAllGetwaySelectGetway = await UnitOfWork.GetwayRepository
-                .GetAllGetwaySelect(lang);
+            const getAllGetwayTypeSelectGetwayType = await UnitOfWork.GetwayTypeRepository
+                .GetAllGetwayTypeSelect(lang);
 
-            if (getAllGetwaySelectGetway.success) {
+            if (getAllGetwayTypeSelectGetwayType.success) {
                 return this.OkObjectResult(res, {
-                    data: getAllGetwaySelectGetway.result
-                }, "Get All Getway Paging");
+                    data: getAllGetwayTypeSelectGetwayType.result
+                }, "Get All GetwayType Paging");
 
             }
-            return this.BadRerquest(res, getAllGetwaySelectGetway.message);
+            return this.BadRerquest(res, getAllGetwayTypeSelectGetwayType.message);
 
         } else {
             return this.BadRerquest(res, validationData.errorMessage.toString());
         }
     }
 
-    /*** GetById Getway ****/
-    async GetByIdGetway(req: Request, res: Response, next: NextFunction) {
+    /*** GetById GetwayType ****/
+    async GetByIdGetwayType(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
 
         if (!validationData.haveError) {
 
-            const GetwayId = req.params.id;
+            const GetwayTypeId = req.params.id;
 
-            const getGetwaybyId = await UnitOfWork.GetwayRepository
-                .GetByIdGetway(GetwayId);
+            const getGetwayTypebyId = await UnitOfWork.GetwayTypeRepository
+                .GetByIdGetwayType(GetwayTypeId);
 
-            if (getGetwaybyId.success) {
+            if (getGetwayTypebyId.success) {
                 return this.OkObjectResult(res, {
-                    data: getGetwaybyId.result
-                }, "Get Getway By Id");
+                    data: getGetwayTypebyId.result
+                }, "Get GetwayType By Id");
 
             }
-            return this.BadRerquest(res, getGetwaybyId.message);
+            return this.BadRerquest(res, getGetwayTypebyId.message);
 
         } else {
             return this.BadRerquest(res, validationData.errorMessage.toString());
         }
     }
 
-    async GetGetwayImage(req: Request, res: Response, next: NextFunction) {
+    async GetGetwayTypeImage(req: Request, res: Response, next: NextFunction) {
 
-        let manager = await UnitOfWork.GetwayRepository.GetByIdGetway(req.params.id);
+        let manager = await UnitOfWork.GetwayTypeRepository.GetByIdGetwayType(req.params.id);
 
         if (manager) {
 

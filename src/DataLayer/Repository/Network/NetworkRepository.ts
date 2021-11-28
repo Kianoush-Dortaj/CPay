@@ -29,6 +29,7 @@ export default class NetworkRepository implements INetworkRepository {
                 build({
                     name: item.name,
                     isDelete: false,
+                    comission : item.comission,
                     symbol: item.symbol,
                     isPublish: item.isPublish
                 });
@@ -59,6 +60,7 @@ export default class NetworkRepository implements INetworkRepository {
                     $set: {
                         name: item.name,
                         symbol: item.symbol,
+                    comission : item.comission,
                         isPublish: item.isPublish
                     }
                 });
@@ -107,7 +109,7 @@ export default class NetworkRepository implements INetworkRepository {
                 .equals(false)
                 .where("isPublish")
                 .equals(true)
-                .select("name symbol");
+                .select("name symbol comission");
 
             return OperationResult.BuildSuccessResult("Get All Networks", getAllNetwork);
 
@@ -180,6 +182,7 @@ export default class NetworkRepository implements INetworkRepository {
             return OperationResult.BuildSuccessResult("Get All Networks", {
                 id: getNetworkById._id,
                 name: getNetworkById.name,
+                comission : getNetworkById.comission,
                 symbol: getNetworkById.symbol,
                 isPublish: getNetworkById.isPublish
             });

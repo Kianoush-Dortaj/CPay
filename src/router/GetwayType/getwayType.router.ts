@@ -1,44 +1,44 @@
 
 import express, { Express, Router, NextFunction, Request, Response } from 'express';
-import getwayController from '../../Controllers/GetwayController/GetwayController';
-import UploadGetwayIcon from "../../Utilities/Multer/Getway";
-import getwayValidator from './GetwayValidator';
+import getwayController from '../../Controllers/GetwayTypeController/GetwayTypeController';
+import UploadGetwayTypeIcon from "../../Utilities/Multer/GetwayType";
+import getwayValidator from './GetwayTypeValidator';
 
 const getwayRouter = express.Router();
 
 getwayRouter.post('/create',
     // authController.AuthToken,
-    UploadGetwayIcon.single("icon"),
+    UploadGetwayTypeIcon.single("icon"),
     getwayValidator.CreateHandle(),
-    getwayController.CreateGetway);
+    getwayController.CreateGetwayType);
 
 getwayRouter.put('/update/:id',
     // authController.AuthToken,
-    UploadGetwayIcon.single("icon"),
+    UploadGetwayTypeIcon.single("icon"),
     getwayValidator.UpdateHandle(),
-    getwayController.UpdateGetway);
+    getwayController.UpdateGetwayType);
 
 getwayRouter.delete('/delete/:id',
     // authController.AuthToken,
     getwayValidator.GetItemByIdHandle(),
-    getwayController.DeleteGetway);
+    getwayController.DeleteGetwayType);
 
 getwayRouter.get('/getById/:id',
     // authController.AuthToken,
     getwayValidator.GetItemByIdHandle(),
-    getwayController.GetByIdGetway);
+    getwayController.GetByIdGetwayType);
 
 getwayRouter.get('/select',
     // authController.AuthToken,
-    getwayController.GetAllGetwaySelect);
+    getwayController.GetAllGetwayTypeSelect);
 
 getwayRouter.post('/getAll',
     // authController.AuthToken,
-    getwayController.GetAllGetwayPaging);
+    getwayController.GetAllGetwayTypePaging);
 
-    getwayRouter.get('/getGetwayImage/:id',
+    getwayRouter.get('/getGetwayTypeImage/:id',
     // authController.AuthToken,
     getwayValidator.GetItemByIdHandle(),
-    getwayController.GetGetwayImage);
+    getwayController.GetGetwayTypeImage);
 
 export default getwayRouter;

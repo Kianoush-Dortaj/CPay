@@ -1,47 +1,44 @@
 import OperationResult from '../../../core/Operation/OperationResult';
-import { AddGetwayModel } from '../../../DTO/Getway/AddGetway';
-import { GetGetwayInfoModel } from '../../../DTO/Getway/GetGetwayInfo';
-import { UpdateGetwayModel } from '../../../DTO/Getway/UpdateGetway';
+import { AddGetwayTypeModel } from '../../../DTO/GetwayType/AddGetwayType';
+import { GetGetwayTypeInfoModel } from '../../../DTO/GetwayType/GetGetwayTypeInfo';
+import { UpdateGetwayTypeModel } from '../../../DTO/GetwayType/UpdateGetwayType';
 import { GetAllPagingModel } from '../../../DTO/Share/GetAllPaging';
-import { IGetwayDoc } from '../../Context/Getway/IGetwayDoc';
-import { GetwayEntitie } from '../../Context/Getway/Getway';
-import { IGetwayRepository } from './IGetwayRepository';
+import { IGetwayTypeDoc } from '../../Context/GetwayType/IGetwayTypeDoc';
+import { GetwayTypeEntitie } from '../../Context/GetwayType/GetwayType';
+import { IGetwayTypeRepository } from './IGetwayTypeRepository';
 import { FilterViewModel } from '../../../DTO/Common/FilterViewModel';
-import { GetAllGetwayFilter } from '../../../DTO/Getway/GetAllGetwayFilter';
+import { GetAllGetwayTypeFilter } from '../../../DTO/GetwayType/GetAllGetwayTypeFilter';
 import UtilService from '../../../Utilities/Util';
-import { Listen } from '../../../Utilities/Websocket/Pattern/listen-chanel';
-import { ListenType } from '../../../Utilities/Websocket/Pattern/listen-type';
-import { IGetwayLocalItem } from '../../Context/Getway/IGetwayLocalItems';
-import { MultiLanguageSelect } from '../../../DTO/Common/MultiSelectLang';
-import { GetAllGetwaySelect } from '../../../DTO/Getway/GetAllGetwaySelect';
+import { GetAllGetwayTypeSelect } from '../../../DTO/GetwayType/GetAllGetwayTypeSelect';
 
-export default class GetwayRepository implements IGetwayRepository {
+export default class GetwayTypeRepository implements IGetwayTypeRepository {
 
     /****
       *
-      * Create Getway
+      * Create GetwayType
       *
       ****/
-    async CreateGetway(item: AddGetwayModel): Promise<OperationResult<boolean>> {
+    async CreateGetwayType(item: AddGetwayTypeModel): Promise<OperationResult<boolean>> {
 
         try {
 
             let avatarUrl = UtilService.getDirectoryImage(
                 `${item.icon.destination}/${item.icon.originalname}`
             );
-            const Getway = await GetwayEntitie.
+            const GetwayType = await GetwayTypeEntitie.
                 build({
                     name: item.name,
                     isDelete: false,
                     description: item.description,
+                    comission: item.comission,
                     isPublish: item.isPublish,
                     icon: avatarUrl,
                     locals: [...item.locals]
                 });
 
-            await Getway.save();
+            await GetwayType.save();
 
-            return OperationResult.BuildSuccessResult("Success Create Getway", true);
+            return OperationResult.BuildSuccessResult("Success Create GetwayType", true);
 
         } catch (error: any) {
 
@@ -52,10 +49,10 @@ export default class GetwayRepository implements IGetwayRepository {
 
     /****
       *
-      * Set Getway
+      * Set GetwayType
       *
       ****/
-    async UpdateGetway(item: UpdateGetwayModel): Promise<OperationResult<boolean>> {
+    async UpdateGetwayType(item: UpdateGetwayTypeModel): Promise<OperationResult<boolean>> {
         try {
 
             let avatarUrl;
@@ -66,23 +63,24 @@ export default class GetwayRepository implements IGetwayRepository {
                     `${item.icon.destination}/${item.icon.originalname}`
                 );
             } else {
-                const coinItem = await this.GetByIdGetway(item.id);
+                const coinItem = await this.GetByIdGetwayType(item.id);
                 avatarUrl = coinItem.result?.icon;
             }
 
-            await GetwayEntitie.updateOne(
+            await GetwayTypeEntitie.updateOne(
                 { _id: item.id },
                 {
                     $set: {
                         name: item.name,
                         description: item.description,
                         icon: avatarUrl,
+                        comission: item.comission,
                         isPublish: item.isPublish,
                         locals: [...item.locals]
                     }
                 });
 
-            return OperationResult.BuildSuccessResult("Success Update Getway", true);
+            return OperationResult.BuildSuccessResult("Success Update GetwayType", true);
 
         } catch (error: any) {
 
@@ -92,19 +90,19 @@ export default class GetwayRepository implements IGetwayRepository {
 
     /****
      *
-     * Delete Getway
+     * Delete GetwayType
      *
      ****/
-    async DeleteGetway(id: string): Promise<OperationResult<boolean>> {
+    async DeleteGetwayType(id: string): Promise<OperationResult<boolean>> {
 
         try {
 
-            await GetwayEntitie.updateOne(
+            await GetwayTypeEntitie.updateOne(
                 { _id: id },
                 { $set: { isDelete: true } }
             );
 
-            return OperationResult.BuildSuccessResult("Success Delete Getway", true);
+            return OperationResult.BuildSuccessResult("Success Delete GetwayType", true);
 
         } catch (error: any) {
 
@@ -117,25 +115,25 @@ export default class GetwayRepository implements IGetwayRepository {
     * GetAll Permission
     *
     ****/
-    async GetAllGetwaySelect(lang?: string): Promise<OperationResult<GetAllGetwaySelect[]>> {
+    async GetAllGetwayTypeSelect(lang?: string): Promise<OperationResult<GetAllGetwayTypeSelect[]>> {
 
         try {
 
-            const getSelectedGetway: GetAllGetwaySelect[] = [];
+            const getSelectedGetwayType: GetAllGetwayTypeSelect[] = [];
 
-            const getAllGetway = await GetwayEntitie.find({})
+            const getAllGetwayType = await GetwayTypeEntitie.find({})
                 .where("isDelete")
                 .equals(false)
                 .where("isPublish")
                 .equals(true)
                 .select("name description  icon locals");
 
-            getAllGetway.forEach(data => {
+            getAllGetwayType.forEach(data => {
 
                 const name = data.locals.find(x => x.lang === lang)?.value.name;
                 const description = data.locals.find(x => x.lang === lang)?.value.description;
 
-                getSelectedGetway.push({
+                getSelectedGetwayType.push({
                     id: data.id,
                     icon: data.icon,
                     description: description ?
@@ -147,7 +145,7 @@ export default class GetwayRepository implements IGetwayRepository {
                 });
             });
 
-            return OperationResult.BuildSuccessResult("Get All Select Getway Getways", getSelectedGetway);
+            return OperationResult.BuildSuccessResult("Get All Select GetwayType GetwayTypes", getSelectedGetwayType);
 
         } catch (error: any) {
 
@@ -157,17 +155,17 @@ export default class GetwayRepository implements IGetwayRepository {
 
     /****
     *
-    * GetAll Getway Paging
+    * GetAll GetwayType Paging
     *
     ****/
-    async GetAllGetwayPaging(items: FilterViewModel<GetAllGetwayFilter>): Promise<OperationResult<GetAllPagingModel<IGetwayDoc>>> {
- 
+    async GetAllGetwayTypePaging(items: FilterViewModel<GetAllGetwayTypeFilter>): Promise<OperationResult<GetAllPagingModel<IGetwayTypeDoc>>> {
+
         try {
 
             const query: any = [];
 
             Object.keys(items.filters).forEach(key => {
-                const value = items.filters[key as keyof GetAllGetwayFilter];
+                const value = items.filters[key as keyof GetAllGetwayTypeFilter];
                 if (key === 'name' && value) {
                     query.push({ name: { $regex: `(.*)${value}(.*)` } });
                 } else {
@@ -175,11 +173,11 @@ export default class GetwayRepository implements IGetwayRepository {
                 }
             });
 
-            let exchnageList = await GetwayEntitie.find(...query)
+            let exchnageList = await GetwayTypeEntitie.find(...query)
                 .skip((items.page - 1) * items.pageSize)
                 .limit(items.pageSize)
 
-            let count = await GetwayEntitie.find({})
+            let count = await GetwayTypeEntitie.find({})
                 .where("isDelete")
                 .equals(false)
                 .estimatedDocumentCount();
@@ -201,27 +199,28 @@ export default class GetwayRepository implements IGetwayRepository {
     * Get ById
     *
     ****/
-    async GetByIdGetway(id: string): Promise<OperationResult<GetGetwayInfoModel>> {
+    async GetByIdGetwayType(id: string): Promise<OperationResult<GetGetwayTypeInfoModel>> {
 
         try {
 
-            const getGetwayById = await GetwayEntitie.findById({ _id: id })
+            const getGetwayTypeById = await GetwayTypeEntitie.findById({ _id: id })
                 .where("isDelete")
                 .equals(false);
 
-            if (!getGetwayById) {
+            if (!getGetwayTypeById) {
 
-                return OperationResult.BuildFailur("Can not find this Getway");
+                return OperationResult.BuildFailur("Can not find this GetwayType");
 
             }
 
-            return OperationResult.BuildSuccessResult("Get All Getways", {
-                id: getGetwayById._id,
-                name: getGetwayById.name,
-                description: getGetwayById.description,
-                isPublish: getGetwayById.isPublish,
-                icon: getGetwayById.icon,
-                locals: getGetwayById.locals
+            return OperationResult.BuildSuccessResult("Get All GetwayTypes", {
+                id: getGetwayTypeById._id,
+                name: getGetwayTypeById.name,
+                description: getGetwayTypeById.description,
+                isPublish: getGetwayTypeById.isPublish,
+                comission : getGetwayTypeById.comission,
+                icon: getGetwayTypeById.icon,
+                locals: getGetwayTypeById.locals
             });
 
         } catch (error: any) {

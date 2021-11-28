@@ -1,4 +1,4 @@
-export interface IGetwayLocalItem {
+export interface IGetwayTypeLocalItem {
     name: string;
     description: string
 }

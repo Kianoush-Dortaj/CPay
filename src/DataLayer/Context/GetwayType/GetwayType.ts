@@ -1,9 +1,9 @@
 import mongoose, { Schema } from 'mongoose';
-import { IGetwayAttrs } from './IGetwayAttrs';
-import { IGetwayDoc } from './IGetwayDoc';
-import { IGetwayModel } from './IGetwayModel';
+import { IGetwayTypeAttrs } from './IGetwayTypeAttrs';
+import { IGetwayTypeDoc } from './IGetwayTypeDoc';
+import { IGetwayTypeModel } from './IGetwayTypeModel';
 
-const GetwaySchema = new mongoose.Schema({
+const GetwayTypeSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -11,6 +11,10 @@ const GetwaySchema = new mongoose.Schema({
     isDelete: { type: Boolean, default: false },
     description: {
         type: String,
+        required: true
+    },
+    comission: {
+        type: Number,
         required: true
     },
     isPublish: { type: Boolean, require: true },
@@ -32,11 +36,11 @@ const GetwaySchema = new mongoose.Schema({
 })
 
 
-GetwaySchema.statics.build = (attrs: IGetwayAttrs) => {
-    return new GetwayEntitie(attrs);
+GetwayTypeSchema.statics.build = (attrs: IGetwayTypeAttrs) => {
+    return new GetwayTypeEntitie(attrs);
 }
 
 
-const GetwayEntitie = mongoose.model<IGetwayDoc, IGetwayModel>("Getway", GetwaySchema);
+const GetwayTypeEntitie = mongoose.model<IGetwayTypeDoc, IGetwayTypeModel>("GetwayType", GetwayTypeSchema);
 
-export { GetwayEntitie }
+export { GetwayTypeEntitie }

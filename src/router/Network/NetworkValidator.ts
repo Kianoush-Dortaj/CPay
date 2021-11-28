@@ -9,6 +9,7 @@ export default new class NetworkValidation {
 
             check("name").notEmpty().withMessage("Name Can not be Empty"),
             check("symbol").notEmpty().withMessage("Symbol Can not be Empty"),
+            check("comission").notEmpty().withMessage("comission Can not be Empty"),
             check("isPublish").notEmpty().withMessage("isPublish Can not be Empty")
         ];
     }
@@ -31,6 +32,7 @@ export default new class NetworkValidation {
             }),
             check("name").notEmpty().withMessage("Name Can not be Empty"),
             check("symbol").notEmpty().withMessage("Symbol Can not be Empty"),
+            check("comission").notEmpty().withMessage("comission Can not be Empty"),
             check("isPublish").notEmpty().withMessage("isPublish Can not be Empty")
         ];
     }

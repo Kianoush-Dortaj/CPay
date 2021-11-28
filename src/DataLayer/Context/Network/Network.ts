@@ -13,6 +13,10 @@ const NetworkSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    comission: {
+        type: Number,
+        required: true
+    },
     isPublish: { type: Boolean, require: true },
 }, {
     toJSON: { virtuals: true },

@@ -3,13 +3,14 @@ import { body, check, param, query } from "express-validator";
 import unitofWotk from '../../DataLayer/Repository/UnitOfWork/UnitOfWork';
 import path from "path";
 
-export default new class CoinValidation {
+export default new class GetwayTypeValidation {
 
     CreateHandle() {
         return [
 
             check("name").notEmpty().withMessage("Name Can not be Empty"),
             check("description").notEmpty().withMessage("description Can not be Empty"),
+            check("comission").notEmpty().withMessage("comission Can not be Empty"),
             check("icon").custom(async (value, { req }) => {
                 if (req.file) {
                     const fileExe = [".png", ".jpg", ".jepg", ".svg"];
@@ -30,8 +31,8 @@ export default new class CoinValidation {
             query("id").custom(async (value, { req }) => {
                 if (req.params) {
 
-                    let data = await unitofWotk.GetwayRepository
-                        .GetByIdGetway(req.params.id);
+                    let data = await unitofWotk.GetwayTypeRepository
+                        .GetByIdGetwayType(req.params.id);
 
                     if (!data.success) {
                         return Promise.reject(
@@ -41,6 +42,7 @@ export default new class CoinValidation {
                 }
             }),
             check("name").notEmpty().withMessage("Name Can not be Empty"),
+            check("comission").notEmpty().withMessage("comission Can not be Empty"),
             check("description").notEmpty().withMessage("description Can not be Empty"),
             check("icon").custom(async (value, { req }) => {
                 if (req.file) {
@@ -48,7 +50,7 @@ export default new class CoinValidation {
                     if (!fileExe.includes(path.extname(req.file.filename).toLowerCase())) {
                         throw new Error("file is not Image , Please Select the Image File");
                     }
-                } 
+                }
             }),
             check("isPublish").notEmpty().withMessage("isPublish Can not be Empty")
         ];

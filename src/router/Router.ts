@@ -12,7 +12,7 @@ import userLevelRouter from './UserLevel/userLevel.router';
 import comissionRouter from './Comission/comission.router';
 import networkRouter from './Network/network.router';
 import langaugeRouter from './Langauge/Langauge.router';
-import getwayRouter from './Getway/getway.router';
+import getwayTypeRouter from './GetwayType/getwayType.router';
 
 
 const router = Router();
@@ -43,7 +43,7 @@ router.use('/api/network', networkRouter);
 
 router.use('/api/language', langaugeRouter);
 
-router.use('/api/getway', getwayRouter);
+router.use('/api/getwayType', getwayTypeRouter);
 
 
 export default router;

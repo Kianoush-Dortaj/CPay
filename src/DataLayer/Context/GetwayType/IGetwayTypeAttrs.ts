@@ -1,12 +1,13 @@
 import { MultiLanguageSelect } from "../../../DTO/Common/MultiSelectLang";
-import { IGetwayLocalItem } from "./IGetwayLocalItems";
+import { IGetwayTypeLocalItem } from "./IGetwayTypeLocalItems";
 
-export interface IGetwayAttrs {
+export interface IGetwayTypeAttrs {
     name: string;
     isDelete: boolean;
     description: string;
+    comission:number;
     isPublish: boolean;
     icon: string;
-    locals: MultiLanguageSelect<IGetwayLocalItem>[];
+    locals: MultiLanguageSelect<IGetwayTypeLocalItem>[];
 }
 
