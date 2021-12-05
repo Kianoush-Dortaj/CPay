@@ -63,7 +63,7 @@ export default new class PermissionValidation {
                 if (req.params) {
 
                     let data = await unitofWotk.PermissionRepository
-                    .GetByIdPermission(value);
+                    .GetByIdPermission(req.params.id);
                     
                     if (!data.success) {
                         return Promise.reject(

@@ -10,12 +10,19 @@ import swaggerUi from 'swagger-ui-express'
 import * as swaggerDocument from './swagger.json';
 import { ListenType } from './Utilities/Websocket/Pattern/listen-type';
 import { Listen } from './Utilities/Websocket/Pattern/listen-chanel';
+import Web3 from "web3";
+import CpayCoin from './CoinConfig/coin-config';
+
+declare global {
+    var web3: Web3;
+}
 
 export default new class Startup {
     app = express();
     port = process.env.PORT || 1248;
 
     constructor() {
+        CpayCoin.Initialweb3();
         this.CreateServer();
         this.ConfigMidllware();
         this.ConfigDatabase();
@@ -49,7 +56,8 @@ export default new class Startup {
           };
 
         this.app.use(express.json());
-        this.app.use(cros(corsOptions))
+        this.app.use(cros(corsOptions));
+        this.app.use(express.static('./../../../Coin/build/contracts'));
         this.app.use(router);
         this.app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
         nodeMailer.Config();
