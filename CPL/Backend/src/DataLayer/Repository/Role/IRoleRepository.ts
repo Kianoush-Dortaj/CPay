@@ -1,5 +1,7 @@
 import OperationResult from "../../../core/Operation/OperationResult";
+import { FilterViewModel } from "../../../DTO/Common/FilterViewModel";
 import { AddRoleModel } from "../../../DTO/Role/AddRole";
+import { GetAllroleFilter } from "../../../DTO/Role/GetAllRoleFilter";
 import { GetRoleInfoModel } from "../../../DTO/Role/GetRoleInfo";
 import { UpdateRoleModel } from "../../../DTO/Role/UpdateRole";
 import { GetAllPagingModel } from "../../../DTO/Share/GetAllPaging";
@@ -11,6 +13,6 @@ export interface IRoleRepository {
     UpdateRole(item: UpdateRoleModel): Promise<OperationResult<boolean>>;
     DeleteRole(id: string): Promise<OperationResult<boolean>>;
     GetAllRoleSelect(): Promise<OperationResult<IRoleDoc[]>>;
-    GetAllRolePaging(page: any, pageSize: any): Promise<OperationResult<GetAllPagingModel<any>>>;
+    GetAllRolePaging(items: FilterViewModel<GetAllroleFilter>): Promise<OperationResult<any>>;
     GetByIdRole(id: string): Promise<OperationResult<GetRoleInfoModel>> ;
 }

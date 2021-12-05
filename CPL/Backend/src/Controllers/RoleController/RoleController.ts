@@ -92,16 +92,15 @@ export default new class RoleController extends BaseController {
 
         if (!validationData.haveError) {
 
-            const { pageNumber, pageSize } = req.query;
+            let getAllrolePagingRole = await UnitOfWork.RoleRepository
+                .GetAllRolePaging(req.body);
 
-            const getAllrolePagingRole = await UnitOfWork.RoleRepository
-                .GetAllRolePaging(pageNumber, pageSize);
 
             if (getAllrolePagingRole.success) {
                 return this.OkObjectResultPager(res, {
-                    count: getAllrolePagingRole.result ? getAllrolePagingRole.result?.count : 0,
-                    data: getAllrolePagingRole.result?.data
-                }, "Get All Role Paging");
+                    count: getAllrolePagingRole.result !== undefined ? getAllrolePagingRole.result.length : 0,
+                    data: getAllrolePagingRole.result
+                }, '')
 
             }
             return this.BadRerquest(res, getAllrolePagingRole.message);

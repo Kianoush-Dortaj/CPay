@@ -162,24 +162,29 @@ export default class LanguageRepository implements ILanguageRepository {
     ****/
     async GetAllLangaugePaging(items: FilterViewModel<GetAllLanguageFilter>): Promise<OperationResult<ILanguageDoc[]>> {
 
+        try {
+            const query: any = [];
 
-        const query: any = [];
+            Object.keys(items.filters).forEach(key => {
+                const value = items.filters[key as keyof GetAllLanguageFilter];
+                if (key === 'name' && value) {
+                    query.push({ name: { $regex: `(.*)${value}(.*)` } });
+                } else if (key === 'uniqueSeoCode' && value) {
+                    query.push({ uniqueSeoCode: { $regex: `(.*)${value}(.*)` } });
+                } else {
+                    query.push({ [key]: value });
+                }
+            });
 
-        Object.keys(items.filters).forEach(key => {
-            const value = items.filters[key as keyof GetAllLanguageFilter];
-            if (key === 'name' && value) {
-                query.push({ name: { $regex: `(.*)${value}(.*)` } });
-            } else if (key === 'uniqueSeoCode' && value) {
-                query.push({ uniqueSeoCode: { $regex: `(.*)${value}(.*)` } });
-            } else {
-                query.push({ [key]: value });
-            }
-        });
+            let userList = await LanguageEntitie.find(...query).skip((items.page - 1) * items.pageSize)
+                .limit(items.pageSize)
 
-        let userList = await LanguageEntitie.find(...query).skip((items.page - 1) * items.pageSize)
-            .limit(items.pageSize)
+            return OperationResult.BuildSuccessResult('Operation Success', userList);
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
 
-        return OperationResult.BuildSuccessResult('Operation Success', userList);
+        }
+
 
     }
     /****

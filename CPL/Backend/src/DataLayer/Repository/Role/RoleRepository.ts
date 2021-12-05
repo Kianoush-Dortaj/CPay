@@ -1,6 +1,8 @@
 import OperationResult from '../../../core/Operation/OperationResult';
+import { FilterViewModel } from '../../../DTO/Common/FilterViewModel';
 import { FileNode } from '../../../DTO/Permission/file-node';
 import { AddRoleModel } from '../../../DTO/Role/AddRole';
+import { GetAllroleFilter } from '../../../DTO/Role/GetAllRoleFilter';
 import { GetRoleInfoModel } from '../../../DTO/Role/GetRoleInfo';
 import { UpdateRoleModel } from '../../../DTO/Role/UpdateRole';
 import { GetRolePermissionForEdit } from '../../../DTO/RolePermission/GetRolePermissionForEdit';
@@ -119,31 +121,27 @@ export default class RoleRepository {
     * GetAll Role Paging
     *
     ****/
-    async GetAllRolePaging(page: any, pageSize: any): Promise<OperationResult<GetAllPagingModel<any>>> {
+    async GetAllRolePaging(items: FilterViewModel<GetAllroleFilter>): Promise<OperationResult<any>> {
 
         try {
+            const query: any = [];
 
-            const skip = (Number(page - 1)) * Number(pageSize);
-
-            const data = await RoleEntitie.find({})
-                .where("isDelete")
-                .equals(false)
-                .select("name")
-                .skip(skip)
-                .limit(Number(pageSize));
-
-            let count = await RoleEntitie.find({})
-                .where("isDelete")
-                .equals(false)
-                .estimatedDocumentCount();
-
-            return OperationResult.BuildSuccessResult<GetAllPagingModel<any>>("Get All data Paging", {
-                data: data,
-                count: count
+            Object.keys(items.filters).forEach(key => {
+                const value = items.filters[key as keyof GetAllroleFilter];
+                if (key === 'name' && value) {
+                    query.push({ name: { $regex: `(.*)${value}(.*)` } });
+                } else {
+                    query.push({ [key]: value });
+                }
             });
 
+            let userList = await RoleEntitie.find(...query).skip((items.page - 1) * items.pageSize)
+                .limit(items.pageSize)
+
+            return OperationResult.BuildSuccessResult('Operation Success', userList);
         } catch (error: any) {
             return OperationResult.BuildFailur(error.message);
+
         }
 
 

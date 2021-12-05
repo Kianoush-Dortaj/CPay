@@ -30,7 +30,7 @@ roleRouter.get('/select',
     // authController.AuthToken,
     roleController.GetAllRoleSelect);
 
-roleRouter.get('/getAll',
+roleRouter.post('/getAll',
     // authController.AuthToken,
     roleController.GetAllRolePaging);
 
