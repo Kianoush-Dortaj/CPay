@@ -29,16 +29,15 @@ export default new class CpayCoin {
         let cpayCointotalSupply = await CpayCoin.coin.methods
             .transfer(
                 '0xD4d5220652a766f3880A66Ce01dd0569465B233C', 10000)
-                .send({from:'0x2030EE9a8Ea604DFf7D6eeDe06B6224cF9440CC7'})
+                .send({from:'0xeDAc8F3681e866702032c0b1d3f39904Ef9eb17E'})
                 .then((data:any)=>{
                     console.log({
-                        trX:data.transactionHash,
+                        trx:data.transactionHash,
                         from:data.from,
                         blockHash:data.events.Transfer.blockHash,
                         blockNumber:data.events.Transfer.blockNumber,
                         event:data.events.Transfer.event,
-                        signature : data.events.Transfer.signature,
-                        raw: data.events.Transfer.raw
+                        signature : data.events.Transfer.signature
                     });
                 });
 
