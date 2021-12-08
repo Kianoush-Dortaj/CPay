@@ -11,7 +11,9 @@ export class MessageBroker {
 
         await channel.assertExchange(exchange, 'direct', { durable: true, autoDelete: true });
 
-        await channel.assertQueue(queue + '.' + exchange, { durable: true, autoDelete: true });
+        await channel.assertQueue(queue + '.' + exchange, {
+            exclusive: true
+        });
 
         await channel.bindQueue(queue + '.' + exchange, exchange, queue);
 
@@ -21,17 +23,32 @@ export class MessageBroker {
 
     }
 
-     static async Publish(exchange: string, queue: string , message:any): Promise<void> {
+    //Random id generator
+    private static randomid() {
+        return new Date().getTime().toString() + Math.random().toString() + Math.random().toString();
+    }
+    static async Publish(exchange: string, queue: string, message: any): Promise<void> {
 
-        MessageBroker.channel.publish(exchange, queue, Buffer.from(JSON.stringify(message)))
+        let id = this.randomid();
 
+        MessageBroker.channel.sendToQueue(exchange, queue,
+            Buffer.from(JSON.stringify(message)), { correlationId: id, replyTo: 'amq.rabbitmq.reply-to' })
+
+    }
+
+    static async SendToQueue(queue: string, message: any): Promise<void> {
+
+        let id = this.randomid();
+
+        MessageBroker.channel.sendToQueue(queue, Buffer.from('10'), {
+            correlationId: id,
+            replyTo: queue
+        });
     }
 
     private static async Consume(exchange: string, queue: string): Promise<void> {
 
-        MessageBroker.channel.consume(exchange + '.' + queue, (msg: any) => {
-            console.log(msg.content.toString())
-        })
+
 
     }
 
