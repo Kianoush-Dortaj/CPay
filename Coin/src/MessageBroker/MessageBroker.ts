@@ -31,8 +31,8 @@ export class MessageBroker {
 
             const { to, amount , type } = JSON.parse(msg.content);
 
-            const transfer = await UnitOfWork.coinRepository.transfer(to, amount);
-            console.log(to, amount);
+            // const transfer = await UnitOfWork.coinRepository.transfer(to, amount);
+            // console.log(to, amount);
         })
 
     }

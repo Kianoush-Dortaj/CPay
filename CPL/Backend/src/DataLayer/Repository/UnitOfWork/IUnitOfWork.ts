@@ -1,5 +1,6 @@
 
 import Websocket from "../../../Utilities/Websocket/Websocket";
+import IAdminRepository from "../Admin/IAdminRepository";
 import { ICoinRepository } from "../Coin/ICoinRepository";
 import { IComissionRepository } from "../Comission/IComissionRepository";
 import { ICurrencyPairRepository } from "../CurrencyPair/ICurrencyPairRepository";
@@ -21,6 +22,7 @@ import { IUserRoleRepository } from "../UserRole/IUserRoleRepository";
 
 export interface IUnitOfWork {
 
+    adminRepository: IAdminRepository;
     userRepository: IUserRepository;
     jwtRepository: IJWTRepository;
     LoginRepository: ILoginRepository;

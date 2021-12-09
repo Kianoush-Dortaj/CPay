@@ -13,6 +13,8 @@ import comissionRouter from './Comission/comission.router';
 import networkRouter from './Network/network.router';
 import langaugeRouter from './Langauge/Langauge.router';
 import getwayTypeRouter from './GetwayType/getwayType.router';
+import userRouter from './User Manager/user.router';
+
 
 
 const router = Router();
@@ -44,6 +46,8 @@ router.use('/api/network', networkRouter);
 router.use('/api/language', langaugeRouter);
 
 router.use('/api/getwayType', getwayTypeRouter);
+
+router.use('/api/user', userRouter);
 
 
 export default router;

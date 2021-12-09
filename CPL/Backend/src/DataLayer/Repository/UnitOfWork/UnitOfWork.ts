@@ -27,8 +27,6 @@ import { IRolePermissionRepository } from '../RolePermission/IRolePermissionRepo
 import RolePermissionRepository from '../RolePermission/RolePermissionRepository';
 import { ISettingRepository } from '../Setting/ISettingRepository';
 import SettingRepository from '../Setting/SettingRepository';
-import IUserRepository from '../User/IUserRepository';
-import { UserRepository } from '../User/UserRepository';
 import { IUserActivityRepository } from '../UserActivity/IUserActivityRepository';
 import UserActivityRepository from '../UserActivity/UserActivityRepository';
 import { IUserLevelRepository } from '../UserLevel/IUserLevelRepository';
@@ -36,9 +34,14 @@ import UserLevelRepository from '../UserLevel/UserLevelRepository';
 import { IUserRoleRepository } from '../UserRole/IUserRoleRepository';
 import UserRoleRepository from '../UserRole/UserRoleRepository';
 import { IUnitOfWork } from './IUnitOfWork';
+import { AdminRepository } from '../Admin/AdminRepository';
+import IAdminRepository from '../Admin/IAdminRepository';
+import { UserRepository } from '../User/UserRepository';
+import IUserRepository from '../User/IUserRepository';
 
 export default new class UnitOfWork implements IUnitOfWork {
 
+    adminRepository: IAdminRepository;
     userRepository: IUserRepository;
     jwtRepository: IJWTRepository;
     LoginRepository: ILoginRepository;
@@ -53,15 +56,15 @@ export default new class UnitOfWork implements IUnitOfWork {
     CurrencyPairRepository: ICurrencyPairRepository;
     UserActivityRepositiry: IUserActivityRepository;
     UserLevelRepository: IUserLevelRepository;
-    ComissionRepository : IComissionRepository;
-    NetworkRepository:INetworkRepository;
-    LanguageRepository:ILanguageRepository;
-    GetwayTypeRepository:IGetwayTypeRepository;
+    ComissionRepository: IComissionRepository;
+    NetworkRepository: INetworkRepository;
+    LanguageRepository: ILanguageRepository;
+    GetwayTypeRepository: IGetwayTypeRepository;
     websocket: Websocket;
 
     constructor() {
 
-        this.userRepository = new UserRepository();
+        this.adminRepository = new AdminRepository();
         this.jwtRepository = new JWTRepository();
         this.LoginRepository = new LoginRepository();
         this.RolePermissionRepository = new RolePermissionRepository();
@@ -80,6 +83,7 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.NetworkRepository = new NetworkRepository();
         this.LanguageRepository = new LanguageRepository();
         this.GetwayTypeRepository = new GetwayTypeRepository();
+        this.userRepository = new UserRepository();
     }
 
 }

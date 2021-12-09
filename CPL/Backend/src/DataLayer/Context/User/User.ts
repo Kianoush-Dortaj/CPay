@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'UserRole',
     },
+    userLevel: {
+        type: Schema.Types.ObjectId,
+        ref: 'UserLevel',
+    },
     birthDate: { type: Date },
     locked: { type: Boolean, default: false },
     lockedDate: { type: Date, default: null },

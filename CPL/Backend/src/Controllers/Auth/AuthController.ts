@@ -16,7 +16,7 @@ export default new class AuthController extends BaseController {
             if (!validation.haveError) {
                 const { email, name, gender, family, password } = req.body;
 
-                let registerUser = await UnitOfWork.userRepository.RegisterAdmin({
+                let registerUser = await UnitOfWork.adminRepository.RegisterAdmin({
                     email: email,
                     name: name,
                     gender: gender,
@@ -42,7 +42,7 @@ export default new class AuthController extends BaseController {
     async ConfirmCode(req: Request, res: Response, next: NextFunction) {
 
         try {
-            let confirmUser = await UnitOfWork.userRepository.CheckUserConfirmCode(req.params.email, req.params.hash);
+            let confirmUser = await UnitOfWork.adminRepository.CheckUserConfirmCode(req.params.email, req.params.hash);
             if (confirmUser.success) {
                 return this.Ok(res, confirmUser.message);
             } else {
@@ -57,7 +57,7 @@ export default new class AuthController extends BaseController {
     async ResendActivationCode(req: Request, res: Response, next: NextFunction) {
 
         try {
-            let confirmUser = await UnitOfWork.userRepository.Resendactivationcode(req.params.email);
+            let confirmUser = await UnitOfWork.adminRepository.Resendactivationcode(req.params.email);
             if (confirmUser.success) {
                 return this.Ok(res, confirmUser.message);
             } else {

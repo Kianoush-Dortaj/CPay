@@ -14,27 +14,17 @@ import { InfoForLoginModel } from "./InfoForLoginModel";
 import { GetProfileInfoModel } from "../../../DTO/User/UserInfoProfile";
 import UnitOfWork from "../UnitOfWork/UnitOfWork";
 import { UpdateUserAccountViewModel } from "../../../DTO/User/UserAccountviewModel";
+import { GetAdminAccountInfoModel } from "../../../DTO/User/GetAdminAccountInfoModel";
+import { GetAdminInformationModel } from "../../../DTO/User/GetAdminInformatinoModel";
 import { FilterViewModel } from "../../../DTO/Common/FilterViewModel";
 import { GetAllUserFilter } from "../../../DTO/User/GetAllUserFilter";
-import IUserRepository from "./IUserRepository";
-import { SETTING_ENUM } from "../../../DTO/Sertting/setting-enum";
-import { SettingRegisterUserRole } from "../../../DTO/Sertting/setting-register-user-role";
-import { GetUserAccountInfoModel } from "../../../DTO/User/GetUserAccountInfoModel";
-import { GetUserInformationModel } from "../../../DTO/User/GetUserInformatinoModel";
+import IAdminRepository from "./IAdminRepository";
 
-export class UserRepository implements IUserRepository {
+export class AdminRepository implements IAdminRepository {
 
-    async RegisterUser(createUserDto: CreateUserDto): Promise<OperationResult<IUserDoc>> {
+    async RegisterAdmin(createUserDto: CreateUserDto): Promise<OperationResult<IUserDoc>> {
 
         try {
-
-            let userLevel = await UnitOfWork.SettingRepository.GetSetting<SettingRegisterUserRole>(SETTING_ENUM.REGISTER_SETTING)
-            
-            const result = JSON.parse(userLevel.result)
-            if (!result.setDefaultRegisterUserLevel) {
-                return OperationResult.BuildFailur("We Can not Find User Level Setting");
-            }
-
             var find = '/';
             var re = new RegExp(find, 'g');
 
@@ -44,13 +34,10 @@ export class UserRepository implements IUserRepository {
             let displayName = createUserDto.name + ' ' + createUserDto.family;
             let securityStamp = (new Date()).getTime().toString(36) + Math.random().toString(36).slice(2);
 
-
             let registerUser = await UserEntite.build({
                 firstName: createUserDto.name,
                 gender: Number(createUserDto.gender),
-                isAdmin: false,
-                isSupport: false,
-                userLevel: result.setDefaultRegisterUserLevel,
+                isAdmin: true,
                 password: password,
                 email: createUserDto.email,
                 lastName: createUserDto.family,
@@ -58,6 +45,62 @@ export class UserRepository implements IUserRepository {
                 avatar: undefined,
                 poster: undefined,
                 birthDate: undefined,
+                isSupport: false,
+                confirmEmail: false,
+                towFactorEnabled: false,
+                isActive: false,
+                locked: false,
+                lockedDate: undefined,
+                phoneNumber: undefined,
+                securityStamp: securityStamp
+            });
+
+
+            const userRole = await UnitOfWork.UserRoleRepository.SetUserRole({
+                roles: createUserDto.roles,
+                userId: registerUser._id
+            })
+
+            registerUser.userRole = userRole.result?._id;
+
+            registerUser.save();
+
+            await RedisManager.Set(RedisKey.UserInfo + registerUser._id, registerUser);
+            await this.GenerateActivationCode(RedisKey.RegisterConfirm + registerUser.email, hashCode);
+            await emailRepo.sendActivationCodeEmail(registerUser.email, 'CPay Configm Email', displayName, hashCode);
+
+            return new OperationResult<IUserDoc>(true, "We Are Sent Activatoin to Your Email");
+
+        } catch (error: any) {
+            return new OperationResult<IUserDoc>(false, error.message);
+        }
+
+    }
+
+    async RegisterUser(createUserDto: CreateUserDto): Promise<OperationResult<IUserDoc>> {
+
+        try {
+            var find = '/';
+            var re = new RegExp(find, 'g');
+
+            let password = await bcrypte.hash(createUserDto.password, 5);
+            let hashCode = await (await bcrypte.hash(createUserDto.email, 5)).replace(re, '');
+
+            let displayName = createUserDto.name + ' ' + createUserDto.family;
+            let securityStamp = (new Date()).getTime().toString(36) + Math.random().toString(36).slice(2);
+
+            let registerUser = await UserEntite.build({
+                firstName: createUserDto.name,
+                gender: Number(createUserDto.gender),
+                isAdmin: false,
+                password: password,
+                email: createUserDto.email,
+                lastName: createUserDto.family,
+                accountFail: 0,
+                avatar: undefined,
+                poster: undefined,
+                birthDate: undefined,
+                isSupport: false,
                 confirmEmail: false,
                 towFactorEnabled: false,
                 isActive: false,
@@ -71,22 +114,68 @@ export class UserRepository implements IUserRepository {
 
             await RedisManager.Set(RedisKey.UserInfo + registerUser._id, registerUser);
             await this.GenerateActivationCode(RedisKey.RegisterConfirm + registerUser.email, hashCode);
-            await emailRepo.sendActivationCodeEmail(registerUser.email, 'CPay Configm Email', displayName, hashCode);
+            await emailRepo.sendActivationCodeEmail(registerUser.email, 'Truvel Budy Configm Email', displayName, hashCode);
 
-            return OperationResult.BuildSuccessResult("We Are Sent Activatoin to Your Email", registerUser);
+            return new OperationResult<IUserDoc>(true, "We Are Sent Activatoin to Your Email");
 
         } catch (error: any) {
-            return OperationResult.BuildFailur(error.message);
+            return new OperationResult<IUserDoc>(false, error.message);
         }
 
     }
 
+    async RegisterSupport(createUserDto: CreateUserDto): Promise<OperationResult<IUserDoc>> {
+
+        try {
+            var find = '/';
+            var re = new RegExp(find, 'g');
+
+            let password = await bcrypte.hash(createUserDto.password, 5);
+            let hashCode = await (await bcrypte.hash(createUserDto.email, 5)).replace(re, '');
+
+            let displayName = createUserDto.name + ' ' + createUserDto.family;
+            let securityStamp = (new Date()).getTime().toString(36) + Math.random().toString(36).slice(2);
+
+            let registerUser = await UserEntite.build({
+                firstName: createUserDto.name,
+                gender: Number(createUserDto.gender),
+                isAdmin: false,
+                password: password,
+                email: createUserDto.email,
+                lastName: createUserDto.family,
+                accountFail: 0,
+                avatar: undefined,
+                poster: undefined,
+                birthDate: undefined,
+                isSupport: true,
+                confirmEmail: false,
+                towFactorEnabled: false,
+                isActive: false,
+                locked: false,
+                lockedDate: undefined,
+                phoneNumber: undefined,
+                securityStamp: securityStamp
+            });
+
+            registerUser.save();
+
+            await RedisManager.Set(RedisKey.UserInfo + registerUser._id, registerUser);
+            await this.GenerateActivationCode(RedisKey.RegisterConfirm + registerUser.email, hashCode);
+            await emailRepo.sendActivationCodeEmail(registerUser.email, 'Truvel Budy Configm Email', displayName, hashCode);
+
+            return new OperationResult<IUserDoc>(true, "We Are Sent Activatoin to Your Email");
+
+        } catch (error: any) {
+            return new OperationResult<IUserDoc>(false, error.message);
+        }
+
+    }
 
     async FindUserByEmail(email: string): Promise<OperationResult<IUserDoc>> {
 
         try {
 
-            let user = await UserEntite.findOne({ email: email, isAdmin: false, isSupport: false });
+            let user = await UserEntite.findOne({ email: email });
             if (user) {
                 return new OperationResult<IUserDoc>(true, "User Find", user);
             }
@@ -100,10 +189,7 @@ export class UserRepository implements IUserRepository {
 
         try {
 
-            let user = await UserEntite.findById(id)
-                .where("isAdmin").equals(false)
-                .where("isSupport").equals(false);
-
+            let user = await UserEntite.findById(id);
             if (user) {
                 return new OperationResult<IUserDoc>(true, "User Find", user);
             }
@@ -113,38 +199,38 @@ export class UserRepository implements IUserRepository {
         }
     }
 
-    // async FindUserByEmailForLogin(email: string): Promise<OperationResult<any>> {
+    async FindUserByEmailForLogin(email: string): Promise<OperationResult<any>> {
 
-    //     try {
+        try {
 
-    //         let user = await UserEntite.findOne({ email: email })
-    //             .populate({
-    //                 path: "userRole",
-    //                 populate: [
-    //                     {
-    //                         path: "roles",
-    //                         populate: {
-    //                             path: "rolePermissionId",
-    //                             populate: {
-    //                                 path: "permissionId",
-    //                                 select: "permissionId"
-    //                             }
-    //                         }
-    //                     }
-    //                 ],
-    //             });
+            let user = await UserEntite.findOne({ email: email })
+                .populate({
+                    path: "userRole",
+                    populate: [
+                        {
+                            path: "roles",
+                            populate: {
+                                path: "rolePermissionId",
+                                populate: {
+                                    path: "permissionId",
+                                    select: "permissionId"
+                                }
+                            }
+                        }
+                    ],
+                });
 
-    //         if (user) {
-    //             return OperationResult.BuildSuccessResult("Operation Success", user);
-    //         }
-    //         return OperationResult.BuildFailur("Can not find User");
+            if (user) {
+                return OperationResult.BuildSuccessResult("Operation Success", user);
+            }
+            return OperationResult.BuildFailur("Can not find User");
 
-    //     } catch (error: any) {
-    //         return OperationResult.BuildFailur(error.message);
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
 
-    //     }
+        }
 
-    // }
+    }
 
     async GenerateActivationCode(userId: string, hash: string): Promise<OperationResult<any>> {
 
@@ -214,7 +300,7 @@ export class UserRepository implements IUserRepository {
     /**********
     * Get Manager Account Info
     ********/
-    async GetUserAccountInfo(id: string): Promise<OperationResult<GetUserAccountInfoModel>> {
+    async GetManagerAccountInfo(id: string): Promise<OperationResult<GetAdminAccountInfoModel>> {
 
         try {
 
@@ -228,10 +314,7 @@ export class UserRepository implements IUserRepository {
                     });
             }
 
-            let getUserInfo = await UserEntite.findById(id)
-                .where("isAdmin").equals(false)
-                .where("isSupport").equals(false)
-                .select('email isActive id');
+            let getUserInfo = await UserEntite.findById(id).select('email isActive id');
 
             if (getUserInfo) {
                 let setRedisValue = await RedisManager.Set(RedisKey.UserAccount + id,
@@ -261,20 +344,17 @@ export class UserRepository implements IUserRepository {
     /**********
    * Get Manager Info
    ********/
-    async GetUserInformation(id: string): Promise<OperationResult<GetUserInformationModel>> {
+    async GetManagerInformation(id: string): Promise<OperationResult<GetAdminInformationModel>> {
 
         try {
 
-            let redisValue = await RedisManager.Get<GetUserInformationModel>(RedisKey.UserInforamtion + id);
+            let redisValue = await RedisManager.Get<GetAdminInformationModel>(RedisKey.UserInforamtion + id);
 
             if (redisValue.result) {
                 return OperationResult.BuildSuccessResult('Operation Success', redisValue.result);
             }
 
-            let getUserInfo = await UserEntite.findById(id)
-                .where("isAdmin").equals(false)
-                .where("isSupport").equals(false)
-                .select('firstName avatar lastName gender id');
+            let getUserInfo = await UserEntite.findById(id).select('firstName avatar lastName gender id');
 
             if (getUserInfo) {
                 let setRedisValue = await RedisManager.Set(RedisKey.UserInforamtion + id,
@@ -304,6 +384,7 @@ export class UserRepository implements IUserRepository {
 
         }
 
+
     }
 
     /**********
@@ -317,9 +398,7 @@ export class UserRepository implements IUserRepository {
             return OperationResult.BuildSuccessResult('Operation Success', redisValue.result);
         }
 
-        let getUserInfo = await UserEntite.findById(id)
-            .where("isAdmin").equals(false)
-            .where("isSupport").equals(false);
+        let getUserInfo = await UserEntite.findById(id);
 
         if (getUserInfo) {
             let setRedisValue = await RedisManager.Set(RedisKey.UserInforamtion + id, getUserInfo);
@@ -333,6 +412,32 @@ export class UserRepository implements IUserRepository {
     }
 
     /**********
+     * Change User Role
+     ********/
+    async ChangeUserRole(userId: string, rolesId: string[]): Promise<OperationResult<boolean>> {
+
+        try {
+            let getUserInfo = await UserEntite.findById(userId);
+
+            if (getUserInfo) {
+
+                UnitOfWork.UserRoleRepository.UpdateUserRole({
+                    userId: userId,
+                    roles: rolesId
+                });
+
+                return OperationResult.BuildSuccessResult("Success Update User Role", true);
+            } else {
+                return OperationResult.BuildFailur('User NotFound');
+            }
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+
+        }
+
+    }
+
+    /**********
      * Get User Info by Username
      ********/
     async GetUserByUsername(userName: string): Promise<OperationResult<IUserDoc | undefined>> {
@@ -343,7 +448,7 @@ export class UserRepository implements IUserRepository {
             return OperationResult.BuildSuccessResult('Operation Success', redisValue.result);
         }
 
-        let getUserInfo = await UserEntite.findOne({ email: userName, isAdmin: false, isSupport: false });
+        let getUserInfo = await UserEntite.findOne({ email: userName });
 
         if (getUserInfo) {
             let setRedisValue = await RedisManager.Set(RedisKey.UserInforamtion + userName, getUserInfo);
@@ -354,6 +459,28 @@ export class UserRepository implements IUserRepository {
         } else {
             return OperationResult.BuildFailur('User NotFound');
         }
+    }
+
+    /**********
+     * Get User Info by Username
+     ********/
+    async GetUserroles(userId: string): Promise<OperationResult<string[] | undefined>> {
+
+        try {
+
+            let getuserRoles = await UnitOfWork.UserRoleRepository.findRolesByUserId(userId);
+            if (getuserRoles.success) {
+                return OperationResult.BuildSuccessResult('Operation Success', getuserRoles.result);
+            }
+
+            return OperationResult.BuildFailur('User NotFound');
+
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+
+        }
+
     }
 
     /**********
@@ -454,7 +581,7 @@ export class UserRepository implements IUserRepository {
 
             let model: InfoForLoginModel;
 
-            let userInfo = await UserEntite.findOne({ email: username, isAdmin: false, isSupport: false })
+            let userInfo = await UserEntite.findOne({ email: username })
                 .select("securityStamp firstName lastName");
 
             if (userInfo) {
@@ -518,7 +645,7 @@ export class UserRepository implements IUserRepository {
             }
         });
 
-        let userList = await UserEntite.find(...query).where({ isUser: true }).skip((items.page - 1) * items.pageSize)
+        let userList = await UserEntite.find(...query).where({ isAdmin: true }).skip((items.page - 1) * items.pageSize)
             .limit(items.pageSize)
 
         return OperationResult.BuildSuccessResult('Operation Success', userList);

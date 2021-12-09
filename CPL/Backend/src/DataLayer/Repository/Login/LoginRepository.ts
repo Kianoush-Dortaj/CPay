@@ -21,7 +21,7 @@ export default class LoginRepository implements ILoginRepository {
 
     async UserLogin(username: string, password: string): Promise<OperationResult<GenerateCode>> {
 
-        let user = await unitofWork.userRepository.FindUserByEmailForLogin(username);
+        let user = await unitofWork.adminRepository.FindUserByEmailForLogin(username);
 
         if (user.success) {
 
@@ -54,7 +54,7 @@ export default class LoginRepository implements ILoginRepository {
                 return OperationResult.BuildFailur('Error in generate code twofactor');
             }
 
-            let userInfo = await unitofWork.userRepository.GetUserInfoForLogin(username);
+            let userInfo = await unitofWork.adminRepository.GetUserInfoForLogin(username);
 
             if (!userInfo.success) {
                 return OperationResult.BuildFailur(userInfo.message)
@@ -100,7 +100,7 @@ export default class LoginRepository implements ILoginRepository {
 
             const permissions: string[] = [];
 
-            let userInfo = await unitofWork.userRepository.FindUserByEmailForLogin(email);
+            let userInfo = await unitofWork.adminRepository.FindUserByEmailForLogin(email);
 
             if (!userInfo.success) {
                 return OperationResult.BuildFailur(userInfo.message);

@@ -25,7 +25,6 @@ export default new class Startup {
 
         this.MessageBroker().then();
 
-        // CpayCoin.Initialweb3();
         this.CreateServer();
         this.ConfigMidllware();
         this.ConfigDatabase();
@@ -36,12 +35,8 @@ export default new class Startup {
  */
 
     async MessageBroker(): Promise<void> {
+
         await MessageBroker.Initial('coin', 'transaction');
-        await MessageBroker.Publish('coin', 'transaction',{
-            type:MessageBrokerType.Transfer,
-            to:'0x36f5C37B48c7888634b9285ae30eeACa5AD427C0',
-            amount:100
-        });
 
     }
 

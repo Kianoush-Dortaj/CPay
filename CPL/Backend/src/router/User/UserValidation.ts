@@ -12,7 +12,7 @@ export default new class UserValidation {
             check("email").custom(async (value, { req }) => {
                 if (req.body.email) {
 
-                    let data = await unitofWotk.userRepository.FindUserByEmail(value);
+                    let data = await unitofWotk.adminRepository.FindUserByEmail(value);
                     if (data.success) {
                         return Promise.reject(
                             "  ایمیل وارد شده تکراری است . لطفا یک  ایمیل دیگر وارد کنید"

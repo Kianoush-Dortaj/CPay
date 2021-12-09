@@ -14,7 +14,7 @@ export default new class UserValidation {
 
                 if (value) {
 
-                    const data = await unitofWotk.adminRepository
+                    const data = await unitofWotk.userRepository
                         .GetUserByUsername(value);
 
                     if (data.success) {
@@ -24,18 +24,6 @@ export default new class UserValidation {
             }),
             check("password").notEmpty().withMessage("password Can not be Empty"),
             check("gender").notEmpty().withMessage("gender Can not be Empty"),
-            check("roles").notEmpty().withMessage("roles Can not be Empty"),
-            check("roles").custom(async (value) => {
-
-                if (value) {
-                    const data = await unitofWotk.RoleRepository
-                        .GetByIdRole(value);
-
-                    if (!data.success) {
-                        throw new Error(" This Role is not Exsist");
-                    }
-                }
-            }),
             check("lastName").notEmpty().withMessage("lastName Can not be Empty"),
         ];
     }
@@ -78,29 +66,7 @@ export default new class UserValidation {
     ChangeUserRoleHandle() {
         return [
 
-            check("roles").notEmpty().withMessage("roles Can not be Empty"),
-            check("roles").custom(async (value, { req }) => {
-
-                let hasError = false;
-                if (value) {
-
-                    for (let item of value) {  
-
-                        let data = await unitofWotk.RoleRepository
-                            .GetByIdRole(item);
-
-                        if (!data.success) {
-                            hasError = true;
-                            break;
-                        }
-                      }
-
-                      if(hasError) {
-                        throw new Error(" This Role is not Exsist");
-                      }
-                      
-                }
-            })
+            check("roles").notEmpty().withMessage("roles Can not be Empty")
 
         ];
     }
@@ -109,7 +75,7 @@ export default new class UserValidation {
         return [
             query("id").custom(async (value, { req }) => {
                 if (req.params) {
-                    let data = await unitofWotk.adminRepository
+                    let data = await unitofWotk.userRepository
                         .FindUserById(req.params.id);
 
 

@@ -14,6 +14,7 @@ export interface IUserDoc extends mongoose.Document {
     isSupport:boolean;
     poster:string;
     avatar: string;
+    userLevel?:string;
     gender: Gender;
     userRole: IUserRoleDoc;
     birthDate: Date;

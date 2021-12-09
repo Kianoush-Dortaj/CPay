@@ -6,11 +6,11 @@ import authController from './../../Utilities/Middllware/Authorization';
 const settingRouter = express.Router();
 
 settingRouter.put("/SetRegisterSetting",
-    authController.AuthToken,
+    // authController.AuthToken,
     SettingController.SetRegisterSetting);
 
 settingRouter.get("/GetRegisterSetting",
-    authController.AuthToken,
+    // authController.AuthToken,
     SettingController.GetRegisterSetting);
 
 settingRouter.put("/SetActivationLinkSetting",

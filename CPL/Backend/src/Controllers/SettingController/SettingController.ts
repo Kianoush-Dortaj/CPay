@@ -18,14 +18,15 @@ export default new class SettingController extends BaseController {
     async SetRegisterSetting(req: Request, res: Response, next: NextFunction) {
         try {
 
-            const { registerUserAdmin, registerUserRole, registerUserSupport } = req.body;
+            const { setDefaultRegisterUserLevel, registerUserAdmin, registerUserRole, registerUserSupport } = req.body;
 
             const setRegisterSetting = await unitOfWork.SettingRepository
                 .SetSetting<SettingRegisterUserRole>
                 (SETTING_ENUM.REGISTER_SETTING, {
                     registerUserAdmin,
                     registerUserRole,
-                    registerUserSupport
+                    registerUserSupport,
+                    setDefaultRegisterUserLevel
                 });
 
             if (setRegisterSetting.success) {
