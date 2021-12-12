@@ -10,8 +10,6 @@ import swaggerUi from 'swagger-ui-express'
 import * as swaggerDocument from './swagger.json';
 import Web3 from "web3";
 import CpayCoin from './CoinConfig/coin-config';
-import { MessageBroker } from './MessageBroker/MessageBroker';
-import { MessageBrokerType } from './MessageBroker/MessageBrokerType';
 
 declare global {
     var web3: Web3;
@@ -23,21 +21,10 @@ export default new class Startup {
 
     constructor() {
 
-        this.MessageBroker().then();
 
         this.CreateServer();
         this.ConfigMidllware();
         this.ConfigDatabase();
-    }
-
-    /**
- * Message Broker
- */
-
-    async MessageBroker(): Promise<void> {
-
-        await MessageBroker.Initial('coin', 'transaction');
-
     }
 
     /**

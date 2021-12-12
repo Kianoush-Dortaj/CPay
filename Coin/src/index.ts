@@ -58,7 +58,10 @@ export default new class Startup {
         this.app.use(express.json());
         this.app.use(cros(corsOptions));
         this.app.use(express.static('./../../../Coin/build/contracts'));
-        this.app.use(router);
+       this.app.get('/',(req,res,next)=>{
+        res.send('its worked');
+       })
+        // this.app.use(router);
         this.app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     }

@@ -1,5 +1,5 @@
 import Web3 from "web3";
-const cpayCoin = require('./');
+const cpayCoin = require('./../../build/contracts/CpayCoin.json');
 
 export default new class CpayCoin {
 
@@ -26,12 +26,7 @@ export default new class CpayCoin {
         CpayCoin.coin = new global.web3.eth.Contract(cpayCoin.abi, coinData.address);
         global.web3.eth.defaultAccount = '0xeDAc8F3681e866702032c0b1d3f39904Ef9eb17E';
 
-      
-
-        // let getBalance = await CpayCoin.coin.methods
-        //     .balanceOf('0xD4d5220652a766f3880A66Ce01dd0569465B233C').call();
-
-        console.log(global.web3)
+    
     }
 
 
