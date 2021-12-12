@@ -1,0 +1,15 @@
+version: "3.0"
+services:
+  cpl:
+    build: ./CPL/Backend
+    ports:
+      - 1248:1248
+
+  coin:
+    build: ./Coin
+    ports:
+      - 1348:1248
+  trc20:
+    build: ./TRC-20
+    ports:
+      - 1448:1248
