@@ -54,6 +54,7 @@ export default new class AuthController extends BaseController {
 
         try {
             let confirmUser = await UnitOfWork.userRepository.Resendactivationcode(req.params.email);
+
             if (confirmUser.success) {
                 return this.Ok(res, confirmUser.message);
             } else {

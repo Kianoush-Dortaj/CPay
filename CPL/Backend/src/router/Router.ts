@@ -14,7 +14,7 @@ import networkRouter from './Network/network.router';
 import langaugeRouter from './Langauge/Langauge.router';
 import getwayTypeRouter from './GetwayType/getwayType.router';
 import userRouter from './User Manager/user.router';
-
+import countryRouter from './Country/Country.router';
 
 
 const router = Router();
@@ -49,5 +49,6 @@ router.use('/api/getwayType', getwayTypeRouter);
 
 router.use('/api/user', userRouter);
 
+router.use('/api/country', countryRouter);
 
 export default router;

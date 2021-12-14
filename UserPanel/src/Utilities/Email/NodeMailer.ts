@@ -36,9 +36,9 @@ export default new class NodeMailer {
             </div>`
         }, function (error: any, info: any) {
             if (error) {
-                return new OperationResult<any>(false, error);
+                return OperationResult.BuildFailur(error.message);
             } else {
-                return new OperationResult<any>(true, "Email Sent");
+                return OperationResult.BuildSuccessResult("Email Sent",true);
 
             }
         });

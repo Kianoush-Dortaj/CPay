@@ -38,6 +38,8 @@ import { AdminRepository } from '../Admin/AdminRepository';
 import IAdminRepository from '../Admin/IAdminRepository';
 import { UserRepository } from '../User/UserRepository';
 import IUserRepository from '../User/IUserRepository';
+import { ICountryRepository } from '../Country/ICountryRepository';
+import CountryRepository from '../Country/CountryRepository';
 
 export default new class UnitOfWork implements IUnitOfWork {
 
@@ -60,6 +62,7 @@ export default new class UnitOfWork implements IUnitOfWork {
     NetworkRepository: INetworkRepository;
     LanguageRepository: ILanguageRepository;
     GetwayTypeRepository: IGetwayTypeRepository;
+    CountryRepository : ICountryRepository;
     websocket: Websocket;
 
     constructor() {
@@ -84,6 +87,7 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.LanguageRepository = new LanguageRepository();
         this.GetwayTypeRepository = new GetwayTypeRepository();
         this.userRepository = new UserRepository();
+        this.CountryRepository = new CountryRepository();
     }
 
 }

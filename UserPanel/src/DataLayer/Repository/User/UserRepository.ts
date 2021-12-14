@@ -149,12 +149,12 @@ export class UserRepository implements IUserRepository {
     async GenerateActivationCode(userId: string, hash: string): Promise<OperationResult<any>> {
 
         try {
-            let code = await RedisManager.SetValueWithexiperationTime(userId, hash, 1000);
+            await RedisManager.SetValueWithexiperationTime(userId, hash, 1000);
 
-            return new OperationResult<any>(true, '');
+            return OperationResult.BuildSuccessResult('Success', true);
 
         } catch (error: any) {
-            return new OperationResult<any>(false, error.message);
+            return OperationResult.BuildFailur(error.message);
 
         }
 
@@ -193,21 +193,18 @@ export class UserRepository implements IUserRepository {
 
         let displayName: string;
         let userInfo = await this.FindUserByEmail(email);
-
         if (userInfo.success && userInfo.result) {
 
             displayName = userInfo.result.firstName + userInfo.result?.lastName
             let generateKey = await this.GenerateActivationCode(RedisKey.RegisterConfirm + email, hashCode);
             if (generateKey.success && generateKey.result) {
-                let sendEmail = await emailRepo.sendActivationCodeEmail(userInfo.result.email, 'Truvel Budy Configm Email', displayName, hashCode);
-                if (sendEmail.success) {
-                    return new OperationResult<any>(true, '');
-                }
-                return new OperationResult<any>(false, sendEmail.message);
+                await emailRepo.sendActivationCodeEmail(userInfo.result.email, 'Cpay Confirm Email', displayName, hashCode);
+
+                return OperationResult.BuildSuccessResult('bnmbm', true);
             }
-            return new OperationResult<any>(false, generateKey.message);
+            return OperationResult.BuildFailur(generateKey.message);
         }
-        return new OperationResult<any>(false, userInfo.message);
+        return OperationResult.BuildFailur(userInfo.message);
 
     }
 

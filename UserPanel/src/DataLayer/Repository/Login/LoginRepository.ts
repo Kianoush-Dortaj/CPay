@@ -88,7 +88,6 @@ export default class LoginRepository implements ILoginRepository {
 
         try {
 
-            const permissions: string[] = [];
 
             let userInfo = await unitofWork.adminRepository.FindUserByEmailForLogin(email);
 
@@ -109,23 +108,14 @@ export default class LoginRepository implements ILoginRepository {
             let token = await unitofWork.jwtRepository.GenerateToken(userInfo.result);
 
             if (token.success) {
-
-                userInfo.result.userRole.roles.forEach((element: any) => {
-                    element.rolePermissionId.forEach((data: any) => {
-                        data.permissionId.forEach((permissionItems: any) => {
-                            permissions.push(permissionItems.permissionId)
-                        });
-                    })
-                });
-
+                let displayName =  userInfo.result?.firstName+ ' ' +  userInfo.result?.lastName;
                 return OperationResult.BuildSuccessResult(token.message, {
                     hash: '',
                     isTowfactor: false,
                     token: token.result,
                     userInfo: {
-                        displayName: userInfo.result?.displayName,
-                        userId: userInfo.result?.userId,
-                        roles: permissions
+                        displayName:displayName,
+                        userId: userInfo.result?._id,
                     }
                 });
             }

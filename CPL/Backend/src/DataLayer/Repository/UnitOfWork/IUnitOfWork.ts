@@ -3,6 +3,7 @@ import Websocket from "../../../Utilities/Websocket/Websocket";
 import IAdminRepository from "../Admin/IAdminRepository";
 import { ICoinRepository } from "../Coin/ICoinRepository";
 import { IComissionRepository } from "../Comission/IComissionRepository";
+import { ICountryRepository } from "../Country/ICountryRepository";
 import { ICurrencyPairRepository } from "../CurrencyPair/ICurrencyPairRepository";
 import { IExchangeRepository } from "../Exchange/IExchangeRepository";
 import { IGetwayTypeRepository } from "../GetwayType/IGetwayTypeRepository";
@@ -42,5 +43,6 @@ export interface IUnitOfWork {
     LanguageRepository: ILanguageRepository;
     GetwayTypeRepository: IGetwayTypeRepository;
     websocket: Websocket;
+    CountryRepository : ICountryRepository;
 
 }

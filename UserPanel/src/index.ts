@@ -9,9 +9,6 @@ import UnitOfWork from './DataLayer/Repository/UnitOfWork/UnitOfWork';
 import swaggerUi from 'swagger-ui-express'
 import * as swaggerDocument from './swagger.json';
 import Web3 from "web3";
-import i18n from "i18next"
-import i18nextMiddleware from 'i18next-express-middleware';
-import Backend from 'i18next-node-fs-backend';
 import { readFileSync } from "fs";
 
 declare global {
@@ -51,7 +48,6 @@ export default new class Startup {
         this.app.listen(this.port, () => {
             console.log(`Cpay is listening on port ${this.port}`);
         })
-        this.app.use(i18nextMiddleware.handle(i18n));
 
         UnitOfWork.websocket.InitialWebsocket();
 
