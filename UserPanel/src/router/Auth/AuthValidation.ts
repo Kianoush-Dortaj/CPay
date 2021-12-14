@@ -1,0 +1,49 @@
+import { check } from "express-validator";
+import path from "path";
+import unitofWotk from '../../DataLayer/Repository/UnitOfWork/UnitOfWork';
+
+export default new class UserValidation {
+
+    CreateHandle() {
+        return [
+
+            check("firstName").notEmpty().withMessage("firstName Can not be Empty"),
+            check("email").notEmpty().withMessage("email Can not be Empty"),
+            check("email").custom(async (value) => {
+
+                if (value) {
+
+                    const data = await unitofWotk.adminRepository
+                        .GetUserByUsername(value);
+
+                    if (data.success) {
+                        throw new Error(" This email is Exsist");
+                    }
+                }
+            }),
+            check("phoneNumber").notEmpty().withMessage("phoneNumber Can not be Empty"),
+            // check("countryId").notEmpty().withMessage("countryId Can not be Empty"),
+            // check("countryId").custom(async (value) => {
+
+            //     if (value) {
+
+            //         const data = await unitofWotk.adminRepository
+            //             .GetUserByUsername(value);
+
+            //         if (data.success) {
+            //             throw new Error(" This Selected Country is Exsist");
+            //         }
+            //     }
+            // }),
+            check("password").notEmpty().withMessage("password Can not be Empty"),
+            check("confirmPassword").notEmpty().withMessage("confirmPassword Can not be Empty"),
+            check("confirmPassword").custom(async (value, { req }) => {
+
+                if (value !== req.body.password) {
+                    throw new Error("Password and Confirm Password not matched");
+                }
+            }),
+            check("lastName").notEmpty().withMessage("lastName Can not be Empty"),
+        ];
+    }
+}
