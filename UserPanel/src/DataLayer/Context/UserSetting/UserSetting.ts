@@ -5,6 +5,10 @@ import { IUserSettingModel } from './IUserSettingModel';
 
 const UserSettingSchema = new Schema({
     field: { type: String, enums: [USER_SETTING_ENUM], require: true },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
     value: { type: String, require: true },
 });
 

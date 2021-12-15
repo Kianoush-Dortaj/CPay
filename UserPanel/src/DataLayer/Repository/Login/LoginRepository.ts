@@ -14,6 +14,7 @@ import RedisRepository from '../../../Utilities/Redis/RedisRepository';
 import Emailrepository from './../../../Utilities/Email/NodeMailer';
 import { UserEntite } from '../../Context/User/User';
 import { IUserDoc } from '../../Context/User/IUserDock';
+import { ValidateGoogleAuth } from './ValidatoinPattern/ValidateGoogleAuth';
 
 export default class LoginRepository implements ILoginRepository {
 
@@ -31,9 +32,11 @@ export default class LoginRepository implements ILoginRepository {
             const isEmailComfirmed = new ValidateEmailConfrim();
             const isValidatePassword = new ValidatePassword(password);
             const isvalidatetowfactor = new ValidateTowFactor();
+            const isvalidateGoogleAuth = new ValidateGoogleAuth();
 
             isValidatePassword.setNext(isBlocked)
-                .setNext(isEmailComfirmed).setNext(isvalidatetowfactor);
+                .setNext(isEmailComfirmed)
+                .setNext(isvalidateGoogleAuth);
 
             let result = await this.ValidationManagerForLogin(isValidatePassword, user.result);
             if (result.HaveError) {
@@ -53,6 +56,12 @@ export default class LoginRepository implements ILoginRepository {
                 return OperationResult.BuildFailur('Error in generate code twofactor');
             }
 
+            if (result.Context.isGoogle2FA) {
+
+                return OperationResult.BuildSuccessResult(result.Message, result.Context)
+
+            }
+
             let userInfo = await unitofWork.userRepository.GetUserInfoForLogin(username);
 
             if (!userInfo.success) {
@@ -66,6 +75,7 @@ export default class LoginRepository implements ILoginRepository {
                 return OperationResult.BuildSuccessResult(token.message, {
                     hash: '',
                     isTowfactor: false,
+                    isGoogle2FA: false,
                     token: token.result,
                     userInfo: {
                         displayName: userInfo.result?.displayName,
@@ -108,13 +118,14 @@ export default class LoginRepository implements ILoginRepository {
             let token = await unitofWork.jwtRepository.GenerateToken(userInfo.result);
 
             if (token.success) {
-                let displayName =  userInfo.result?.firstName+ ' ' +  userInfo.result?.lastName;
+                let displayName = userInfo.result?.firstName + ' ' + userInfo.result?.lastName;
                 return OperationResult.BuildSuccessResult(token.message, {
                     hash: '',
                     isTowfactor: false,
+                    isGoogle2FA: false,
                     token: token.result,
                     userInfo: {
-                        displayName:displayName,
+                        displayName: displayName,
                         userId: userInfo.result?._id,
                     }
                 });

@@ -1,9 +1,7 @@
 
-export interface SettingRegisterUserRole {
+export interface UserSettingAuthGoogle2FA {
 
-    registerUserRole: string;
-    registerUserSupport: string;
-    registerUserAdmin: string;
-    setDefaultRegisterUserLevel: string;
+    isEnable: boolean;
+    secretKey:any;
 
 }

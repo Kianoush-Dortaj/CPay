@@ -5,7 +5,7 @@ import { ValidationContext } from "./ValidationContext";
 
 export class ValidateBlocked extends Handler {
 
-    handle(request: IUserDoc): ValidationContext {
+   async handle(request: IUserDoc): Promise<ValidationContext> {
 
         if (!request.locked) {
 
@@ -23,6 +23,7 @@ export class ValidateBlocked extends Handler {
                     Context: {
                         hash: '',
                         isTowfactor: false,
+                        isGoogle2FA:false,
                         token: ''
                     },
                     HaveError: true,

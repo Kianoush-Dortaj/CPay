@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import authRouter from './Auth/AuthRouter';
+import userSettingRouter from './UserSetting/UserSetting.router';
+
 import permissionRouter from './Permission/Permission.router';
 import roleRouter from './Role/role.router';
 import adminRouter from './Admin/admin.router';
@@ -17,6 +19,8 @@ import getwayTypeRouter from './GetwayType/getwayType.router';
 const router = Router();
 
 router.use('/api/auth', authRouter);
+
+router.use('/api/setting', userSettingRouter);
 
 // router.use('/api/admin', adminRouter);
 

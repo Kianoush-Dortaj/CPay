@@ -40,6 +40,8 @@ import { UserRepository } from '../User/UserRepository';
 import IUserRepository from '../User/IUserRepository';
 import { IRegisterRepository } from '../Register/IRegisterRepository';
 import RegisterRepository from '../Register/RegisterRepository';
+import { IUserSettingRepository } from '../UserSetting/IUserSettingRepository';
+import UserSettingRepository from '../UserSetting/UserSettingRepository';
 
 export default new class UnitOfWork implements IUnitOfWork {
 
@@ -63,6 +65,7 @@ export default new class UnitOfWork implements IUnitOfWork {
     LanguageRepository: ILanguageRepository;
     GetwayTypeRepository: IGetwayTypeRepository;
     RegisterUserRepository: IRegisterRepository;
+    UserSettingRepository: IUserSettingRepository;
     websocket: Websocket;
 
     constructor() {
@@ -88,6 +91,8 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.GetwayTypeRepository = new GetwayTypeRepository();
         this.userRepository = new UserRepository();
         this.RegisterUserRepository = new RegisterRepository();
+        this.UserSettingRepository= new UserSettingRepository();
+
     }
 
 }

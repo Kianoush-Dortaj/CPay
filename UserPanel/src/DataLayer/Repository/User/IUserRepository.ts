@@ -30,4 +30,5 @@ export default interface IUserRepository {
     GetUserAccountInfo(id: string): Promise<OperationResult<GetUserAccountInfoModel>>; 
     GetUserInformation(id: string): Promise<OperationResult<GetUserInformationModel>>;
     FindUserByEmailForLogin(email: string): Promise<OperationResult<any>>;
+    Change2FaStatus(userId: string, value: boolean): Promise<OperationResult<boolean>>;
 }

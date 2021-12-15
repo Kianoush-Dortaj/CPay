@@ -11,7 +11,7 @@ export class ValidatePassword extends Handler {
         this.password = password;
     }
 
-    handle(request: IUserDoc): ValidationContext {
+    async handle(request: IUserDoc): Promise<ValidationContext> {
 
         if (bcrypte.compareSync(this.password, request.password)) {
        
@@ -29,6 +29,7 @@ export class ValidatePassword extends Handler {
                 Context: {
                     hash: '',
                     isTowfactor: false,
+                    isGoogle2FA:false,
                     token: ''
                 },
                 HaveError: true,

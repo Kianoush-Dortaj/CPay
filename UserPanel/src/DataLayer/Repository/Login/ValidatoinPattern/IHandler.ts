@@ -5,5 +5,5 @@ import { ValidationContext } from "./ValidationContext";
 export interface IHandler {
     setNext(handler: IHandler): IHandler;
 
-    handle(request: IUserDoc): ValidationContext;
+    handle(request: IUserDoc): Promise<ValidationContext>;
 }
