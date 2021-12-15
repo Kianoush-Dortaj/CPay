@@ -36,6 +36,7 @@ export default class LoginRepository implements ILoginRepository {
 
             isValidatePassword.setNext(isBlocked)
                 .setNext(isEmailComfirmed)
+                .setNext(isvalidatetowfactor)
                 .setNext(isvalidateGoogleAuth);
 
             let result = await this.ValidationManagerForLogin(isValidatePassword, user.result);
