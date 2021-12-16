@@ -13,6 +13,8 @@ authRouter.post('/login', LoginController.LoginUser);
 
 authRouter.post('/checkTwofactor', LoginController.UserCheckAuthTowfactor);
 
+authRouter.post('/checkGoogleAuth', LoginController.UserCheckAuth2FA);
+
 authRouter.get('/confirm-email/:email/:hash', AuthController.ConfirmCode);
 
 authRouter.post('/resendActivationCode/:email', AuthController.ResendActivationCode);

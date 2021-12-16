@@ -15,6 +15,8 @@ import Emailrepository from './../../../Utilities/Email/NodeMailer';
 import { UserEntite } from '../../Context/User/User';
 import { IUserDoc } from '../../Context/User/IUserDock';
 import { ValidateGoogleAuth } from './ValidatoinPattern/ValidateGoogleAuth';
+import { USER_SETTING_ENUM } from '../../../DTO/UserSetting/user-setting-enum';
+import speakeasy from 'speakeasy';
 
 export default class LoginRepository implements ILoginRepository {
 
@@ -38,6 +40,7 @@ export default class LoginRepository implements ILoginRepository {
                 .setNext(isvalidateGoogleAuth);
 
             let result = await this.ValidationManagerForLogin(isValidatePassword, user.result);
+
             if (result.HaveError) {
                 return OperationResult.BuildFailur(result.Message)
             }
@@ -77,8 +80,7 @@ export default class LoginRepository implements ILoginRepository {
                     isGoogle2FA: false,
                     token: token.result,
                     userInfo: {
-                        displayName: userInfo.result?.displayName,
-                        userId: userInfo.result?.userId
+                        displayName: userInfo.result?.displayName
                     }
                 });
             }
@@ -98,7 +100,7 @@ export default class LoginRepository implements ILoginRepository {
         try {
 
 
-            let userInfo = await unitofWork.adminRepository.FindUserByEmailForLogin(email);
+            let userInfo = await unitofWork.userRepository.GetUserInfoForLogin(email);
 
             if (!userInfo.success) {
                 return OperationResult.BuildFailur(userInfo.message);
@@ -112,6 +114,63 @@ export default class LoginRepository implements ILoginRepository {
             } else if (findKeyInRedis.result?.code != code || findKeyInRedis.result?.hash != hash) {
 
                 return OperationResult.BuildFailur('Your code is Expire . please Type again');
+            }
+
+            let token = await unitofWork.jwtRepository.GenerateToken(userInfo.result);
+
+            if (token.success) {
+                let displayName = userInfo.result?.displayName;
+                return OperationResult.BuildSuccessResult(token.message, {
+                    hash: '',
+                    isTowfactor: false,
+                    isGoogle2FA: false,
+                    token: token.result,
+                    userInfo: {
+                        displayName: displayName
+                    }
+                });
+            }
+
+            return OperationResult.BuildFailur(token.message);
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+
+
+    }
+
+    /*******
+ * check Auth Google 2FA
+ ******/
+
+    async CheckAuthGoogle2FA(code: string, email: string): Promise<OperationResult<GenerateCode>> {
+
+        try {
+
+
+            let userInfo = await unitofWork.adminRepository.FindUserByEmailForLogin(email);
+
+            if (!userInfo.success) {
+                return OperationResult.BuildFailur(userInfo.message);
+            }
+
+            let userSettingInfo = await unitofWork.UserSettingRepository
+                .GetSetting(USER_SETTING_ENUM.GOOGLE_AUTH_2FA, userInfo.result.id);
+
+            if (!userSettingInfo.success) {
+                return OperationResult.BuildFailur("User not Found");
+
+            }
+
+            const soeasy = speakeasy.totp.verify({
+                secret: userSettingInfo.result.secretKey.base32,
+                token: code,
+                encoding: 'base32',
+                window: 1
+            })
+
+            if (!soeasy) {
+                return OperationResult.BuildFailur("Code was Expired");
             }
 
             let token = await unitofWork.jwtRepository.GenerateToken(userInfo.result);

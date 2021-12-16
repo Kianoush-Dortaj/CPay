@@ -473,7 +473,7 @@ export class UserRepository implements IUserRepository {
 
             let userInfo = await UserEntite.findOne({ email: username, isAdmin: false, isSupport: false })
                 .select("securityStamp firstName lastName");
-
+console.log('ffff',userInfo)
             if (userInfo) {
                 model = {
                     userSecurityStamp: userInfo.securityStamp,
