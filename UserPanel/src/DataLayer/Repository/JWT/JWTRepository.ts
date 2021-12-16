@@ -31,6 +31,30 @@ export default class JWTRepository implements IJWTRepository {
     }
 
     /********
+     * Generate Token
+     *******/
+
+    async GenerateTokenWithExTime(info: any , time:number): Promise<OperationResult<string>> {
+        try {
+
+            var payload = {
+                iss: "a57bb14a44455e98800d6a513953fc0",
+                sub: "a57bb14a445541e98800d6a513953fc0",
+                aud: "Store.com",
+                expiresIn: time,
+                iat: 360,
+            };
+
+            let token = jwt.sign({ info: info, payload }, "travelbudy", { expiresIn: 60 * 24 });
+            return OperationResult.BuildSuccessResult('', token);
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+
+    }
+
+    /********
   * Decode Token
   *******/
 

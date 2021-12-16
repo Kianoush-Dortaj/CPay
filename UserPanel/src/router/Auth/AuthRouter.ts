@@ -19,5 +19,10 @@ authRouter.get('/confirm-email/:email/:hash', AuthController.ConfirmCode);
 
 authRouter.post('/resendActivationCode/:email', AuthController.ResendActivationCode);
 
+authRouter.post('/forgetpassword', AuthController.ForgetPassword);
+
+authRouter.post('/checkforgetpasswordcode', AuthController.CheckForgetPasswordCode);
+
+
 
 export default authRouter;

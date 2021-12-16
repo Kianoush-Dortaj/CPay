@@ -44,7 +44,7 @@ export default new class AuthController extends BaseController {
             } else {
                 return this.BadRerquest(res, confirmUser.message);
             }
-        } catch (error:any) {
+        } catch (error: any) {
             return this.InternalServerError(res, error.message);
         }
 
@@ -60,12 +60,57 @@ export default new class AuthController extends BaseController {
             } else {
                 return this.BadRerquest(res, confirmUser.message);
             }
-        } catch (error:any) {
+        } catch (error: any) {
             return this.InternalServerError(res, error.message);
         }
 
     }
 
+    async ForgetPassword(req: Request, res: Response, next: NextFunction) {
+
+        try {
+
+            const { email } = req.body;
+
+            let forgetPassword = await UnitOfWork.LoginRepository.ForgetPassword(email);
+
+            if (forgetPassword.success) {
+                return this.OkObjectResult(res, {
+                    data: {
+                        hash: forgetPassword.result
+                    }
+                }, forgetPassword.message);
+            } else {
+                return this.BadRerquest(res, forgetPassword.message);
+            }
+        } catch (error: any) {
+            return this.InternalServerError(res, error.message);
+        }
+
+    }
+
+    async CheckForgetPasswordCode(req: Request, res: Response, next: NextFunction) {
+
+        try {
+
+            const { email, hash, code } = req.body;
+
+            let forgetPassword = await UnitOfWork.LoginRepository.CheckAuthForgetPasswordCode(hash, code, email);
+
+            if (forgetPassword.success) {
+                return this.OkObjectResult(res, {
+                    data: {
+                        token: forgetPassword.result
+                    }
+                }, forgetPassword.message);
+            } else {
+                return this.BadRerquest(res, forgetPassword.message);
+            }
+        } catch (error: any) {
+            return this.InternalServerError(res, error.message);
+        }
+
+    }
 
 
 }

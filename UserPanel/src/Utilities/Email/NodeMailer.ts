@@ -50,7 +50,27 @@ export default new class NodeMailer {
             subject: subject,
             html: `<h1>Twofactor Code</h1>
             <h2>Hello ${name}</h2>
-            <p>This is your twofactor Code for Login in TravelBudy Website </p>
+            <p>This is your twofactor Code for Login in CPAY Website </p>
+            <h1>${code}</h1>
+            <p>This code Will be Expire in 2 Minutes </p>
+            </div>`
+        }, function (error: any, info: any) {
+            if (error) {
+                return new OperationResult<any>(false, error);
+            } else {
+                return new OperationResult<any>(true, "Email Sent");
+
+            }
+        });
+    }
+
+    ForgetPassword(to: string, subject: string, name: string, code: string): Promise<OperationResult<any>> {
+        return this.transporter.sendMail({
+            to: to,
+            subject: subject,
+            html: `<h1>Forget Password Code</h1>
+            <h2>Hello ${name}</h2>
+            <p>This is your Forget Password Code for Login in CPAY Website </p>
             <h1>${code}</h1>
             <p>This code Will be Expire in 2 Minutes </p>
             </div>`

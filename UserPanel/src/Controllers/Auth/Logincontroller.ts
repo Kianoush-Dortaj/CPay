@@ -50,6 +50,22 @@ export default new class LoginController extends BaseController {
 
     }
 
+    async UserCheckAuthForgetPasswordCode(req: Request, res: Response, next: NextFunction) {
+
+        const { hash, code, email } = req.body;
+
+        let result = await UnitOfWork.LoginRepository.CheckAuthForgetPasswordCode(hash, code, email);
+
+        if (result.success) {
+            return this.OkObjectResult(res, {
+                data: result.result
+            }, "Success Confirm Code Towfactor");
+        }
+
+        return this.BadRerquest(res, result.message);
+
+    }
+
     async UserCheckAuth2FA(req: Request, res: Response, next: NextFunction) {
 
         const { code, email } = req.body;
