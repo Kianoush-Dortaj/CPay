@@ -26,8 +26,6 @@ export default class LoginRepository implements ILoginRepository {
 
         if (user.success) {
 
-            const permissions: string[] = [];
-
             const isBlocked = new ValidateBlocked();
             const isEmailComfirmed = new ValidateEmailConfrim();
             const isValidatePassword = new ValidatePassword(password);

@@ -7,10 +7,18 @@ const settingRouter = express.Router();
 
 settingRouter.put("/SetGoogleAuth2Fa",
     authController.AuthToken,
-    SettingController.SetRegisterSetting);
+    SettingController.SetGoogleAuth2FASetting);
 
 settingRouter.get("/GetGoogleAuth2Fa",
     authController.AuthToken,
-    SettingController.GetRegisterSetting);
+    SettingController.GetGoogleAuth2FASetting);
+
+    settingRouter.put("/SetTwofactor",
+    authController.AuthToken,
+    SettingController.SetTwofactorSetting);
+
+settingRouter.get("/GetTwofactor",
+    authController.AuthToken,
+    SettingController.GetTwofactorSetting);
 
 export default settingRouter;
