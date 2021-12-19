@@ -237,10 +237,10 @@ export class AdminRepository implements IAdminRepository {
         try {
             let code = await RedisManager.SetValueWithexiperationTime(userId, hash, 1000);
 
-            return new OperationResult<any>(true, '');
+            return OperationResult.BuildSuccessResult('Success Send Email', true);
 
         } catch (error: any) {
-            return new OperationResult<any>(false, error.message);
+            return OperationResult.BuildFailur(error.message);
 
         }
 
@@ -273,27 +273,33 @@ export class AdminRepository implements IAdminRepository {
 
     async Resendactivationcode(email: string): Promise<OperationResult<any>> {
 
-        var find = '/';
-        var re = new RegExp(find, 'g');
-        let hashCode = await (await bcrypte.hash(email, 5)).replace(re, '');
+        try {
 
-        let displayName: string;
-        let userInfo = await this.FindUserByEmail(email);
 
-        if (userInfo.success && userInfo.result) {
+            var find = '/';
+            var re = new RegExp(find, 'g');
+            let hashCode = await (await bcrypte.hash(email, 5)).replace(re, '');
 
-            displayName = userInfo.result.firstName + userInfo.result?.lastName
-            let generateKey = await this.GenerateActivationCode(RedisKey.RegisterConfirm + email, hashCode);
-            if (generateKey.success && generateKey.result) {
-                let sendEmail = await emailRepo.sendActivationCodeEmail(userInfo.result.email, 'Truvel Budy Configm Email', displayName, hashCode);
-                if (sendEmail.success) {
-                    return new OperationResult<any>(true, '');
+            let displayName: string;
+            let userInfo = await this.FindUserByEmail(email);
+
+            if (userInfo.success && userInfo.result) {
+
+                displayName = userInfo.result.firstName + userInfo.result?.lastName
+                let generateKey = await this.GenerateActivationCode(RedisKey.RegisterConfirm + email, hashCode);
+                if (generateKey.success && generateKey.result) {
+                    let sendEmail = await emailRepo.sendActivationCodeEmail(userInfo.result.email, 'Cpay Configm Email', displayName, hashCode);
+
+                    return OperationResult.BuildSuccessResult('Success Send Confirm Email', true);
                 }
-                return new OperationResult<any>(false, sendEmail.message);
+                return OperationResult.BuildFailur(generateKey.message);
             }
-            return new OperationResult<any>(false, generateKey.message);
+            return OperationResult.BuildFailur(userInfo.message);
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+
         }
-        return new OperationResult<any>(false, userInfo.message);
+
 
     }
 

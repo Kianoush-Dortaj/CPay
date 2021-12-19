@@ -16,7 +16,7 @@ export default new class NodeMailer {
             service: 'gmail',
             auth: {
                 user: 'cpay.payment.crypto@gmail.com',
-                pass: 'k123456789d' 
+                pass: 'k123456789d'
             }
         });
     }
@@ -25,6 +25,8 @@ export default new class NodeMailer {
 
         const activatoinLink = await RedisRepository.Get(SETTING_ENUM.ACTIVATION_LINK);
 
+        const activationLink = `https://adminpay.vercel.app/?email=${to}&hash=${text}`
+
         return this.transporter.sendMail({
             to: to,
             subject: subject,
@@ -32,7 +34,7 @@ export default new class NodeMailer {
             html: `<h1>Email Confirmation</h1>
             <h2>Hello ${name}</h2>
             <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
-            <a href=${activatoinLink.result}/${to}/${text}> Click here</a>
+            <a href=${activationLink}> Click here</a>
             </div>`
         }, function (error: any, info: any) {
             if (error) {

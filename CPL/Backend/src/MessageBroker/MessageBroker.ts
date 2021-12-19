@@ -31,8 +31,8 @@ export class MessageBroker {
 
         let id = this.randomid();
 
-        MessageBroker.channel.sendToQueue(exchange, queue,
-            Buffer.from(JSON.stringify(message)), { correlationId: id, replyTo: 'amq.rabbitmq.reply-to' })
+        // MessageBroker.channel.sendToQueue(exchange, queue,
+        //     Buffer.from(JSON.stringify(message)), { correlationId: id, replyTo: 'amq.rabbitmq.reply-to' })
 
     }
 

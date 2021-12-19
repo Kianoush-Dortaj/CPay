@@ -36,7 +36,7 @@ export default class LoginRepository implements ILoginRepository {
                 .setNext(isEmailComfirmed).setNext(isenavledtowfactor);
 
             let result = await this.ValidationManagerForLogin(isValidatePassword, user.result);
-            console.log(result)
+  
             if (result .HaveError) {
                 return OperationResult.BuildFailur(result.Message)
             }
