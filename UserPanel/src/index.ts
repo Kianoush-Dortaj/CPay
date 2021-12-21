@@ -10,16 +10,15 @@ import swaggerUi from 'swagger-ui-express'
 import * as swaggerDocument from './swagger.json';
 import Web3 from "web3";
 import { readFileSync } from "fs";
-
+import * as dotenv from 'dotenv';
+import config from './Configs/index';
 declare global {
     var web3: Web3;
 }
 
 export default new class Startup {
     app = express();
-    port = process.env.PORT || 1248;
-
-
+    port = process.env.PORT || 1348;
 
     constructor() {
 
@@ -35,9 +34,11 @@ export default new class Startup {
         //     });
 
         //     console.log( __dirname + '\\translations\\en\\translation.json')
+
         this.CreateServer();
         this.ConfigMidllware();
         this.ConfigDatabase();
+        dotenv.config();
     }
 
     /**
@@ -86,6 +87,7 @@ export default new class Startup {
     ConfigDatabase(): void {
         new DatabaseWrapper(DatabaseType.MongoDBRegular).connect();
         RedisManager.Connet();
+
     }
 }
 

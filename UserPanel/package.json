@@ -37,6 +37,7 @@
     "@types/qrcode": "^1.4.1",
     "@types/redis": "^2.8.31",
     "@types/speakeasy": "^2.0.6",
+    "@types/twilio": "^3.19.3",
     "@types/ws": "^7.4.7",
     "amqplib": "^0.8.0",
     "auto-bind": "^4.0.0",
@@ -68,6 +69,7 @@
     "speakeasy": "^2.0.0",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6",
+    "twilio": "^3.72.0",
     "ws": "^8.2.2"
   },
   "devDependencies": {
