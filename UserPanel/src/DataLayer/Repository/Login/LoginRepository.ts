@@ -1,10 +1,8 @@
 import { ValidateEmailConfrim } from './ValidatoinPattern/ValidateEmailConfirm';
 import { ILoginRepository } from "./ILoginRepository";
-import { ValidateIsAdmin } from "./ValidatoinPattern/ValidateIsAdmin";
 import { ValidateBlocked } from "./ValidatoinPattern/ValidateBlocked";
 import { IHandler } from './ValidatoinPattern/IHandler';
 import { GenerateCode, ValidationContext } from './ValidatoinPattern/ValidationContext';
-import bcrypte from 'bcrypt';
 import { ValidatePassword } from './ValidatoinPattern/ValidatePassword';
 import { ValidateTowFactor } from './ValidatoinPattern/ValidateTowFactor';
 import unitofWork from './../UnitOfWork/UnitOfWork';
@@ -12,8 +10,12 @@ import OperationResult from '../../../core/Operation/OperationResult';
 import RedisKey from '../../../Utilities/Redis/RedisKey';
 import RedisRepository from '../../../Utilities/Redis/RedisRepository';
 import Emailrepository from './../../../Utilities/Email/NodeMailer';
-import { UserEntite } from '../../Context/User/User';
 import { IUserDoc } from '../../Context/User/IUserDock';
+import { ValidateGoogleAuth } from './ValidatoinPattern/ValidateGoogleAuth';
+import { USER_SETTING_ENUM } from '../../../DTO/UserSetting/user-setting-enum';
+import speakeasy from 'speakeasy';
+import utility from "./../../../Utilities/Util";
+import uniqueString from 'unique-string';
 
 export default class LoginRepository implements ILoginRepository {
 
@@ -25,17 +27,19 @@ export default class LoginRepository implements ILoginRepository {
 
         if (user.success) {
 
-            const permissions: string[] = [];
-
             const isBlocked = new ValidateBlocked();
             const isEmailComfirmed = new ValidateEmailConfrim();
             const isValidatePassword = new ValidatePassword(password);
             const isvalidatetowfactor = new ValidateTowFactor();
+            const isvalidateGoogleAuth = new ValidateGoogleAuth();
 
             isValidatePassword.setNext(isBlocked)
-                .setNext(isEmailComfirmed).setNext(isvalidatetowfactor);
+                .setNext(isEmailComfirmed)
+                .setNext(isvalidatetowfactor)
+                .setNext(isvalidateGoogleAuth);
 
             let result = await this.ValidationManagerForLogin(isValidatePassword, user.result);
+
             if (result.HaveError) {
                 return OperationResult.BuildFailur(result.Message)
             }
@@ -53,6 +57,12 @@ export default class LoginRepository implements ILoginRepository {
                 return OperationResult.BuildFailur('Error in generate code twofactor');
             }
 
+            if (result.Context.isGoogle2FA) {
+
+                return OperationResult.BuildSuccessResult(result.Message, result.Context)
+
+            }
+
             let userInfo = await unitofWork.userRepository.GetUserInfoForLogin(username);
 
             if (!userInfo.success) {
@@ -66,10 +76,10 @@ export default class LoginRepository implements ILoginRepository {
                 return OperationResult.BuildSuccessResult(token.message, {
                     hash: '',
                     isTowfactor: false,
+                    isGoogle2FA: false,
                     token: token.result,
                     userInfo: {
-                        displayName: userInfo.result?.displayName,
-                        userId: userInfo.result?.userId
+                        displayName: userInfo.result?.displayName
                     }
                 });
             }
@@ -89,7 +99,7 @@ export default class LoginRepository implements ILoginRepository {
         try {
 
 
-            let userInfo = await unitofWork.adminRepository.FindUserByEmailForLogin(email);
+            let userInfo = await unitofWork.userRepository.GetUserInfoForLogin(email);
 
             if (!userInfo.success) {
                 return OperationResult.BuildFailur(userInfo.message);
@@ -108,13 +118,112 @@ export default class LoginRepository implements ILoginRepository {
             let token = await unitofWork.jwtRepository.GenerateToken(userInfo.result);
 
             if (token.success) {
-                let displayName =  userInfo.result?.firstName+ ' ' +  userInfo.result?.lastName;
+                let displayName = userInfo.result?.displayName;
                 return OperationResult.BuildSuccessResult(token.message, {
                     hash: '',
                     isTowfactor: false,
+                    isGoogle2FA: false,
                     token: token.result,
                     userInfo: {
-                        displayName:displayName,
+                        displayName: displayName
+                    }
+                });
+            }
+
+            return OperationResult.BuildFailur(token.message);
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+
+
+    }
+
+    /*******
+     * check Auth Forgetpassword Code
+     ******/
+
+    async CheckAuthForgetPasswordCode(hash: string, code: string, email: string): Promise<OperationResult<string>> {
+
+        try {
+
+
+            let userInfo = await unitofWork.userRepository.GetUserInfoForLogin(email);
+
+            if (!userInfo.success) {
+                return OperationResult.BuildFailur(userInfo.message);
+            }
+
+            let findKeyInRedis = await RedisRepository.Get<{ code: string, hash: string }>(RedisKey.ForgetPasswordKey + email);
+
+            if (!findKeyInRedis.success) {
+
+                return OperationResult.BuildFailur(findKeyInRedis.message);
+            } else if (findKeyInRedis.result?.code != code || findKeyInRedis.result?.hash != hash) {
+
+                return OperationResult.BuildFailur('Your code is Expire . please Type again');
+            }
+
+            let token = uniqueString();
+
+            await RedisRepository.SetValueWithexiperationTime(RedisKey.ForgetPasswordTokenKey + email, {
+                hash: token,
+                email: email
+            }, 120);
+
+            return OperationResult.BuildSuccessResult("Success Validation", token);
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+
+
+    }
+
+    /*******
+     * check Auth Google 2FA
+     ******/
+
+    async CheckAuthGoogle2FA(code: string, email: string): Promise<OperationResult<GenerateCode>> {
+
+        try {
+
+
+            let userInfo = await unitofWork.adminRepository.FindUserByEmailForLogin(email);
+
+            if (!userInfo.success) {
+                return OperationResult.BuildFailur(userInfo.message);
+            }
+
+            let userSettingInfo = await unitofWork.UserSettingRepository
+                .GetSetting(USER_SETTING_ENUM.GOOGLE_AUTH_2FA, userInfo.result.id);
+
+            if (!userSettingInfo.success) {
+                return OperationResult.BuildFailur("User not Found");
+
+            }
+
+            const soeasy = speakeasy.totp.verify({
+                secret: userSettingInfo.result.secretKey.base32,
+                token: code,
+                encoding: 'base32',
+                window: 1
+            })
+
+            if (!soeasy) {
+                return OperationResult.BuildFailur("Code was Expired");
+            }
+
+            let token = await unitofWork.jwtRepository.GenerateToken(userInfo.result);
+
+            if (token.success) {
+                let displayName = userInfo.result?.firstName + ' ' + userInfo.result?.lastName;
+                return OperationResult.BuildSuccessResult(token.message, {
+                    hash: '',
+                    isTowfactor: false,
+                    isGoogle2FA: false,
+                    token: token.result,
+                    userInfo: {
+                        displayName: displayName,
                         userId: userInfo.result?._id,
                     }
                 });
@@ -134,6 +243,44 @@ export default class LoginRepository implements ILoginRepository {
 
         let result = handler.handle(user);
         return result;
+    }
+
+    /*******
+     * Forget Password
+     ******/
+    async ForgetPassword(email: string): Promise<OperationResult<string>> {
+        try {
+
+            let user = await unitofWork.userRepository.FindUserByEmailForLogin(email);
+
+            const randCode = utility.getRandomInt(1111111, 999999);
+            let hash = uniqueString();
+
+            const setHashCode = await RedisRepository.SetValueWithexiperationTime(RedisKey.ForgetPasswordKey + email, {
+                code: randCode,
+                hash: hash
+            }, 120)
+
+
+            if (!user.success) {
+                return OperationResult.BuildFailur('We can not find this email');
+
+            }
+
+            let displayName = user.result.firstName + user.result.lastName;
+
+            if (setHashCode.success) {
+                Emailrepository.ForgetPassword(email, 'Forget Password', displayName, randCode.toString());
+                return OperationResult.BuildSuccessResult("Success Send Email", hash)
+            }
+
+            return OperationResult.BuildFailur('Error in generate code twofactor');
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+
+        }
+
+
     }
 
 }

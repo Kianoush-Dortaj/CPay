@@ -13,7 +13,7 @@ export abstract class Handler implements IHandler {
         return this.nextHandler;
     }
     
-    handle(request: IUserDoc): ValidationContext {
+   async handle(request: IUserDoc): Promise<ValidationContext> {
         if (this.nextHandler) {
             return this.nextHandler.handle(request);
         }
@@ -21,6 +21,7 @@ export abstract class Handler implements IHandler {
             Context: {
                 hash: '',
                 isTowfactor: false,
+                isGoogle2FA : false,
                 token: ''
             },
             HaveError: false,

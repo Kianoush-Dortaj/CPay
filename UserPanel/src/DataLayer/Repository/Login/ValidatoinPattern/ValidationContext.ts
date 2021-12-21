@@ -6,6 +6,7 @@ export interface ValidationContext {
 
 export interface GenerateCode {
     isTowfactor: boolean;
+    isGoogle2FA: boolean;
     hash: string;
     token: any;
 }

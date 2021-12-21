@@ -441,6 +441,28 @@ export class UserRepository implements IUserRepository {
     }
 
     /**********
+* Change 2FA Status
+********/
+    async Change2FaStatus(userId: string, value: boolean): Promise<OperationResult<boolean>> {
+
+        try {
+
+            await UserEntite.updateOne(
+                { _id: userId },
+                {
+                    $set: {
+                        towFactorEnabled: value
+                    },
+                }
+            );
+            return OperationResult.BuildSuccessResult('', true);
+        }
+        catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+    }
+
+    /**********
    * Get User Info for Login
    ********/
     async GetUserInfoForLogin(username: string): Promise<OperationResult<InfoForLoginModel>> {
@@ -451,7 +473,7 @@ export class UserRepository implements IUserRepository {
 
             let userInfo = await UserEntite.findOne({ email: username, isAdmin: false, isSupport: false })
                 .select("securityStamp firstName lastName");
-
+console.log('ffff',userInfo)
             if (userInfo) {
                 model = {
                     userSecurityStamp: userInfo.securityStamp,

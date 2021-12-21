@@ -2,6 +2,8 @@ export default new class RedisKey {
     UserInfo = 'UserInfo/';
     RegisterConfirm = 'RegisterConfirmCode/';
     TowfactorKey='TowfactorCode/';
+    ForgetPasswordKey='ForgetPassword/';
+    ForgetPasswordTokenKey='ForgetPassword/Token/';
     UserInforamtion = '/api/UserInformation/';
     UserAvatar='UserAvatar/';
     UserPoster='UserPoster/';

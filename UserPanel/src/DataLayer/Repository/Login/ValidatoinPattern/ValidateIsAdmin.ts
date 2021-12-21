@@ -5,7 +5,7 @@ import { ValidationContext } from "./ValidationContext";
 
 export class ValidateIsAdmin extends Handler {
 
-    handle(request: IUserDoc): ValidationContext {
+    async handle(request: IUserDoc): Promise<ValidationContext> {
 
         if (request.isAdmin) {
             return super.handle(request);
@@ -15,6 +15,7 @@ export class ValidateIsAdmin extends Handler {
             Context: {
                 hash: '',
                 isTowfactor: false,
+                isGoogle2FA:false,
                 token: ''
             },
             HaveError:true,

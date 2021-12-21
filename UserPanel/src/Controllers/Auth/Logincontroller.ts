@@ -20,7 +20,7 @@ export default new class LoginController extends BaseController {
                 let loginUser = await UnitOfWork.LoginRepository.UserLogin(email, password)
 
                 if (loginUser.success) {
-                    
+
                     return this.OkObjectResult(res, loginUser.result, "Success Login");
                 } else {
                     return this.BadRerquest(res, loginUser.message);
@@ -44,6 +44,38 @@ export default new class LoginController extends BaseController {
             return this.OkObjectResult(res, {
                 data: result.result
             }, "Success Towfactor");
+        }
+
+        return this.BadRerquest(res, result.message);
+
+    }
+
+    async UserCheckAuthForgetPasswordCode(req: Request, res: Response, next: NextFunction) {
+
+        const { hash, code, email } = req.body;
+
+        let result = await UnitOfWork.LoginRepository.CheckAuthForgetPasswordCode(hash, code, email);
+
+        if (result.success) {
+            return this.OkObjectResult(res, {
+                data: result.result
+            }, "Success Confirm Code Towfactor");
+        }
+
+        return this.BadRerquest(res, result.message);
+
+    }
+
+    async UserCheckAuth2FA(req: Request, res: Response, next: NextFunction) {
+
+        const { code, email } = req.body;
+
+        let result = await UnitOfWork.LoginRepository.CheckAuthGoogle2FA(code, email);
+
+        if (result.success && !result.result?.isTowfactor) {
+            return this.OkObjectResult(res, {
+                data: result.result
+            }, "Success Google Auth");
         }
 
         return this.BadRerquest(res, result.message);

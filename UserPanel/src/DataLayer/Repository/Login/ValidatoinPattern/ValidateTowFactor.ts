@@ -8,7 +8,7 @@ import uniqueString from 'unique-string';
 
 export class ValidateTowFactor extends Handler {
 
-    handle(request: IUserDoc): ValidationContext {
+    async handle(request: IUserDoc): Promise<ValidationContext> {
 
         if (!request.towFactorEnabled) {
             return super.handle(request);
@@ -39,6 +39,7 @@ export class ValidateTowFactor extends Handler {
             Context: {
                 hash: hash,
                 isTowfactor: true,
+                isGoogle2FA:false,
                 token: ''
             },
             HaveError: false,
