@@ -6,5 +6,4 @@ export interface CreateUserDto {
     password: string;
     family: string;
     email: string;
-    roles: string[];
 }

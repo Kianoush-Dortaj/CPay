@@ -26,8 +26,7 @@ export default new class AdminController extends BaseController {
                 gender,
                 password,
                 family: lastName,
-                email,
-                roles: roles
+                email
             });
 
             if (createAdmin.success) {

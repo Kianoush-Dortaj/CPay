@@ -13,7 +13,7 @@ import { InfoForLoginModel } from "./InfoForLoginModel";
 
 export default interface IAdminRepository {
 
-    RegisterAdmin(createUserDto: CreateUserDto): Promise<OperationResult<IUserDoc>>;
+    RegisterAdmin(createUserDto: any): Promise<OperationResult<IUserDoc>>;
     FindUserById(id: string): Promise<OperationResult<IUserDoc>>;
     FindUserByEmail(email: string): Promise<OperationResult<IUserDoc>>;
     GenerateActivationCode(userId: string, hash: string): Promise<OperationResult<any>>;

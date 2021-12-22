@@ -2,6 +2,7 @@ import OperationResult from "../../../core/Operation/OperationResult";
 import { UserSettingEntitie } from "../../Context/UserSetting/UserSetting";
 import RedisManager from '../../../Utilities/Redis/RedisRepository';
 import { IUserSettingRepository } from "./IUserSettingRepository";
+import { USER_SETTING_ENUM } from "../../../DTO/UserSetting/user-setting-enum";
 
 export default class UserSettingRepository implements IUserSettingRepository {
 
@@ -10,21 +11,21 @@ export default class UserSettingRepository implements IUserSettingRepository {
      * Set Setting
      *
      ****/
-    async SetSetting<T>(key: string, userId: string, item: T): Promise<OperationResult<boolean>> {
+    async SetSetting<T>(userId: string, item: T): Promise<OperationResult<boolean>> {
 
         try {
 
             const setting = await UserSettingEntitie.findOne({
-                field: key,
+                userId: userId
             });
 
             if (setting) {
                 const updateSetting = await UserSettingEntitie.updateOne(
-                    { field: key, userId: userId },
+                    { userId: userId },
                     { value: JSON.stringify(item) });
 
                 if (updateSetting) {
-                    await RedisManager.ResetSingleItem<T>(key, item);
+                    await RedisManager.ResetSingleItem<T>(USER_SETTING_ENUM.USER_SETTING+userId, item);
                 }
 
                 return OperationResult.BuildSuccessResult("Success Set Setting", true);
@@ -32,12 +33,11 @@ export default class UserSettingRepository implements IUserSettingRepository {
             } else {
 
                 var newSetting = new UserSettingEntitie();
-                newSetting.field = key;
                 newSetting.userId = userId;
                 newSetting.value = JSON.stringify(item);
                 newSetting.save();
 
-                await RedisManager.Set(key, newSetting.value);
+                await RedisManager.Set(USER_SETTING_ENUM.USER_SETTING+userId, newSetting.value);
                 return OperationResult.BuildSuccessResult("Success Set Setting", true);
 
             }
@@ -56,7 +56,7 @@ export default class UserSettingRepository implements IUserSettingRepository {
         try {
 
             const getRedisSetting = await RedisManager.Get<T>(key);
-   
+
             if (getRedisSetting.result) {
 
                 return OperationResult.BuildSuccessResult("Success Get Setting", getRedisSetting.result);

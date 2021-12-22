@@ -25,7 +25,6 @@ export default new class SettingController extends BaseController {
             const { isEnable } = req.body;
             let userId = (await unitOfWork.jwtRepository.DecodeToken(req, res, next)).result;
 
-            console.log(userId)
             const findUser = await unitOfWork.userRepository.FindUserById(userId);
             if (!findUser.result) {
                 return this.BadRerquest(res, "We can not Find User");
@@ -36,7 +35,7 @@ export default new class SettingController extends BaseController {
 
             const setRegisterSetting = await unitOfWork.UserSettingRepository
                 .SetSetting<UserSettingAuthGoogle2FA>
-                (USER_SETTING_ENUM.GOOGLE_AUTH_2FA, userId, {
+                ( userId, {
                     isEnable: isEnable,
                     secretKey: tempSecret
                 });

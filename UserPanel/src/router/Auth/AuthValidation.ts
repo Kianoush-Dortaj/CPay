@@ -21,7 +21,7 @@ export default new class UserValidation {
                     }
                 }
             }),
-            check("phoneNumber").notEmpty().withMessage("phoneNumber Can not be Empty"),
+            // check("phoneNumber").notEmpty().withMessage("phoneNumber Can not be Empty"),
             // check("countryId").notEmpty().withMessage("countryId Can not be Empty"),
             // check("countryId").custom(async (value) => {
 

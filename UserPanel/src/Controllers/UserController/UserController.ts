@@ -19,15 +19,14 @@ export default new class UserController extends BaseController {
 
         if (!validationData.haveError) {
 
-            const { firstName, gender, password, lastName, email, roles } = req.body;
+            const { firstName, gender, password, lastName, email } = req.body;
 
             const createUser = await UnitOfWork.userRepository.RegisterUser({
                 name: firstName,
                 gender,
                 password,
                 family: lastName,
-                email,
-                roles: roles
+                email
             });
 
             if (createUser.success) {

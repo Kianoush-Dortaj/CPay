@@ -9,6 +9,7 @@ import RedisManager from "../../../Utilities/Redis/RedisRepository";
 import RedisKey from "../../../Utilities/Redis/RedisKey";
 import emailRepo from '../../../Utilities/Email/NodeMailer';
 import { SETTING_ENUM } from "../../../DTO/Sertting/setting-enum";
+import { UserSettingModel } from "../../../DTO/UserSetting/user-setting-model";
 
 export default class RegisterRepository implements IRegisterRepository {
 
@@ -20,8 +21,7 @@ export default class RegisterRepository implements IRegisterRepository {
 
             let userLevel = await UnitOfWork.SettingRepository.GetSetting<SettingRegisterUserRole>(SETTING_ENUM.REGISTER_SETTING)
 
-            const result = JSON.parse(userLevel.result);
-
+            const result = JSON.parse(userLevel.result)
             if (!result.setDefaultRegisterUserLevel) {
                 return OperationResult.BuildFailur("We Can not Find User Level Setting");
             }
@@ -35,9 +35,12 @@ export default class RegisterRepository implements IRegisterRepository {
             let displayName = item.firstName + ' ' + item.lastName;
             let securityStamp = (new Date()).getTime().toString(36) + Math.random().toString(36).slice(2);
 
+            const userSession = UserEntite.startSession();
+            (await userSession).startTransaction();
 
             let registerUser = await UserEntite.build({
                 firstName: item.firstName,
+                gender: undefined,
                 isAdmin: false,
                 isSupport: false,
                 userLevel: result.setDefaultRegisterUserLevel,
@@ -57,29 +60,65 @@ export default class RegisterRepository implements IRegisterRepository {
                 securityStamp: securityStamp
             });
 
-            registerUser.save();
+            const setUserLevel = await UnitOfWork.UserActiveLevelRepository
+                .SetUserActiveLevel({
+                    userId: registerUser.id,
+                    level: result.setDefaultRegisterUserLevel
+                });
 
-            await RedisManager.Set(RedisKey.UserInfo + registerUser._id, registerUser);
-            await this.GenerateActivationCode(RedisKey.RegisterConfirm + registerUser.email, hashCode);
-            await emailRepo.sendActivationCodeEmail(registerUser.email, 'CPay Configm Email', displayName, hashCode);
+            if (setUserLevel.success) {
 
-            return OperationResult.BuildSuccessResult("Success Register User","We Are Sent Activatoin to Your Email");
+                registerUser.save();
+
+                const setRegisterSetting = await UnitOfWork.UserSettingRepository
+                    .SetSetting<UserSettingModel>
+                    (registerUser.id, {
+                        googleAuth: {
+                            isEnable: false,
+                            secretKey: null
+                        },
+                        notification: {
+                            byEmail: true,
+                            bySms: false
+                        },
+                        twofactor: {
+                            isEnable: false
+                        }
+                    });
+
+                if (setRegisterSetting.success) {
+
+                    const generateActiveCode = await this.GenerateActivationCode(RedisKey.RegisterConfirm + registerUser.email, hashCode);
+                    if (generateActiveCode.success) {
+
+                        const sendEmail = await emailRepo.sendActivationCodeEmail(registerUser.email, 'CPay Configm Email', displayName, hashCode);
+
+                    }
+                } else {
+                    return OperationResult.BuildFailur("can not set user setting");
+
+                }
+
+            }
+
+            (await userSession).commitTransaction();
+            (await userSession).endSession();
+            return OperationResult.BuildSuccessResult("We Are Sent Activatoin to Your Email", '');
 
         } catch (error: any) {
             return OperationResult.BuildFailur(error.message);
         }
-
     }
 
     async GenerateActivationCode(userId: string, hash: string): Promise<OperationResult<any>> {
 
         try {
-            let code = await RedisManager.SetValueWithexiperationTime(userId, hash, 1000);
+            await RedisManager.SetValueWithexiperationTime(userId, hash, 1000);
 
-            return new OperationResult<any>(true, '');
+            return OperationResult.BuildSuccessResult('Suyccess Set Value in Redis', '');
 
         } catch (error: any) {
-            return new OperationResult<any>(false, error.message);
+            return OperationResult.BuildFailur(error.message);
 
         }
 

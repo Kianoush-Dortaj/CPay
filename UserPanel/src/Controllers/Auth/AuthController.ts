@@ -14,14 +14,13 @@ export default new class AuthController extends BaseController {
 
         if (!validationData.haveError) {
 
-            const { firstName, password, lastName, email, phoneNumber } = req.body;
+            const { firstName, password, lastName, email } = req.body;
 
             const createUser = await UnitOfWork.RegisterUserRepository.registerUser({
                 firstName: firstName,
                 password,
                 lastName: lastName,
-                email,
-                phoneNumber
+                email
             });
 
             if (createUser.success) {

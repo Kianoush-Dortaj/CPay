@@ -12,6 +12,7 @@ import Web3 from "web3";
 import { readFileSync } from "fs";
 import * as dotenv from 'dotenv';
 import config from './Configs/index';
+import Sms from './Utilities/SMS/Sms';
 declare global {
     var web3: Web3;
 }
@@ -39,6 +40,7 @@ export default new class Startup {
         this.ConfigMidllware();
         this.ConfigDatabase();
         dotenv.config();
+        Sms.Initial();
     }
 
     /**

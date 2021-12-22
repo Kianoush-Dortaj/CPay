@@ -16,6 +16,7 @@ import { IRoleRepository } from "../Role/IRoleRepository";
 import { IRolePermissionRepository } from "../RolePermission/IRolePermissionRepository";
 import { ISettingRepository } from "../Setting/ISettingRepository";
 import IUserRepository from "../User/IUserRepository";
+import { IUserActiveLevelRepository } from "../UserActiveLevel/IUserActiveLevelRepository";
 import { IUserActivityRepository } from "../UserActivity/IUserActivityRepository";
 import { IUserLevelRepository } from "../UserLevel/IUserLevelRepository";
 import { IUserRoleRepository } from "../UserRole/IUserRoleRepository";
@@ -41,6 +42,7 @@ export interface IUnitOfWork {
     NetworkRepository: INetworkRepository;
     LanguageRepository: ILanguageRepository;
     GetwayTypeRepository: IGetwayTypeRepository;
+    UserActiveLevelRepository: IUserActiveLevelRepository;
     websocket: Websocket;
 
 }

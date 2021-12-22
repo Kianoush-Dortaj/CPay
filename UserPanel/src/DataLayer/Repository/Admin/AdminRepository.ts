@@ -19,6 +19,8 @@ import { GetAdminInformationModel } from "../../../DTO/User/GetAdminInformatinoM
 import { FilterViewModel } from "../../../DTO/Common/FilterViewModel";
 import { GetAllUserFilter } from "../../../DTO/User/GetAllUserFilter";
 import IAdminRepository from "./IAdminRepository";
+import { SETTING_ENUM } from "../../../DTO/Sertting/setting-enum";
+import { SettingRegisterUserRole } from "../../../DTO/Sertting/setting-register-user-role";
 
 export class AdminRepository implements IAdminRepository {
 
@@ -55,13 +57,9 @@ export class AdminRepository implements IAdminRepository {
                 securityStamp: securityStamp
             });
 
+            const getRegisterSetting = await UnitOfWork.SettingRepository
+            .GetSetting<SettingRegisterUserRole>(SETTING_ENUM.REGISTER_SETTING);
 
-            const userRole = await UnitOfWork.UserRoleRepository.SetUserRole({
-                roles: createUserDto.roles,
-                userId: registerUser._id
-            })
-
-            registerUser.userRole = userRole.result?._id;
 
             registerUser.save();
 
