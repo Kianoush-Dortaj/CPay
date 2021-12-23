@@ -66,7 +66,7 @@ export default class JWTRepository implements IJWTRepository {
                 let tokenInfo: any = await jwt.verify(token, "travelbudy");
 
                 if (tokenInfo) {
-                    return OperationResult.BuildSuccessResult('success decode', tokenInfo.info.userId)
+                    return OperationResult.BuildSuccessResult('success decode', tokenInfo.info.id)
                 }
             }
             return OperationResult.BuildFailur('Error Decode')

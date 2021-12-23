@@ -1,5 +1,5 @@
 export interface InfoForLoginModel {
     userSecurityStamp: string;
-    userId: string;
+    id: string;
     displayName:string;
 }

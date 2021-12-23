@@ -38,9 +38,9 @@ export class RedisManager {
   async Get<TValue>(key: string): Promise<OperationResult<TValue>> {
     try {
       return new Promise((resolve, reject) => {
-        this.client.get(key, async (err: any, data: any) => {
+        this.client.get(key, async (err: any, data: TValue) => {
           if (err) reject(OperationResult.BuildFailur(err.message));
-          resolve(OperationResult.BuildSuccessResult('Operation Success', JSON.parse(data)));
+          resolve(OperationResult.BuildSuccessResult('Operation Success', data));
         });
       });
     } catch (error: any) {

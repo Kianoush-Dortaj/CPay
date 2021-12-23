@@ -195,7 +195,7 @@ export default class LoginRepository implements ILoginRepository {
             }
 
             let userSettingInfo = await unitofWork.UserSettingRepository
-                .GetSetting(USER_SETTING_ENUM.GOOGLE_AUTH_2FA, userInfo.result.id);
+                .getGoogleAuthSetting(userInfo.result.id);
 
             if (!userSettingInfo.success) {
                 return OperationResult.BuildFailur("User not Found");
@@ -203,7 +203,7 @@ export default class LoginRepository implements ILoginRepository {
             }
 
             const soeasy = speakeasy.totp.verify({
-                secret: userSettingInfo.result.secretKey.base32,
+                secret: userSettingInfo.result?.secretKey.base32,
                 token: code,
                 encoding: 'base32',
                 window: 1
@@ -223,8 +223,7 @@ export default class LoginRepository implements ILoginRepository {
                     isGoogle2FA: false,
                     token: token.result,
                     userInfo: {
-                        displayName: displayName,
-                        userId: userInfo.result?._id,
+                        displayName: displayName
                     }
                 });
             }
