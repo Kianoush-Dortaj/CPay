@@ -49,6 +49,7 @@ export default new class NodeMailer {
     }
 
     sendTwofactorCode(to: string, subject: string, name: string, code: string): Promise<OperationResult<any>> {
+
         return this.transporter.sendMail({
             to: to,
             subject: subject,

@@ -162,5 +162,68 @@ export default new class SettingController extends BaseController {
             return this.BadRerquest(res, error.message);
         }
     }
+    /**********
+    *
+    * Set Register Setting
+    *
+    ************/
+    async SetNotificationSetting(req: Request, res: Response, next: NextFunction) {
+        try {
+
+            const { byEmail, bySms } = req.body;
+
+            let userId = (await unitOfWork.jwtRepository.DecodeToken(req, res, next)).result;
+
+            const findUser = await unitOfWork.userRepository.FindUserById(userId);
+
+            if (!findUser.result) {
+                return this.BadRerquest(res, "We can not Find User");
+
+            }
+
+            const setNotificationSettingValue = await unitOfWork.UserSettingRepository
+                .setNotificationSetting(userId, {
+                    byEmail,
+                    bySms
+                });
+
+
+
+            return this.Ok(res, setNotificationSettingValue.message);
+        } catch (error: any) {
+
+            return this.BadRerquest(res, error.message);
+        }
+    }
+    /**********
+   *
+   * Get Register Setting
+   *
+   ************/
+    async GetNotificationSetting(req: Request, res: Response, next: NextFunction) {
+
+        try {
+
+            let userId = (await unitOfWork.jwtRepository.DecodeToken(req, res, next)).result;
+
+            const getTwofactorSetting = await unitOfWork.UserSettingRepository
+                .getNotificationSetting(userId);
+
+            if (getTwofactorSetting.success) {
+
+                return this.OkObjectResult(res, {
+                    data: {
+                        byEmail: getTwofactorSetting.result?.byEmail,
+                        bySms: getTwofactorSetting.result?.bySms
+                    }
+                }, "Get Notification Setting");
+            }
+
+            return this.BadRerquest(res, getTwofactorSetting.message);
+        } catch (error: any) {
+
+            return this.BadRerquest(res, error.message);
+        }
+    }
 
 }

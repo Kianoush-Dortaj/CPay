@@ -50,7 +50,8 @@ export default class LoginRepository implements ILoginRepository {
                 let code = await RedisRepository.Get<any>(RedisKey.TowfactorKey + username);
 
                 if (code.result) {
-                    Emailrepository.sendTwofactorCode(username, 'Twfactor Code', displayName, code.result.code);
+                    const resultTwofactor = JSON.parse(code.result)
+                    Emailrepository.sendTwofactorCode(username, 'Twfactor Code', displayName, resultTwofactor.code);
                     return OperationResult.BuildSuccessResult(result.Message, result.Context)
                 }
 
@@ -98,19 +99,23 @@ export default class LoginRepository implements ILoginRepository {
 
         try {
 
-
+            let redisValue;
             let userInfo = await unitofWork.userRepository.GetUserInfoForLogin(email);
 
             if (!userInfo.success) {
                 return OperationResult.BuildFailur(userInfo.message);
             }
 
-            let findKeyInRedis = await RedisRepository.Get<{ code: string, hash: string }>(RedisKey.TowfactorKey + email);
+            let findKeyInRedis = await RedisRepository.Get<any>(RedisKey.TowfactorKey + email);
+
+            if (findKeyInRedis.result) {
+                redisValue = JSON.parse(findKeyInRedis.result);
+            }
 
             if (!findKeyInRedis.success) {
 
                 return OperationResult.BuildFailur(findKeyInRedis.message);
-            } else if (findKeyInRedis.result?.code != code || findKeyInRedis.result?.hash != hash) {
+            } else if (redisValue.code != code || redisValue.hash != hash) {
 
                 return OperationResult.BuildFailur('Your code is Expire . please Type again');
             }

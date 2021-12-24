@@ -7,6 +7,8 @@ import { UserSettingAuthGoogle2FA } from "../../../DTO/UserSetting/user-setting-
 import { SpeakEeasy } from './../../../Utilities/Speakeasy/SpeakEasyConfig';
 import { UserSettingModel } from "../../../DTO/UserSetting/user-setting-model";
 import { GoogleAuthSetting } from "../../../DTO/UserSetting/google-auth.setting";
+import { NotificationSetting } from "../../../DTO/UserSetting/notification.setting";
+import { GetNotificationSetting } from "../../../DTO/UserSetting/get-notification.setting";
 
 
 export default class UserSettingRepository implements IUserSettingRepository {
@@ -114,6 +116,76 @@ export default class UserSettingRepository implements IUserSettingRepository {
                     const settingPars = JSON.parse(JSON.parse(getRedisSetting.result)) as UserSettingModel;
 
                     return OperationResult.BuildSuccessResult("Success Get Setting", settingPars.twofactor.isEnable);
+                }
+            }
+
+            let setting = await UserSettingEntitie.findOne({ userId: userId });
+
+            if (setting) {
+
+                const settingPars = JSON.parse(setting.value);
+
+                return OperationResult.BuildSuccessResult('Success Update UserSetting', settingPars.googleAuth.isEnable);
+            }
+            return OperationResult.BuildFailur('We can not find setting for this user');
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+
+
+    }
+
+    async setNotificationSetting(userId: string, item: NotificationSetting): Promise<OperationResult<any>> {
+
+        try {
+
+            if (item.byEmail === false && item.bySms === false) {
+                return OperationResult.BuildFailur("You can not set disabled Email and Sms for Notification");
+            }
+
+            let setting = await UserSettingEntitie.findOne({ userId: userId });
+            const tempSecret = SpeakEeasy.generate();
+
+            if (setting) {
+
+                const settingPars = JSON.parse(setting.value);
+
+                settingPars.notification.byEmail = item.byEmail;
+                settingPars.notification.bySms = item.bySms;
+
+                setting.value = JSON.stringify(settingPars);
+
+                setting.save();
+
+                await RedisManager.ResetSingleItem(USER_SETTING_ENUM.USER_SETTING + userId, setting.value);
+
+                return OperationResult.BuildSuccessResult('Success Update UserSetting', tempSecret);
+            }
+            return OperationResult.BuildSuccessResult('We can not find setting for this user', true);
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+
+
+    }
+
+    async getNotificationSetting(userId: string): Promise<OperationResult<GetNotificationSetting>> {
+
+        try {
+
+            const getRedisSetting = await RedisManager.Get<any>(USER_SETTING_ENUM.USER_SETTING + userId);
+
+            if (getRedisSetting.success) {
+                if (getRedisSetting.result) {
+
+                    const settingPars = JSON.parse(JSON.parse(getRedisSetting.result)) as UserSettingModel;
+
+                    return OperationResult.BuildSuccessResult("Success Get Setting", {
+                        byEmail: settingPars.notification.byEmail,
+                        bySms: settingPars.notification.bySms
+                    });
                 }
             }
 

@@ -13,12 +13,20 @@ settingRouter.get("/GetGoogleAuth2Fa",
     authController.AuthToken,
     SettingController.GetGoogleAuth2FASetting);
 
-    settingRouter.put("/SetTwofactor",
+settingRouter.put("/SetTwofactor",
     authController.AuthToken,
     SettingController.SetTwofactorSetting);
 
 settingRouter.get("/GetTwofactor",
     authController.AuthToken,
     SettingController.GetTwofactorSetting);
+
+settingRouter.put("/SetNotification",
+    authController.AuthToken,
+    SettingController.SetNotificationSetting);
+
+settingRouter.get("/GetNotification",
+    authController.AuthToken,
+    SettingController.GetNotificationSetting);
 
 export default settingRouter;
