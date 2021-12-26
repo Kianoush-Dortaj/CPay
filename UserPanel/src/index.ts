@@ -9,10 +9,11 @@ import UnitOfWork from './DataLayer/Repository/UnitOfWork/UnitOfWork';
 import swaggerUi from 'swagger-ui-express'
 import * as swaggerDocument from './swagger.json';
 import Web3 from "web3";
-import { readFileSync } from "fs";
 import * as dotenv from 'dotenv';
-import config from './Configs/index';
 import Sms from './Utilities/SMS/Sms';
+import Email from './Utilities/Email/Email';
+import { CpayNotification } from './Utilities/Notification/Notification';
+
 declare global {
     var web3: Web3;
 }
@@ -23,24 +24,13 @@ export default new class Startup {
 
     constructor() {
 
-        // i18n
-        //     .use(Backend)
-        //     .use(i18nextMiddleware.LanguageDetector)
-        //     .init({
-        //         backend: {
-        //             loadPath: __dirname + './../translations/{{lng}}/translation.json'
-        //         },
-        //         fallbackLng: 'fa',
-        //         preload: ['fa']
-        //     });
-
-        //     console.log( __dirname + '\\translations\\en\\translation.json')
-
         this.CreateServer();
         this.ConfigMidllware();
         this.ConfigDatabase();
-        dotenv.config();
+        Email.Config();
         Sms.Initial();
+
+        dotenv.config();
     }
 
     /**
@@ -53,11 +43,7 @@ export default new class Startup {
         })
 
         UnitOfWork.websocket.InitialWebsocket();
-
-        // new Listen(ListenType.UpdateCurrencyPairs).listen({
-        //     data: '',
-        //     userId: ''
-        // });
+        CpayNotification.Initial();
 
     }
     /**
@@ -74,11 +60,6 @@ export default new class Startup {
         this.app.use(cros(corsOptions));
         this.app.use(express.static('./../../../Coin/build/contracts'));
         this.app.use(router);
-        // this.app.get('/greeting', (req: any, res: any) => {
-        //     const response = req.t('hi');
-        //     res.status(200);
-        //     res.send(response);
-        // });
 
         this.app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
         nodeMailer.Config();

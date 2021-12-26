@@ -170,7 +170,7 @@ export default new class SettingController extends BaseController {
     async SetNotificationSetting(req: Request, res: Response, next: NextFunction) {
         try {
 
-            const { byEmail, bySms } = req.body;
+            const { sendNotificationType } = req.body;
 
             let userId = (await unitOfWork.jwtRepository.DecodeToken(req, res, next)).result;
 
@@ -182,10 +182,7 @@ export default new class SettingController extends BaseController {
             }
 
             const setNotificationSettingValue = await unitOfWork.UserSettingRepository
-                .setNotificationSetting(userId, {
-                    byEmail,
-                    bySms
-                });
+                .setNotificationSetting(userId, sendNotificationType);
 
 
 
@@ -195,6 +192,7 @@ export default new class SettingController extends BaseController {
             return this.BadRerquest(res, error.message);
         }
     }
+   
     /**********
    *
    * Get Register Setting
@@ -213,8 +211,7 @@ export default new class SettingController extends BaseController {
 
                 return this.OkObjectResult(res, {
                     data: {
-                        byEmail: getTwofactorSetting.result?.byEmail,
-                        bySms: getTwofactorSetting.result?.bySms
+                        sendNotificationType: getTwofactorSetting.result
                     }
                 }, "Get Notification Setting");
             }

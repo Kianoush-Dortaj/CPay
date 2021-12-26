@@ -15,6 +15,7 @@ export default interface IUserRepository {
 
     RegisterUser(createUserDto: CreateUserDto): Promise<OperationResult<IUserDoc>>;
     FindUserById(id: string): Promise<OperationResult<IUserDoc>>;
+    ChangePhoneNumberStatus(userId: string, value: boolean , phoneNumber:string): Promise<OperationResult<boolean>>;
     FindUserByEmail(email: string): Promise<OperationResult<IUserDoc>>;
     GenerateActivationCode(userId: string, hash: string): Promise<OperationResult<any>>;
     CheckUserConfirmCode(email: string, hashCode: string): Promise<OperationResult<any>>;
@@ -31,4 +32,5 @@ export default interface IUserRepository {
     GetUserInformation(id: string): Promise<OperationResult<GetUserInformationModel>>;
     FindUserByEmailForLogin(email: string): Promise<OperationResult<any>>;
     Change2FaStatus(userId: string, value: boolean): Promise<OperationResult<boolean>>;
+    FindUserByPhoneNmber(phoneNumber: string): Promise<OperationResult<any>>;
 }

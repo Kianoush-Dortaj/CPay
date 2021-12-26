@@ -11,6 +11,7 @@ export interface IUserDoc extends mongoose.Document {
     isActive: boolean;
     confirmEmail:boolean;
     towFactorEnabled:boolean;
+    confirmPhoneNumber:boolean;
     isSupport:boolean;
     poster:string;
     avatar: string;

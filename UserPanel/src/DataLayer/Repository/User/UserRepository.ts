@@ -7,7 +7,6 @@ import RedisManager from "../../../Utilities/Redis/RedisRepository";
 import RedisKey from "../../../Utilities/Redis/RedisKey";
 import { Gender } from "../../Context/User/Gender";
 import emailRepo from '../../../Utilities/Email/NodeMailer';
-import UtilService from '../../../Utilities/Util';
 import { UpdateUserModel } from "../../../DTO/User/UpdateUserModel";
 import { ChangePassword } from "../../../DTO/User/ChangePasswordModel";
 import { InfoForLoginModel } from "./InfoForLoginModel";
@@ -21,6 +20,7 @@ import { SETTING_ENUM } from "../../../DTO/Sertting/setting-enum";
 import { SettingRegisterUserRole } from "../../../DTO/Sertting/setting-register-user-role";
 import { GetUserAccountInfoModel } from "../../../DTO/User/GetUserAccountInfoModel";
 import { GetUserInformationModel } from "../../../DTO/User/GetUserInformatinoModel";
+import UtilService from "../../../Utilities/Util";
 
 export class UserRepository implements IUserRepository {
 
@@ -53,6 +53,7 @@ export class UserRepository implements IUserRepository {
                 userLevel: result.setDefaultRegisterUserLevel,
                 password: password,
                 email: createUserDto.email,
+                confirmPhoneNumber: false,
                 lastName: createUserDto.family,
                 accountFail: 0,
                 avatar: undefined,
@@ -112,39 +113,6 @@ export class UserRepository implements IUserRepository {
             return new OperationResult<IUserDoc>(false, error.message);
         }
     }
-
-    // async FindUserByEmailForLogin(email: string): Promise<OperationResult<any>> {
-
-    //     try {
-
-    //         let user = await UserEntite.findOne({ email: email })
-    //             .populate({
-    //                 path: "userRole",
-    //                 populate: [
-    //                     {
-    //                         path: "roles",
-    //                         populate: {
-    //                             path: "rolePermissionId",
-    //                             populate: {
-    //                                 path: "permissionId",
-    //                                 select: "permissionId"
-    //                             }
-    //                         }
-    //                     }
-    //                 ],
-    //             });
-
-    //         if (user) {
-    //             return OperationResult.BuildSuccessResult("Operation Success", user);
-    //         }
-    //         return OperationResult.BuildFailur("Can not find User");
-
-    //     } catch (error: any) {
-    //         return OperationResult.BuildFailur(error.message);
-
-    //     }
-
-    // }
 
     async GenerateActivationCode(userId: string, hash: string): Promise<OperationResult<any>> {
 
@@ -390,7 +358,6 @@ export class UserRepository implements IUserRepository {
         }
     }
 
-
     /**********
      * Update Account Manager Info
      ********/
@@ -441,8 +408,8 @@ export class UserRepository implements IUserRepository {
     }
 
     /**********
-* Change 2FA Status
-********/
+    * Change 2FA Status
+    ********/
     async Change2FaStatus(userId: string, value: boolean): Promise<OperationResult<boolean>> {
 
         try {
@@ -461,6 +428,30 @@ export class UserRepository implements IUserRepository {
             return OperationResult.BuildFailur(error.message);
         }
     }
+
+    /**********
+    * Change 2FA Status
+    ********/
+    async ChangePhoneNumberStatus(userId: string, value: boolean, phoneNumber: string): Promise<OperationResult<boolean>> {
+
+        try {
+
+            await UserEntite.updateOne(
+                { _id: userId },
+                {
+                    $set: {
+                        confirmPhoneNumber: value,
+                        phoneNumber: phoneNumber
+                    },
+                }
+            );
+            return OperationResult.BuildSuccessResult('', true);
+        }
+        catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+    }
+
 
     /**********
    * Get User Info for Login
@@ -547,6 +538,24 @@ export class UserRepository implements IUserRepository {
         try {
 
             let user = await UserEntite.findOne({ email: email });
+
+            if (user) {
+                return OperationResult.BuildSuccessResult("Operation Success", user);
+            }
+            return OperationResult.BuildFailur("Can not find User");
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+
+        }
+
+    }
+
+    async FindUserByPhoneNmber(phoneNumber: string): Promise<OperationResult<any>> {
+
+        try {
+
+            let user = await UserEntite.findOne({ phoneNumber: phoneNumber });
 
             if (user) {
                 return OperationResult.BuildSuccessResult("Operation Success", user);

@@ -1,18 +1,24 @@
 import UnitOfWork from "../DataLayer/Repository/UnitOfWork/UnitOfWork";
 import { GetAllUserActivityModel } from "../DTO/UserActivity/GetAllUserActivityModel";
+import uniqueString from 'unique-string';
+import redisRepository from './Redis/RedisRepository';
+import OperationResult from "../core/Operation/OperationResult";
+import { GenerateHashcodeResult } from "../DTO/utilitie/GetrateHashcodeResult";
+import RedisRepository from "./Redis/RedisRepository";
 
-export default new class UtilService {
+
+export default class UtilService {
 
 
-    getDirectoryImage(dir: string) {
+    static getDirectoryImage(dir: string) {
         return dir.substring(10);
     }
 
-    getRandomInt(min: number, max: number) {
+    static async getRandomInt(min: number, max: number): Promise<number> {
         return Math.floor(Math.random() * (max - min)) + min;
     }
 
-    convertEnumToArray(value: any): GetAllUserActivityModel[] {
+    static convertEnumToArray(value: any): GetAllUserActivityModel[] {
 
         const map: GetAllUserActivityModel[] = [];
 
@@ -33,7 +39,7 @@ export default new class UtilService {
         return map;
     }
 
-    async getAcceptLang(req: any): Promise<string> {
+    static async getAcceptLang(req: any): Promise<string> {
 
         let lang = null;
 
@@ -54,6 +60,58 @@ export default new class UtilService {
             }
         }
         return lang;
+    }
+
+    static async GerateHashCode(redisKey: any): Promise<OperationResult<GenerateHashcodeResult>> {
+        try {
+
+            let hash = uniqueString();
+            let code = await this.getRandomInt(1111111, 999999);
+
+            const setValue = await redisRepository.SetValueWithexiperationTime(redisKey, {
+                code: code,
+                hash: hash
+            }, 120)
+
+            if (setValue.success) {
+                return OperationResult.BuildSuccessResult("Success", {
+                    code: code,
+                    hash: hash
+                })
+            }
+            return OperationResult.BuildFailur(setValue.message);
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+
+        }
+    }
+
+    static async CheckHashCode(redisKey: any, code: string, hash: string): Promise<OperationResult<boolean>> {
+
+        try {
+
+            let findKeyInRedis = await RedisRepository.Get<any>(redisKey);
+
+            const resultredis = JSON.parse(findKeyInRedis.result);
+
+            if (!findKeyInRedis.success) {
+
+                return OperationResult.BuildFailur(findKeyInRedis.message);
+            } else if (resultredis.code != code || resultredis.hash != hash) {
+
+                return OperationResult.BuildFailur('Your code is Expire . please Type again');
+            }
+
+            return OperationResult.BuildSuccessResult(findKeyInRedis.message, true);
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+
+        }
+
+
+
     }
 
 }

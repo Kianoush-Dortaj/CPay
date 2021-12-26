@@ -1,4 +1,5 @@
 export default new class RedisKey {
+    ConfirmPhoneNumber = 'ConfirmPhoneNumber/';
     UserInfo = 'UserInfo/';
     RegisterConfirm = 'RegisterConfirmCode/';
     TowfactorKey='TowfactorCode/';

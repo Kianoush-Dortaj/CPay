@@ -90,4 +90,26 @@ export default new class NodeMailer {
     }
 
 
+    async sendEmail(to: string, subject: string, data: any): Promise<OperationResult<any>> {
+
+        return new Promise((resolve,reject)=>{
+
+            return this.transporter.sendMail({
+                to: to,
+                subject: subject,
+                html:data
+            }, function (error: any, info: any) {
+                if (error) {
+                    reject(OperationResult.BuildFailur(error.message));
+                } else {
+                    resolve(OperationResult.BuildSuccessResult("Email Sent",true));
+    
+                }
+            });
+        });
+        // const activatoinLink = await RedisRepository.Get(SETTING_ENUM.ACTIVATION_LINK);
+     
+    }
+
+
 }

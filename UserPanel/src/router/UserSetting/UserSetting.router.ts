@@ -29,4 +29,5 @@ settingRouter.get("/GetNotification",
     authController.AuthToken,
     SettingController.GetNotificationSetting);
 
+
 export default settingRouter;

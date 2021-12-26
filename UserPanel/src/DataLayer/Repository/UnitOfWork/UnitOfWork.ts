@@ -44,6 +44,9 @@ import { IUserSettingRepository } from '../UserSetting/IUserSettingRepository';
 import UserSettingRepository from '../UserSetting/UserSettingRepository';
 import UserActiveLevelRepository from '../UserActiveLevel/UserActiveLevelRepository';
 import { IUserActiveLevelRepository } from '../UserActiveLevel/IUserActiveLevelRepository';
+import { CpayNotification } from '../../../Utilities/Notification/Notification';
+import { IUserVerificationRepository } from '../UserVerification/IUserVerificationRepository';
+import UserVerificationRepository from '../UserVerification/UserSettingRepository';
 
 export default new class UnitOfWork implements IUnitOfWork {
 
@@ -69,6 +72,8 @@ export default new class UnitOfWork implements IUnitOfWork {
     RegisterUserRepository: IRegisterRepository;
     UserSettingRepository: IUserSettingRepository;
     UserActiveLevelRepository: IUserActiveLevelRepository;
+    cpayNotification:CpayNotification;
+    UserVerification : IUserVerificationRepository;
     websocket: Websocket;
 
     constructor() {
@@ -96,6 +101,9 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.RegisterUserRepository = new RegisterRepository();
         this.UserSettingRepository = new UserSettingRepository();
         this.UserActiveLevelRepository = new UserActiveLevelRepository();
+        this.cpayNotification = new CpayNotification();
+        this.UserVerification = new UserVerificationRepository(); 
+    
 
     }
 

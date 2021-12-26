@@ -13,10 +13,10 @@ export class ValidateGoogleAuth extends Handler {
 
     async handle(request: IUserDoc): Promise<ValidationContext> {
 
-        const getUserSetting =await UnitOfWork.UserSettingRepository.getGoogleAuthSetting(request.id)
+        const getUserSetting = await UnitOfWork.UserSettingRepository.getGoogleAuthSetting(request.id)
 
         if (getUserSetting.result?.isEnable === false) {
-  
+
             return super.handle(request);
         }
 

@@ -9,7 +9,13 @@ import { UserSettingModel } from "../../../DTO/UserSetting/user-setting-model";
 import { GoogleAuthSetting } from "../../../DTO/UserSetting/google-auth.setting";
 import { NotificationSetting } from "../../../DTO/UserSetting/notification.setting";
 import { GetNotificationSetting } from "../../../DTO/UserSetting/get-notification.setting";
-
+import { SendNotificationType } from "../../../DTO/UserSetting/notification-type.setting";
+import UnitOfWork from "../UnitOfWork/UnitOfWork";
+import { CpayNotification } from "../../../Utilities/Notification/Notification";
+import { UserEntite } from "../../Context/User/User";
+import UtilService from "../../../Utilities/Util";
+import RedisKey from "../../../Utilities/Redis/RedisKey";
+import Sms from "../../../Utilities/SMS/Sms";
 
 export default class UserSettingRepository implements IUserSettingRepository {
 
@@ -107,6 +113,7 @@ export default class UserSettingRepository implements IUserSettingRepository {
     async getTwofactorSetting(userId: string): Promise<OperationResult<boolean>> {
 
         try {
+            const res = await CpayNotification.send(userId, 'salam', 'test');
 
             const getRedisSetting = await RedisManager.Get<any>(USER_SETTING_ENUM.USER_SETTING + userId);
 
@@ -136,33 +143,31 @@ export default class UserSettingRepository implements IUserSettingRepository {
 
     }
 
-    async setNotificationSetting(userId: string, item: NotificationSetting): Promise<OperationResult<any>> {
+    async setNotificationSetting(userId: string, item: SendNotificationType): Promise<OperationResult<any>> {
 
         try {
 
-            if (item.byEmail === false && item.bySms === false) {
-                return OperationResult.BuildFailur("You can not set disabled Email and Sms for Notification");
-            }
 
             let setting = await UserSettingEntitie.findOne({ userId: userId });
-            const tempSecret = SpeakEeasy.generate();
 
             if (setting) {
 
+                let findUser = await UnitOfWork.userRepository.FindUserById(userId);
+
+                if (findUser.success && findUser.result?.confirmPhoneNumber === false) {
+                    return OperationResult.BuildFailur("you Should Confirm Phone Number and then active your notifcation with SMS");
+                }
+
                 const settingPars = JSON.parse(setting.value);
-
-                settingPars.notification.byEmail = item.byEmail;
-                settingPars.notification.bySms = item.bySms;
-
+                settingPars.notification = item;
                 setting.value = JSON.stringify(settingPars);
-
                 setting.save();
 
                 await RedisManager.ResetSingleItem(USER_SETTING_ENUM.USER_SETTING + userId, setting.value);
 
-                return OperationResult.BuildSuccessResult('Success Update UserSetting', tempSecret);
+                return OperationResult.BuildSuccessResult('Success Update UserSetting', true);
             }
-            return OperationResult.BuildSuccessResult('We can not find setting for this user', true);
+            return OperationResult.BuildSuccessResult('We can not find setting for this user', false);
 
         } catch (error: any) {
             return OperationResult.BuildFailur(error.message);
@@ -171,7 +176,7 @@ export default class UserSettingRepository implements IUserSettingRepository {
 
     }
 
-    async getNotificationSetting(userId: string): Promise<OperationResult<GetNotificationSetting>> {
+    async getNotificationSetting(userId: string): Promise<OperationResult<SendNotificationType>> {
 
         try {
 
@@ -182,10 +187,7 @@ export default class UserSettingRepository implements IUserSettingRepository {
 
                     const settingPars = JSON.parse(JSON.parse(getRedisSetting.result)) as UserSettingModel;
 
-                    return OperationResult.BuildSuccessResult("Success Get Setting", {
-                        byEmail: settingPars.notification.byEmail,
-                        bySms: settingPars.notification.bySms
-                    });
+                    return OperationResult.BuildSuccessResult("Success Get Setting", settingPars.notification);
                 }
             }
 
@@ -198,6 +200,66 @@ export default class UserSettingRepository implements IUserSettingRepository {
                 return OperationResult.BuildSuccessResult('Success Update UserSetting', settingPars.googleAuth.isEnable);
             }
             return OperationResult.BuildFailur('We can not find setting for this user');
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+
+
+    }
+
+    async setPhoneNumber(userId: string, phoneNumber: string): Promise<OperationResult<string>> {
+
+        try {
+
+
+            let userInfo = await UnitOfWork.userRepository.FindUserById(userId);
+
+            if (userInfo.success) {
+
+                const generateCode = await UtilService.GerateHashCode(RedisKey.ConfirmPhoneNumber + userId);
+
+                if (generateCode.success && generateCode.result) {
+
+                    const sendSMS = await Sms.sendMessage('Confirm Phone Number', phoneNumber, generateCode.result.code)
+                    if (sendSMS.success) {
+
+                        return OperationResult.BuildSuccessResult('Success Send Code to Your Phone', generateCode.result?.hash);
+
+                    }
+                    return OperationResult.BuildFailur('we have a problem with send code yo your phone number , please try a few minute later');
+
+                }
+
+            }
+            return OperationResult.BuildFailur('We can not find this user , please try with currect information');
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+
+
+    }
+
+    async checkPhoneNumber(userId: string, code: string, hash: string, phoneNumber: string): Promise<OperationResult<boolean>> {
+
+        try {
+
+            const checkHashCode = await UtilService.CheckHashCode(RedisKey.ConfirmPhoneNumber + userId, code, hash)
+
+            if (checkHashCode.success) {
+                const userchangePhoneNumberStatus = await UnitOfWork.userRepository
+                    .ChangePhoneNumberStatus(userId, true, phoneNumber);
+
+                if (userchangePhoneNumberStatus.success) {
+                    return OperationResult.BuildSuccessResult("Success Set Phone Number", true);
+
+                }
+                return OperationResult.BuildFailur(checkHashCode.message);
+
+            }
+
+            return OperationResult.BuildFailur(checkHashCode.message);
 
         } catch (error: any) {
             return OperationResult.BuildFailur(error.message);

@@ -8,8 +8,8 @@ import { GetwayTypeEntitie } from '../../Context/GetwayType/GetwayType';
 import { IGetwayTypeRepository } from './IGetwayTypeRepository';
 import { FilterViewModel } from '../../../DTO/Common/FilterViewModel';
 import { GetAllGetwayTypeFilter } from '../../../DTO/GetwayType/GetAllGetwayTypeFilter';
-import UtilService from '../../../Utilities/Util';
 import { GetAllGetwayTypeSelect } from '../../../DTO/GetwayType/GetAllGetwayTypeSelect';
+import UtilService from '../../../Utilities/Util';
 
 export default class GetwayTypeRepository implements IGetwayTypeRepository {
 

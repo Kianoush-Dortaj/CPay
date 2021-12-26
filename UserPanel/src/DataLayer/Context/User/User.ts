@@ -13,15 +13,16 @@ const UserSchema = new mongoose.Schema({
     gender: { type: Number, require: false },
     isAdmin: { type: Boolean, require: true, default: false },
     isActive: { type: Boolean, default: false },
-    isSupport : {type:Boolean , default:false},
+    isSupport: { type: Boolean, default: false },
     poster: { type: String },
     confirmEmail: { type: Boolean, default: false },
+    confirmPhoneNumber: { type: Boolean, default: false },
     towFactorEnabled: { type: Boolean, default: false },
     avatar: { type: String },
     userRole: {
         type: Schema.Types.ObjectId,
         ref: 'UserRole',
-        require : false
+        require: false
     },
     userLevel: {
         type: Schema.Types.ObjectId,
@@ -37,22 +38,15 @@ const UserSchema = new mongoose.Schema({
     toJSON: { virtuals: true },
 })
 
-// UserSchema.plugin(BaseSchema);
 
 UserSchema.pre('updateOne', function () {
     this.set({ securityStamp: uniqueString() });
 });
 
-
 UserSchema.statics.build = (attrs: IUserAttrs) => {
     return new UserEntite(attrs);
 }
 
-// UserSchema.virtual("userRole", {
-//     foreignField: "userRole",
-//     ref: "UserRole",
-//     localField: "userId"
-// })
 
 const UserEntite = mongoose.model<IUserDoc, IUserModel>("User", UserSchema);
 

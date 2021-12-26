@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import authRouter from './Auth/AuthRouter';
 import userSettingRouter from './UserSetting/UserSetting.router';
+import userVerificationRouter from './UserVerfication/user-verification.router';
 
 import permissionRouter from './Permission/Permission.router';
 import roleRouter from './Role/role.router';
@@ -21,6 +22,9 @@ const router = Router();
 router.use('/api/auth', authRouter);
 
 router.use('/api/setting', userSettingRouter);
+
+router.use('/api/verification', userVerificationRouter);
+
 
 // router.use('/api/admin', adminRouter);
 

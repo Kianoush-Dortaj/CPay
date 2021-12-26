@@ -5,10 +5,10 @@ import { GetLanguageInfoModel } from '../../../DTO/Language/GetLanguageInfo';
 import { UpdateLanguageModel } from '../../../DTO/Language/UpdateLanguage';
 import { ILanguageDoc } from '../../Context/Language/ILanguageDoc';
 import { LanguageEntitie } from '../../Context/Language/Language';
-import UtilService from './../../../Utilities/Util';
 import { FilterViewModel } from '../../../DTO/Common/FilterViewModel';
 import { GetAllLanguageFilter } from '../../../DTO/Language/GetAllLangaugeFilter';
 import { ILanguageRepository } from './ILanguageRepository';
+import UtilService from '../../../Utilities/Util';
 
 
 export default class LanguageRepository implements ILanguageRepository {

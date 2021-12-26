@@ -5,6 +5,7 @@ import redisManager from './../../../../Utilities/Redis/RedisRepository';
 import RedisKey from "./../../../../Utilities/Redis/RedisKey";
 import utility from "./../../../../Utilities/Util";
 import uniqueString from 'unique-string';
+import UtilService from "./../../../../Utilities/Util";
 
 export class ValidateTowFactor extends Handler {
 
@@ -14,37 +15,34 @@ export class ValidateTowFactor extends Handler {
             return super.handle(request);
         }
 
-        let hash = uniqueString();
-        redisManager.SetValueWithexiperationTime(RedisKey.TowfactorKey + request.email, {
-            code: utility.getRandomInt(1111111, 999999),
-            hash: hash
-        }, 120).then(data => {
+        const generateHashCode = await UtilService.GerateHashCode(RedisKey.TowfactorKey + request.email);
+
+        if (generateHashCode.success && generateHashCode.result) {
             return {
                 Context: {
-                    hash: data.result,
+                    hash: generateHashCode.result?.hash,
                     isTowfactor: true,
+                    isGoogle2FA: false,
                     token: ''
                 },
                 HaveError: false,
                 Message: 'we are send code to your phone number . plase enter that code in this'
             }
-        }).catch(error => {
-            return {
-                Context: request,
-                HaveError: true,
-                Message: 'we have error to send yuor activation code . please try again in 10 minutes'
-            }
-        })
+        }
+
         return {
             Context: {
-                hash: hash,
-                isTowfactor: true,
-                isGoogle2FA:false,
+                hash: '',
+                isGoogle2FA: false,
+                isTowfactor: false,
                 token: ''
             },
             HaveError: false,
-            Message: 'we are send code to your phone number . plase enter that code in this'
+            Message: 'We have an Error in Generate your activation code . please try again for activation later'
         }
+
+
+
     }
 
 }

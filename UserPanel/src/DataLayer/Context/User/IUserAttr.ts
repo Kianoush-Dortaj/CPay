@@ -8,6 +8,7 @@ export interface IUserAttrs {
     email: string;
     isAdmin: boolean;
     confirmEmail: boolean;
+    confirmPhoneNumber: boolean;
     userLevel?: any;
     isActive: boolean;
     isSupport: boolean;

@@ -16,6 +16,8 @@ import { USER_SETTING_ENUM } from '../../../DTO/UserSetting/user-setting-enum';
 import speakeasy from 'speakeasy';
 import utility from "./../../../Utilities/Util";
 import uniqueString from 'unique-string';
+import UtilService from './../../../Utilities/Util';
+import { CpayNotification } from '../../../Utilities/Notification/Notification';
 
 export default class LoginRepository implements ILoginRepository {
 
@@ -46,12 +48,11 @@ export default class LoginRepository implements ILoginRepository {
 
             if (result.Context.isTowfactor) {
 
-                let displayName = user.result.firstName + user.result.lastName;
                 let code = await RedisRepository.Get<any>(RedisKey.TowfactorKey + username);
 
                 if (code.result) {
                     const resultTwofactor = JSON.parse(code.result)
-                    Emailrepository.sendTwofactorCode(username, 'Twfactor Code', displayName, resultTwofactor.code);
+                    CpayNotification.send(user.result.id, resultTwofactor.code, 'Twofactor Code');
                     return OperationResult.BuildSuccessResult(result.Message, result.Context)
                 }
 
@@ -158,24 +159,25 @@ export default class LoginRepository implements ILoginRepository {
                 return OperationResult.BuildFailur(userInfo.message);
             }
 
-            let findKeyInRedis = await RedisRepository.Get<{ code: string, hash: string }>(RedisKey.ForgetPasswordKey + email);
+            let findKeyInRedis = await RedisRepository.Get<any>(RedisKey.ForgetPasswordKey + email);
+
+            const resultredis = JSON.parse(findKeyInRedis.result);
 
             if (!findKeyInRedis.success) {
 
                 return OperationResult.BuildFailur(findKeyInRedis.message);
-            } else if (findKeyInRedis.result?.code != code || findKeyInRedis.result?.hash != hash) {
+            } else if (resultredis.code != code || resultredis.hash != hash) {
 
                 return OperationResult.BuildFailur('Your code is Expire . please Type again');
             }
 
-            let token = uniqueString();
+            const generateHashCode = await UtilService.GerateHashCode(RedisKey.ForgetPasswordKey + email);
 
-            await RedisRepository.SetValueWithexiperationTime(RedisKey.ForgetPasswordTokenKey + email, {
-                hash: token,
-                email: email
-            }, 120);
+            if (generateHashCode.result && generateHashCode.success) {
+                return OperationResult.BuildSuccessResult("Success Validation", generateHashCode.result?.hash);
+            }
 
-            return OperationResult.BuildSuccessResult("Success Validation", token);
+            return OperationResult.BuildFailur(generateHashCode.message);
 
         } catch (error: any) {
             return OperationResult.BuildFailur(error.message);
@@ -256,14 +258,7 @@ export default class LoginRepository implements ILoginRepository {
         try {
 
             let user = await unitofWork.userRepository.FindUserByEmailForLogin(email);
-
-            const randCode = utility.getRandomInt(1111111, 999999);
-            let hash = uniqueString();
-
-            const setHashCode = await RedisRepository.SetValueWithexiperationTime(RedisKey.ForgetPasswordKey + email, {
-                code: randCode,
-                hash: hash
-            }, 120)
+            const generateHashCode = await UtilService.GerateHashCode(RedisKey.ForgetPasswordKey + email);
 
 
             if (!user.success) {
@@ -271,11 +266,23 @@ export default class LoginRepository implements ILoginRepository {
 
             }
 
-            let displayName = user.result.firstName + user.result.lastName;
+            let displayName = user.result.firstName + ' ' + user.result.lastName;
 
-            if (setHashCode.success) {
-                Emailrepository.ForgetPassword(email, 'Forget Password', displayName, randCode.toString());
-                return OperationResult.BuildSuccessResult("Success Send Email", hash)
+            let emailData = `<h1>Forget Password Code</h1>
+            <h2>Hello ${displayName}</h2>
+            <p>This is your Forget Password Code for Login in CPAY Website </p>
+            <h1>${generateHashCode.result?.code}</h1>
+            <p>This code Will be Expire in 2 Minutes </p>
+            </div>`;
+
+            if (generateHashCode.success) {
+                const sendEmail = await CpayNotification.send(user.result.id, emailData, 'Forget Password');
+
+                if (sendEmail.success && generateHashCode.result) {
+                    return OperationResult.BuildSuccessResult("Success Send Email", generateHashCode.result?.hash)
+                }
+                return OperationResult.BuildFailur(sendEmail.message);
+
             }
 
             return OperationResult.BuildFailur('Error in generate code twofactor');

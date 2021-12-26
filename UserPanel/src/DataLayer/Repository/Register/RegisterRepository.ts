@@ -10,6 +10,7 @@ import RedisKey from "../../../Utilities/Redis/RedisKey";
 import emailRepo from '../../../Utilities/Email/NodeMailer';
 import { SETTING_ENUM } from "../../../DTO/Sertting/setting-enum";
 import { UserSettingModel } from "../../../DTO/UserSetting/user-setting-model";
+import { SendNotificationType } from "../../../DTO/UserSetting/notification-type.setting";
 
 export default class RegisterRepository implements IRegisterRepository {
 
@@ -43,6 +44,7 @@ export default class RegisterRepository implements IRegisterRepository {
                 gender: undefined,
                 isAdmin: false,
                 isSupport: false,
+                confirmPhoneNumber: false,
                 userLevel: result.setDefaultRegisterUserLevel,
                 password: password,
                 email: item.email,
@@ -77,10 +79,7 @@ export default class RegisterRepository implements IRegisterRepository {
                             isEnable: false,
                             secretKey: null
                         },
-                        notification: {
-                            byEmail: true,
-                            bySms: false
-                        },
+                        notification: SendNotificationType.EMAIL,
                         twofactor: {
                             isEnable: false
                         }
