@@ -6,11 +6,12 @@ import { IUserDoc } from '../User/IUserDock';
 
 export interface IUserVerificationDoc extends mongoose.Document {
 
-    userId:any;
+    userId: any;
     birthDate: string;
     nationality: string;
     typeVerification: UserVerificationType;
     image: any;
+    description?: string;
     selfieImage: any;
     frontImage: any;
     backImage: any;

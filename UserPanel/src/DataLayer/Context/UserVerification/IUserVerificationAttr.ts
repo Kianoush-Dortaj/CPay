@@ -8,6 +8,7 @@ export interface IUserVerificationAttrs {
     nationality: string;
     typeVerification: UserVerificationType;
     image: any;
+    description?:string;
     selfieImage: any;
     frontImage: any;
     backImage: any;

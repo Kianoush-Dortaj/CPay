@@ -73,39 +73,81 @@ export default new class SettingController extends BaseController {
     async SendVerification(req: Request, res: Response, next: NextFunction) {
         try {
 
-            const { backImage,
-                birthDate,
-                frontImage,
-                image,
-                nationality,
-                selfieImage,
-                typeVerification } = req.body;
+            let validationData = await this.ValidationAction(req, res);
 
-            let userId = (await unitOfWork.jwtRepository.DecodeToken(req, res, next)).result;
-
-            const sendVerification = await unitOfWork.UserVerification
-                .verification(userId, {
-                    backImage,
+            if (!validationData.haveError) {
+                const { backImage,
                     birthDate,
                     frontImage,
                     image,
                     nationality,
                     selfieImage,
-                    typeVerification
-                });
+                    typeVerification } = req.body;
 
-            if (sendVerification.success) {
-                return this.OkObjectResult(res, {
-                    data: sendVerification.result
-                }, sendVerification.message);
+                let userId = (await unitOfWork.jwtRepository.DecodeToken(req, res, next)).result;
+
+                const sendVerification = await unitOfWork.UserVerification
+                    .verification(userId, {
+                        backImage,
+                        birthDate,
+                        frontImage,
+                        image,
+                        nationality,
+                        selfieImage,
+                        typeVerification
+                    });
+
+                if (sendVerification.success) {
+                    return this.OkObjectResult(res, {
+                        data: sendVerification.result
+                    }, sendVerification.message);
+                }
+
+                return this.BadRerquest(res, sendVerification.message);
             }
 
-            return this.BadRerquest(res, sendVerification.message);
+            return this.BadRerquest(res, validationData.errorMessage.toString());
 
         } catch (error: any) {
 
             return this.BadRerquest(res, error.message);
         }
+
+    }
+
+    /**********
+*
+* Get User Verification
+*
+************/
+    async GetUserVerification(req: Request, res: Response, next: NextFunction) {
+        try {
+
+            let validationData = await this.ValidationAction(req, res);
+
+            if (!validationData.haveError) {
+
+                let userId = (await unitOfWork.jwtRepository.DecodeToken(req, res, next)).result;
+
+                const getVerification = await unitOfWork.UserVerification
+                    .getUServerificationInfo(userId);
+
+                if (getVerification.success) {
+                    return this.OkObjectResult(res, {
+                        data: getVerification.result
+                    }, getVerification.message);
+                }
+
+                return this.BadRerquest(res, getVerification.message);
+            }
+
+            return this.BadRerquest(res, validationData.errorMessage.toString());
+
+        } catch (error: any) {
+
+            return this.BadRerquest(res, error.message);
+        }
+
     }
 
 }

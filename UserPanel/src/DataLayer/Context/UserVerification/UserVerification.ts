@@ -37,6 +37,10 @@ const UserVerificationSchema = new mongoose.Schema({
         type: Date,
         require: true
     },
+    description: {
+        type: String,
+        require: false
+    },
     updateAt: {
         type: Date,
         require: false

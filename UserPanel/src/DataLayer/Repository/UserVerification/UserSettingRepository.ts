@@ -115,7 +115,6 @@ export default class UserVerificationRepository implements IUserVerificationRepo
 
         try {
 
-            console.log(item);
 
             const userVerification = UserVerificationEntitie.build({
                 backImage: item.backImage,
@@ -130,6 +129,33 @@ export default class UserVerificationRepository implements IUserVerificationRepo
             });
 
             userVerification.save();
+            console.log(userVerification);
+            return OperationResult.BuildSuccessResult("success send verification", {
+                createdAt: userVerification.createdAt,
+                id: userVerification.id,
+                status: userVerification.status,
+                type: userVerification.typeVerification,
+                updatedAt: userVerification.updateAt
+            });
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+
+
+    }
+
+    async getUServerificationInfo(userId: string): Promise<OperationResult<UserVerificationResult>> {
+
+        try {
+
+
+            const userVerification = await UserVerificationEntitie.findOne({ userId: userId }, {}, { sort: { createdAt: -1 } })
+
+            if (!userVerification) {
+                return OperationResult.BuildFailur("we can not find user verfication inforamtion for this user");
+
+            }
 
             return OperationResult.BuildSuccessResult("success send verification", {
                 createdAt: userVerification.createdAt,
