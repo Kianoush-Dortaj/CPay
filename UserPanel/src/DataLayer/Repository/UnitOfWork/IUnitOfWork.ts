@@ -21,7 +21,7 @@ import { IUserActivityRepository } from "../UserActivity/IUserActivityRepository
 import { IUserLevelRepository } from "../UserLevel/IUserLevelRepository";
 import { IUserRoleRepository } from "../UserRole/IUserRoleRepository";
 import { IUserVerificationRepository } from "../UserVerification/IUserVerificationRepository";
-import UserVerificationRepository from "../UserVerification/UserSettingRepository";
+import UserVerificationRepository from "../UserVerification/UserVerificationRepository";
 
 export interface IUnitOfWork {
 

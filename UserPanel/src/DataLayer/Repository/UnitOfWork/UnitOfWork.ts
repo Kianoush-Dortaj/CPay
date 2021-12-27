@@ -46,7 +46,7 @@ import UserActiveLevelRepository from '../UserActiveLevel/UserActiveLevelReposit
 import { IUserActiveLevelRepository } from '../UserActiveLevel/IUserActiveLevelRepository';
 import { CpayNotification } from '../../../Utilities/Notification/Notification';
 import { IUserVerificationRepository } from '../UserVerification/IUserVerificationRepository';
-import UserVerificationRepository from '../UserVerification/UserSettingRepository';
+import UserVerificationRepository from '../UserVerification/UserVerificationRepository';
 
 export default new class UnitOfWork implements IUnitOfWork {
 
