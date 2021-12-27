@@ -10,4 +10,12 @@ userLevelRouter.post('/getAll',
     // authController.AuthToken,
     userVerificationController.GetAllUserVerifications);
 
+userLevelRouter.get('/getById/:id',
+    // authController.AuthToken,
+    userVerificationController.GetByIdUserVerification);
+
+userLevelRouter.put('/changeStatus/:id',
+    // authController.AuthToken,
+    userVerificationController.ChangeUserVerificationStatus);
+
 export default userLevelRouter;

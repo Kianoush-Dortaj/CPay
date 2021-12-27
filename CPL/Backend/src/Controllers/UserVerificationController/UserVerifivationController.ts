@@ -11,10 +11,10 @@ export default new class UserVerificationController extends BaseController {
 
 
     /**********
-*
-* Get User Verification
-*
-************/
+    *
+    * Get User Verification
+    *
+    ************/
     async GetAllUserVerifications(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
@@ -27,7 +27,7 @@ export default new class UserVerificationController extends BaseController {
 
             if (getAllrolePagingRole.success) {
                 return this.OkObjectResultPager(res, {
-                    count: getAllrolePagingRole.result !== undefined ? getAllrolePagingRole.result.length : 0,
+                    count: getAllrolePagingRole.result !== undefined ? getAllrolePagingRole.result.count : 0,
                     data: getAllrolePagingRole.result
                 }, '')
 
@@ -39,5 +39,65 @@ export default new class UserVerificationController extends BaseController {
         }
 
     }
+
+    /**********
+    *
+    * Get User Verification By Id
+    *
+    ************/
+    async GetByIdUserVerification(req: Request, res: Response, next: NextFunction) {
+
+        let validationData = await this.ValidationAction(req, res);
+
+        if (!validationData.haveError) {
+
+            const userVerificationId = req.params.id;
+
+            const getCountrybyId = await unitOfWork.UserVerification
+                .getUServerificationById(userVerificationId);
+
+            if (getCountrybyId.success) {
+                return this.OkObjectResult(res, {
+                    data: getCountrybyId.result
+                }, "Get User Verification By Id");
+
+            }
+            return this.BadRerquest(res, getCountrybyId.message);
+
+        } else {
+            return this.BadRerquest(res, validationData.errorMessage.toString());
+        }
+    }
+
+
+        /**********
+        *
+        * Change User Verification Status
+        *
+        ************/
+         async ChangeUserVerificationStatus(req: Request, res: Response, next: NextFunction) {
+
+            let validationData = await this.ValidationAction(req, res);
+    
+            if (!validationData.haveError) {
+    
+                const userVerificationId = req.params.id;
+                const {status , description} = req.body;
+    
+                const getCountrybyId = await unitOfWork.UserVerification
+                    .changeUserVerificationStatus(userVerificationId,status,description);
+    
+                if (getCountrybyId.success) {
+                    return this.OkObjectResult(res, {
+                        data: getCountrybyId.result
+                    }, "Change User status");
+    
+                }
+                return this.BadRerquest(res, getCountrybyId.message);
+    
+            } else {
+                return this.BadRerquest(res, validationData.errorMessage.toString());
+            }
+        }
 
 }
