@@ -20,6 +20,7 @@ import IUserRepository from "../User/IUserRepository";
 import { IUserActivityRepository } from "../UserActivity/IUserActivityRepository";
 import { IUserLevelRepository } from "../UserLevel/IUserLevelRepository";
 import { IUserRoleRepository } from "../UserRole/IUserRoleRepository";
+import { IUserVerificationRepository } from "../UserVerification/IUserVerificationRepository";
 
 export interface IUnitOfWork {
 
@@ -43,6 +44,7 @@ export interface IUnitOfWork {
     LanguageRepository: ILanguageRepository;
     GetwayTypeRepository: IGetwayTypeRepository;
     websocket: Websocket;
-    CountryRepository : ICountryRepository;
+    UserVerification: IUserVerificationRepository;
+    CountryRepository: ICountryRepository;
 
 }

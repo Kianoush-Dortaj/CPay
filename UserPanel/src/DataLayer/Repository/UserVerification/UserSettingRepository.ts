@@ -20,6 +20,8 @@ import { UserVerificationResult } from "../../../DTO/UserVerification/verificati
 import { UserVerificationModel } from "../../../DTO/UserVerification/user-verification-model";
 import { UserVerificationEntitie } from "../../Context/UserVerification/UserVerification";
 import { Status } from "../../../DTO/Common/Status.enum";
+import { GetAllPagingModel } from "../../../DTO/Share/GetAllPaging";
+import { FilterViewModel } from "../../../DTO/Common/FilterViewModel";
 
 export default class UserVerificationRepository implements IUserVerificationRepository {
 
@@ -145,24 +147,32 @@ export default class UserVerificationRepository implements IUserVerificationRepo
 
     }
 
-    async getUServerificationInfo(userId: string): Promise<OperationResult<UserVerificationResult>> {
+    async getUServerificationInfo(items: FilterViewModel<any>): Promise<OperationResult<GetAllPagingModel<any>>> {
 
         try {
 
+            const query: any = [];
 
-            const userVerification = await UserVerificationEntitie.findOne({ userId: userId }, {}, { sort: { createdAt: -1 } })
+            Object.keys(items.filters).forEach(key => {
+                const value = items.filters[key as keyof any];
+                if (key === 'name' && value) {
+                    query.push({ name: { $regex: `(.*)${value}(.*)` } });
+                } else if (key === 'symbol' && value) {
+                    query.push({ symbol: { $regex: `(.*)${value}(.*)` } });
+                }
+            });
 
-            if (!userVerification) {
-                return OperationResult.BuildFailur("we can not find user verfication inforamtion for this user");
+            let exchnageList = await UserVerificationEntitie.find(...query,{},{ sort: { createdAt: -1 }}).skip((items.page - 1) * items.pageSize)
+                .limit(items.pageSize)
 
-            }
+            let count = await UserVerificationEntitie.find({})
+                .where("isDelete")
+                .equals(false)
+                .estimatedDocumentCount();
 
-            return OperationResult.BuildSuccessResult("success send verification", {
-                createdAt: userVerification.createdAt,
-                id: userVerification.id,
-                status: userVerification.status,
-                type: userVerification.typeVerification,
-                updatedAt: userVerification.updateAt
+            return OperationResult.BuildSuccessResult<GetAllPagingModel<any>>("Get All data Paging", {
+                data: exchnageList,
+                count: count
             });
 
         } catch (error: any) {

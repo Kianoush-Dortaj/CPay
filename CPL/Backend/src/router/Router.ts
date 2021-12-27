@@ -15,6 +15,8 @@ import langaugeRouter from './Langauge/Langauge.router';
 import getwayTypeRouter from './GetwayType/getwayType.router';
 import userRouter from './User Manager/user.router';
 import countryRouter from './Country/Country.router';
+import userVerificationRouter from './UserVerification/user-verification.router';
+
 
 
 const router = Router();
@@ -50,5 +52,8 @@ router.use('/api/getwayType', getwayTypeRouter);
 router.use('/api/user', userRouter);
 
 router.use('/api/country', countryRouter);
+
+router.use('/api/userVerification', userVerificationRouter);
+
 
 export default router;
