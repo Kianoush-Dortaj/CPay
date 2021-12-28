@@ -116,10 +116,10 @@ export default new class SettingController extends BaseController {
     }
 
     /**********
-*
-* Get User Verification
-*
-************/
+    *
+    * Get User Verification
+    *
+    ************/
     async GetUserVerification(req: Request, res: Response, next: NextFunction) {
         try {
 
@@ -130,7 +130,7 @@ export default new class SettingController extends BaseController {
                 let userId = (await unitOfWork.jwtRepository.DecodeToken(req, res, next)).result;
 
                 const getVerification = await unitOfWork.UserVerification
-                    .getUServerificationInfo(userId);
+                    .getUServerificationById(userId);
 
                 if (getVerification.success) {
                     return this.OkObjectResult(res, {
