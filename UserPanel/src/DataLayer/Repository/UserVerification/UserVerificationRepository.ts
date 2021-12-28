@@ -11,6 +11,7 @@ import UtilService from "../../../Utilities/Util";
 import RedisKey from "../../../Utilities/Redis/RedisKey";
 import Sms from "../../../Utilities/SMS/Sms";
 import { UserVerificationResult } from "../../../DTO/UserVerification/verification-result";
+import Email from "../../../Utilities/Email/Email";
 
 export default class UserVerificationRepository implements IUserVerificationRepository {
 
@@ -165,6 +166,93 @@ export default class UserVerificationRepository implements IUserVerificationRepo
 
                 if (userchangePhoneNumberStatus.success) {
                     return OperationResult.BuildSuccessResult("Success Set Phone Number", true);
+
+                }
+                return OperationResult.BuildFailur(checkHashCode.message);
+
+            }
+
+            return OperationResult.BuildFailur(checkHashCode.message);
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+
+
+    }
+
+    async changeEamil(userId: string, email: string): Promise<OperationResult<string>> {
+
+        try {
+
+            let userInfo = await UnitOfWork.userRepository.FindUserById(userId);
+
+            if (userInfo.success) {
+                console.log(email);
+                let findUserByEmail = await UnitOfWork.userRepository
+                    .FindByEmail(email);
+
+                if (findUserByEmail.success && findUserByEmail.result) {
+                    if (findUserByEmail.result.id === userId) {
+
+                        return OperationResult.BuildFailur("you are selected this email , please try an other number");
+
+                    }
+
+                    return OperationResult.BuildFailur("you can not select this email , this email selected by other user");
+
+                }
+                const generateCode = await UtilService.GerateHashCode(RedisKey.ConfirmEmail + userId);
+
+                if (generateCode.success && generateCode.result) {
+
+                    const sendSMS = await Email.sendEmail(email, 'Confirm email', generateCode.result.code)
+                    if (sendSMS.success) {
+
+                        return OperationResult.BuildSuccessResult('Success Send Code to Your email', generateCode.result?.hash);
+
+                    }
+                    return OperationResult.BuildFailur('we have a problem with send code yo your email , please try a few minute later');
+
+                }
+
+            }
+            return OperationResult.BuildFailur('We can not find this user , please try with currect information');
+
+        } catch (error: any) {
+            return OperationResult.BuildFailur(error.message);
+        }
+
+
+    }
+
+    async checkEmail(userId: string, code: string, hash: string, email: string): Promise<OperationResult<boolean>> {
+
+        try {
+
+            const checkHashCode = await UtilService.CheckHashCode(RedisKey.ConfirmEmail + userId, code, hash)
+
+            if (checkHashCode.success) {
+
+                let findUserByPhoneNmber = await UnitOfWork.userRepository
+                    .FindByEmail(email);
+
+                if (findUserByPhoneNmber.success && findUserByPhoneNmber.result) {
+                    if (findUserByPhoneNmber.result.id === userId) {
+
+                        return OperationResult.BuildFailur("you are selected this email , please try an other email");
+
+                    }
+
+                    return OperationResult.BuildFailur("you can not select this email , this email selected by other user");
+
+                }
+
+                const userchangePhoneNumberStatus = await UnitOfWork.userRepository
+                    .ChangeEmailStatus(userId, true, email);
+
+                if (userchangePhoneNumberStatus.success) {
+                    return OperationResult.BuildSuccessResult("Success Set email", true);
 
                 }
                 return OperationResult.BuildFailur(checkHashCode.message);

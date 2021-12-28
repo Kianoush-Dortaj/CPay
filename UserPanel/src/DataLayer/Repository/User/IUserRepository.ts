@@ -33,4 +33,6 @@ export default interface IUserRepository {
     FindUserByEmailForLogin(email: string): Promise<OperationResult<any>>;
     Change2FaStatus(userId: string, value: boolean): Promise<OperationResult<boolean>>;
     FindUserByPhoneNmber(phoneNumber: string): Promise<OperationResult<any>>;
+    ChangeEmailStatus(userId: string, value: boolean, email: string): Promise<OperationResult<boolean>>;
+    FindByEmail(email: string): Promise<OperationResult<IUserDoc>>;
 }

@@ -66,6 +66,62 @@ export default new class SettingController extends BaseController {
         }
     }
     /**********
+*
+* Change Email
+*
+************/
+    async SetEmail(req: Request, res: Response, next: NextFunction) {
+        try {
+
+            const { email } = req.body;
+
+            let userId = (await unitOfWork.jwtRepository.DecodeToken(req, res, next)).result;
+
+            const setPhoneNumber = await unitOfWork.UserVerification
+                .changeEamil(userId, email);
+
+            if (setPhoneNumber.success) {
+                return this.OkObjectResult(res, {
+                    data: {
+                        hash: setPhoneNumber.result
+                    }
+                }, setPhoneNumber.message);
+            }
+
+            return this.BadRerquest(res, setPhoneNumber.message);
+
+        } catch (error: any) {
+
+            return this.BadRerquest(res, error.message);
+        }
+    }
+    /**********
+    *
+    * Check Email
+    *
+    ************/
+    async CheckActiveEmail(req: Request, res: Response, next: NextFunction) {
+        try {
+
+            const { phoneNumber, hash, code } = req.body;
+
+            let userId = (await unitOfWork.jwtRepository.DecodeToken(req, res, next)).result;
+
+            const setPhoneNumber = await unitOfWork.UserVerification
+                .checkEmail(userId, code, hash, phoneNumber);
+
+            if (setPhoneNumber.success) {
+                return this.Ok(res, setPhoneNumber.message);
+            }
+
+            return this.BadRerquest(res, setPhoneNumber.message);
+
+        } catch (error: any) {
+
+            return this.BadRerquest(res, error.message);
+        }
+    }
+    /**********
     *
     * Send Verification
     *

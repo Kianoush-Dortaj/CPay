@@ -12,13 +12,21 @@ settingRouter.put("/SetPhoneNumber",
     authController.AuthToken,
     UserVerificationController.SetPhoneNumber);
 
-settingRouter.get("/GetUSerVerificationInfo",
-    authController.AuthToken,
-    UserVerificationController.GetUserVerification);
-
 settingRouter.post("/CheckPhoneNumber",
     authController.AuthToken,
     UserVerificationController.CheckActivePhoneNumber);
+
+settingRouter.put("/ChangeEmail",
+    authController.AuthToken,
+    UserVerificationController.SetEmail);
+
+settingRouter.post("/CheckActivationEmail",
+    authController.AuthToken,
+    UserVerificationController.CheckActiveEmail);
+
+settingRouter.get("/GetUSerVerificationInfo",
+    authController.AuthToken,
+    UserVerificationController.GetUserVerification);
 
 settingRouter.post("/Verification",
     authController.AuthToken,

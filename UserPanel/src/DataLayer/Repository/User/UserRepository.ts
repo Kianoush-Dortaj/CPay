@@ -97,6 +97,21 @@ export class UserRepository implements IUserRepository {
         }
     }
 
+    async FindByEmail(email: string): Promise<OperationResult<IUserDoc>> {
+        console.log(email)
+        try {
+
+            let user = await UserEntite.findOne({ email: email});
+            console.log(user)
+            if (user) {
+                return new OperationResult<IUserDoc>(true, "User Find", user);
+            }
+            return new OperationResult<IUserDoc>(false, "User can Not find");
+        } catch (error: any) {
+            return new OperationResult<IUserDoc>(false, error.message);
+        }
+    }
+
     async FindUserById(id: string): Promise<OperationResult<IUserDoc>> {
 
         try {
@@ -451,6 +466,29 @@ export class UserRepository implements IUserRepository {
             return OperationResult.BuildFailur(error.message);
         }
     }
+
+        /**********
+    * Change 2FA Status
+    ********/
+         async ChangeEmailStatus(userId: string, value: boolean, email: string): Promise<OperationResult<boolean>> {
+
+            try {
+    
+                await UserEntite.updateOne(
+                    { _id: userId },
+                    {
+                        $set: {
+                            confirmEmail: value,
+                            email: email
+                        },
+                    }
+                );
+                return OperationResult.BuildSuccessResult('', true);
+            }
+            catch (error: any) {
+                return OperationResult.BuildFailur(error.message);
+            }
+        }
 
 
     /**********
