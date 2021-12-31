@@ -13,6 +13,8 @@ import * as dotenv from 'dotenv';
 import Sms from './Utilities/SMS/Sms';
 import Email from './Utilities/Email/Email';
 import { CpayNotification } from './Utilities/Notification/Notification';
+import { CreateWalletRequest } from './GRPC/models/ERC20';
+import { erc20ClientService } from './GRPC/services/ERC20.grpc.service';
 
 declare global {
     var web3: Web3;
@@ -24,6 +26,15 @@ export default new class Startup {
 
     constructor() {
 
+        const param: CreateWalletRequest = {
+            coinId: 'BTC',
+            networkId: 'ERC20',
+            oprtaionStatus: 'success',
+            userId: 'kianoush'
+        };
+        erc20ClientService.CreateWallet(param).then(data => {
+            console.log(data);
+        });
         this.CreateServer();
         this.ConfigMidllware();
         this.ConfigDatabase();
@@ -40,7 +51,7 @@ export default new class Startup {
 
         this.app.listen(this.port, () => {
             console.log(`Cpay is listening on port ${this.port}`);
-        })
+        });
 
         UnitOfWork.websocket.InitialWebsocket();
         CpayNotification.Initial();

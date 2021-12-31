@@ -7,8 +7,9 @@ import UnitOfWork from './DataLayer/Repository/UnitOfWork/UnitOfWork';
 import swaggerUi from 'swagger-ui-express'
 import * as swaggerDocument from './swagger.json';
 import Web3 from "web3";
-import { MessageBroker } from './MessageBroker/MessageBroker';
 import CpayCoin from './CoinConfig/coin-config';
+import { GRPCConfig } from './GRPC/utiles/GRPC.config';
+import { CreateWalletRequest } from './GRPC/models/ERC20';
 
 declare global {
     var web3: Web3;
@@ -16,24 +17,22 @@ declare global {
 
 export default new class Startup {
     app = express();
-    port = process.env.PORT || 1348;
+    port = 1148;
 
     constructor() {
+
+
+        GRPCConfig.inital();
+
+        // clientService.CreateWallet(param).then(data => {
+        //     console.log(data)
+        // });
         CpayCoin.Initialweb3();
-        this.MessageBroker().then();
         this.CreateServer();
         this.ConfigMidllware();
         this.ConfigDatabase();
     }
 
-    /**
-     * Message Broker
-     */
-
-    async MessageBroker(): Promise<void> {
-        await MessageBroker.Initial('coin', 'transaction');
-
-    }
 
     /**
      * Run Server
@@ -58,9 +57,6 @@ export default new class Startup {
         this.app.use(express.json());
         this.app.use(cros(corsOptions));
         this.app.use(express.static('./../../../Coin/build/contracts'));
-       this.app.get('/',(req,res,next)=>{
-        res.send('its worked');
-       })
         // this.app.use(router);
         this.app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
