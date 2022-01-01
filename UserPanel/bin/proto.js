@@ -5,8 +5,8 @@ const rimraf = require('rimraf');
 // https://github.com/shelljs/shelljs/issues/469
 process.env.PATH += (path.delimiter + path.join(process.cwd(), 'node_modules', '.bin'));
 
-const PROTO_DIR = path.join(__dirname, '../src/GRPC/protos');
-const MODEL_DIR = path.join(__dirname, '../src/GRPC/models');
+const PROTO_DIR = path.join(__dirname, '../src/Utilities/GRPC/protos');
+const MODEL_DIR = path.join(__dirname, '../src/Utilities/GRPC/models');
 const PROTOC_PATH = path.join(__dirname, "../node_modules/grpc-tools/bin/protoc");
 const PLUGIN_PATH = path.join(__dirname, "../node_modules/.bin/protoc-gen-ts_proto");
 

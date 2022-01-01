@@ -8,8 +8,7 @@ import swaggerUi from 'swagger-ui-express'
 import * as swaggerDocument from './swagger.json';
 import Web3 from "web3";
 import CpayCoin from './CoinConfig/coin-config';
-import { GRPCConfig } from './GRPC/utiles/GRPC.config';
-import { CreateWalletRequest } from './GRPC/models/ERC20';
+import { GRPCConfig } from './Utilities/GRPC/utiles/GRPC.config';
 
 declare global {
     var web3: Web3;
@@ -20,7 +19,6 @@ export default new class Startup {
     port = 1148;
 
     constructor() {
-
 
         GRPCConfig.inital();
 
@@ -39,7 +37,7 @@ export default new class Startup {
      */
     CreateServer(): void {
 
-        this.app.listen(this.port, () => {
+        this.app.listen(1148, () => {
             console.log(`Cpay is listening on port ${this.port}`);
         })
 

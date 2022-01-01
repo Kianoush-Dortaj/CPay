@@ -163,7 +163,7 @@ export default class RoleRepository {
                 .populate({
                     path: "rolePermissionId",
                     select: "permissionId"
-                })
+                });
 
             if (!getRoleById) {
 

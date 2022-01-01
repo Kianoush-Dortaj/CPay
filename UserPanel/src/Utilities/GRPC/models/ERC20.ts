@@ -14,62 +14,67 @@ import {
 } from "@grpc/grpc-js";
 import _m0 from "protobufjs/minimal";
 
-export interface CreateWalletRequest {
-  userId: string;
-  networkId: string;
-  coinId: string;
-  oprtaionStatus: string;
+export enum OperationStatus {
+  SUCCESS = 0,
+  FAIL = 1,
+  UNRECOGNIZED = -1,
 }
+
+export function operationStatusFromJSON(object: any): OperationStatus {
+  switch (object) {
+    case 0:
+    case "SUCCESS":
+      return OperationStatus.SUCCESS;
+    case 1:
+    case "FAIL":
+      return OperationStatus.FAIL;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return OperationStatus.UNRECOGNIZED;
+  }
+}
+
+export function operationStatusToJSON(object: OperationStatus): string {
+  switch (object) {
+    case OperationStatus.SUCCESS:
+      return "SUCCESS";
+    case OperationStatus.FAIL:
+      return "FAIL";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+export interface EmptyRequest {}
 
 export interface CreateWalletReposnse {
-  oprtaionStatus: string;
+  operationStatus: OperationStatus;
+  operationMessage: string;
   walletAddress: string;
   userId: string;
+  privateKey: string;
 }
 
-function createBaseCreateWalletRequest(): CreateWalletRequest {
-  return { userId: "", networkId: "", coinId: "", oprtaionStatus: "" };
+function createBaseEmptyRequest(): EmptyRequest {
+  return {};
 }
 
-export const CreateWalletRequest = {
+export const EmptyRequest = {
   encode(
-    message: CreateWalletRequest,
+    _: EmptyRequest,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.userId !== "") {
-      writer.uint32(10).string(message.userId);
-    }
-    if (message.networkId !== "") {
-      writer.uint32(18).string(message.networkId);
-    }
-    if (message.coinId !== "") {
-      writer.uint32(26).string(message.coinId);
-    }
-    if (message.oprtaionStatus !== "") {
-      writer.uint32(34).string(message.oprtaionStatus);
-    }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): CreateWalletRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): EmptyRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCreateWalletRequest();
+    const message = createBaseEmptyRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.userId = reader.string();
-          break;
-        case 2:
-          message.networkId = reader.string();
-          break;
-        case 3:
-          message.coinId = reader.string();
-          break;
-        case 4:
-          message.oprtaionStatus = reader.string();
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -78,51 +83,32 @@ export const CreateWalletRequest = {
     return message;
   },
 
-  fromJSON(object: any): CreateWalletRequest {
-    const message = createBaseCreateWalletRequest();
-    message.userId =
-      object.userId !== undefined && object.userId !== null
-        ? String(object.userId)
-        : "";
-    message.networkId =
-      object.networkId !== undefined && object.networkId !== null
-        ? String(object.networkId)
-        : "";
-    message.coinId =
-      object.coinId !== undefined && object.coinId !== null
-        ? String(object.coinId)
-        : "";
-    message.oprtaionStatus =
-      object.oprtaionStatus !== undefined && object.oprtaionStatus !== null
-        ? String(object.oprtaionStatus)
-        : "";
+  fromJSON(_: any): EmptyRequest {
+    const message = createBaseEmptyRequest();
     return message;
   },
 
-  toJSON(message: CreateWalletRequest): unknown {
+  toJSON(_: EmptyRequest): unknown {
     const obj: any = {};
-    message.userId !== undefined && (obj.userId = message.userId);
-    message.networkId !== undefined && (obj.networkId = message.networkId);
-    message.coinId !== undefined && (obj.coinId = message.coinId);
-    message.oprtaionStatus !== undefined &&
-      (obj.oprtaionStatus = message.oprtaionStatus);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<CreateWalletRequest>, I>>(
-    object: I
-  ): CreateWalletRequest {
-    const message = createBaseCreateWalletRequest();
-    message.userId = object.userId ?? "";
-    message.networkId = object.networkId ?? "";
-    message.coinId = object.coinId ?? "";
-    message.oprtaionStatus = object.oprtaionStatus ?? "";
+  fromPartial<I extends Exact<DeepPartial<EmptyRequest>, I>>(
+    _: I
+  ): EmptyRequest {
+    const message = createBaseEmptyRequest();
     return message;
   },
 };
 
 function createBaseCreateWalletReposnse(): CreateWalletReposnse {
-  return { oprtaionStatus: "", walletAddress: "", userId: "" };
+  return {
+    operationStatus: 0,
+    operationMessage: "",
+    walletAddress: "",
+    userId: "",
+    privateKey: "",
+  };
 }
 
 export const CreateWalletReposnse = {
@@ -130,14 +116,20 @@ export const CreateWalletReposnse = {
     message: CreateWalletReposnse,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.oprtaionStatus !== "") {
-      writer.uint32(10).string(message.oprtaionStatus);
+    if (message.operationStatus !== 0) {
+      writer.uint32(8).int32(message.operationStatus);
+    }
+    if (message.operationMessage !== "") {
+      writer.uint32(18).string(message.operationMessage);
     }
     if (message.walletAddress !== "") {
-      writer.uint32(18).string(message.walletAddress);
+      writer.uint32(26).string(message.walletAddress);
     }
     if (message.userId !== "") {
-      writer.uint32(26).string(message.userId);
+      writer.uint32(34).string(message.userId);
+    }
+    if (message.privateKey !== "") {
+      writer.uint32(42).string(message.privateKey);
     }
     return writer;
   },
@@ -153,13 +145,19 @@ export const CreateWalletReposnse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.oprtaionStatus = reader.string();
+          message.operationStatus = reader.int32() as any;
           break;
         case 2:
-          message.walletAddress = reader.string();
+          message.operationMessage = reader.string();
           break;
         case 3:
+          message.walletAddress = reader.string();
+          break;
+        case 4:
           message.userId = reader.string();
+          break;
+        case 5:
+          message.privateKey = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -171,9 +169,13 @@ export const CreateWalletReposnse = {
 
   fromJSON(object: any): CreateWalletReposnse {
     const message = createBaseCreateWalletReposnse();
-    message.oprtaionStatus =
-      object.oprtaionStatus !== undefined && object.oprtaionStatus !== null
-        ? String(object.oprtaionStatus)
+    message.operationStatus =
+      object.operationStatus !== undefined && object.operationStatus !== null
+        ? operationStatusFromJSON(object.operationStatus)
+        : 0;
+    message.operationMessage =
+      object.operationMessage !== undefined && object.operationMessage !== null
+        ? String(object.operationMessage)
         : "";
     message.walletAddress =
       object.walletAddress !== undefined && object.walletAddress !== null
@@ -183,16 +185,23 @@ export const CreateWalletReposnse = {
       object.userId !== undefined && object.userId !== null
         ? String(object.userId)
         : "";
+    message.privateKey =
+      object.privateKey !== undefined && object.privateKey !== null
+        ? String(object.privateKey)
+        : "";
     return message;
   },
 
   toJSON(message: CreateWalletReposnse): unknown {
     const obj: any = {};
-    message.oprtaionStatus !== undefined &&
-      (obj.oprtaionStatus = message.oprtaionStatus);
+    message.operationStatus !== undefined &&
+      (obj.operationStatus = operationStatusToJSON(message.operationStatus));
+    message.operationMessage !== undefined &&
+      (obj.operationMessage = message.operationMessage);
     message.walletAddress !== undefined &&
       (obj.walletAddress = message.walletAddress);
     message.userId !== undefined && (obj.userId = message.userId);
+    message.privateKey !== undefined && (obj.privateKey = message.privateKey);
     return obj;
   },
 
@@ -200,9 +209,11 @@ export const CreateWalletReposnse = {
     object: I
   ): CreateWalletReposnse {
     const message = createBaseCreateWalletReposnse();
-    message.oprtaionStatus = object.oprtaionStatus ?? "";
+    message.operationStatus = object.operationStatus ?? 0;
+    message.operationMessage = object.operationMessage ?? "";
     message.walletAddress = object.walletAddress ?? "";
     message.userId = object.userId ?? "";
+    message.privateKey = object.privateKey ?? "";
     return message;
   },
 };
@@ -212,9 +223,9 @@ export const ERC20Service = {
     path: "/cpay.erc20.ERC20/CreateWallet",
     requestStream: false,
     responseStream: false,
-    requestSerialize: (value: CreateWalletRequest) =>
-      Buffer.from(CreateWalletRequest.encode(value).finish()),
-    requestDeserialize: (value: Buffer) => CreateWalletRequest.decode(value),
+    requestSerialize: (value: EmptyRequest) =>
+      Buffer.from(EmptyRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer) => EmptyRequest.decode(value),
     responseSerialize: (value: CreateWalletReposnse) =>
       Buffer.from(CreateWalletReposnse.encode(value).finish()),
     responseDeserialize: (value: Buffer) => CreateWalletReposnse.decode(value),
@@ -222,19 +233,19 @@ export const ERC20Service = {
 } as const;
 
 export interface ERC20Server extends UntypedServiceImplementation {
-  createWallet: handleUnaryCall<CreateWalletRequest, CreateWalletReposnse>;
+  createWallet: handleUnaryCall<EmptyRequest, CreateWalletReposnse>;
 }
 
 export interface ERC20Client extends Client {
   createWallet(
-    request: CreateWalletRequest,
+    request: EmptyRequest,
     callback: (
       error: ServiceError | null,
       response: CreateWalletReposnse
     ) => void
   ): ClientUnaryCall;
   createWallet(
-    request: CreateWalletRequest,
+    request: EmptyRequest,
     metadata: Metadata,
     callback: (
       error: ServiceError | null,
@@ -242,7 +253,7 @@ export interface ERC20Client extends Client {
     ) => void
   ): ClientUnaryCall;
   createWallet(
-    request: CreateWalletRequest,
+    request: EmptyRequest,
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (

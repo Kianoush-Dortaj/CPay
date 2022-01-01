@@ -110,7 +110,7 @@ export default class RolePermissionRepository implements IRolePermissionReposito
      * Make Tree Permission
      */
     private async MakeTreePermission(permissions: any): Promise<FileNode[]> {
-        console.log(permissions)
+  
         let treeData: FileNode[] = [];
         try {
             let queue: FileNode[] = [];
@@ -144,7 +144,6 @@ export default class RolePermissionRepository implements IRolePermissionReposito
 
             return treeData;
         } catch (error) {
-            console.log(error)
             return treeData;
         }
 

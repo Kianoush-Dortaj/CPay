@@ -47,6 +47,11 @@ import { IUserActiveLevelRepository } from '../UserActiveLevel/IUserActiveLevelR
 import { CpayNotification } from '../../../Utilities/Notification/Notification';
 import { IUserVerificationRepository } from '../UserVerification/IUserVerificationRepository';
 import UserVerificationRepository from '../UserVerification/UserVerificationRepository';
+import { IERC20NetworkRepository } from '../ERC20Network/IERC20Network';
+import ERC20NetworkRepository from '../ERC20Network/ERC20Network';
+import WalletRepository from '../Wallet/WalletRepository';
+import { IWalletRepository } from '../Wallet/IWalletRepository';
+
 
 export default new class UnitOfWork implements IUnitOfWork {
 
@@ -73,7 +78,9 @@ export default new class UnitOfWork implements IUnitOfWork {
     UserSettingRepository: IUserSettingRepository;
     UserActiveLevelRepository: IUserActiveLevelRepository;
     cpayNotification:CpayNotification;
+    ERC20Network : IERC20NetworkRepository;
     UserVerification : IUserVerificationRepository;
+    WalletRepository : IWalletRepository;
     websocket: Websocket;
 
     constructor() {
@@ -103,8 +110,8 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.UserActiveLevelRepository = new UserActiveLevelRepository();
         this.cpayNotification = new CpayNotification();
         this.UserVerification = new UserVerificationRepository(); 
-    
-
+        this.ERC20Network = new ERC20NetworkRepository();
+        this.WalletRepository = new WalletRepository();
     }
 
 }

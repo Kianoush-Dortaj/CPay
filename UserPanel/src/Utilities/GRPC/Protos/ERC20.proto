@@ -1,0 +1,25 @@
+
+syntax = "proto3";
+
+package cpay.erc20;
+
+service ERC20 {
+    rpc CreateWallet(EmptyRequest) returns (CreateWalletReposnse) {}
+}
+
+message EmptyRequest {
+ 
+}
+
+message CreateWalletReposnse {
+    OperationStatus operationStatus =1;
+    string operationMessage =2;
+    string walletAddress =3;
+    string userId =4;
+    string privateKey =5 ;
+}
+
+enum OperationStatus {
+    SUCCESS =0 ;
+    FAIL = 1;
+}

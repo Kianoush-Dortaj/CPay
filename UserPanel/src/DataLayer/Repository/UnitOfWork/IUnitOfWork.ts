@@ -4,6 +4,7 @@ import IAdminRepository from "../Admin/IAdminRepository";
 import { ICoinRepository } from "../Coin/ICoinRepository";
 import { IComissionRepository } from "../Comission/IComissionRepository";
 import { ICurrencyPairRepository } from "../CurrencyPair/ICurrencyPairRepository";
+import { IERC20NetworkRepository } from "../ERC20Network/IERC20Network";
 import { IExchangeRepository } from "../Exchange/IExchangeRepository";
 import { IGetwayTypeRepository } from "../GetwayType/IGetwayTypeRepository";
 import { IJWTRepository } from "../JWT/IJWTRepository";
@@ -22,6 +23,7 @@ import { IUserLevelRepository } from "../UserLevel/IUserLevelRepository";
 import { IUserRoleRepository } from "../UserRole/IUserRoleRepository";
 import { IUserVerificationRepository } from "../UserVerification/IUserVerificationRepository";
 import UserVerificationRepository from "../UserVerification/UserVerificationRepository";
+import { IWalletRepository } from "../Wallet/IWalletRepository";
 
 export interface IUnitOfWork {
 
@@ -46,6 +48,8 @@ export interface IUnitOfWork {
     GetwayTypeRepository: IGetwayTypeRepository;
     UserActiveLevelRepository: IUserActiveLevelRepository;
     UserVerification : IUserVerificationRepository;
+    ERC20Network : IERC20NetworkRepository;
     websocket: Websocket;
+    WalletRepository : IWalletRepository;
 
 }

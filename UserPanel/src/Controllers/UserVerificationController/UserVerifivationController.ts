@@ -66,10 +66,10 @@ export default new class SettingController extends BaseController {
         }
     }
     /**********
-*
-* Change Email
-*
-************/
+    *
+    * Change Email
+    *
+    ************/
     async SetEmail(req: Request, res: Response, next: NextFunction) {
         try {
 
