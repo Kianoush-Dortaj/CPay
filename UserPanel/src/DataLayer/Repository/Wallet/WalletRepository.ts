@@ -58,7 +58,8 @@ export default class WalletRepository implements IWalletRepository {
                         return OperationResult.BuildFailur(ERC20WalletInfo.message);
 
                 case "TRC20":
-                    const TRC20WalletInfo = await UnitOfWork.ERC20Network.CreateWallet();
+                    const TRC20WalletInfo = await UnitOfWork.TRC20Network.CreateWallet();
+                    console.log(TRC20WalletInfo);
                     if (TRC20WalletInfo.success && TRC20WalletInfo.result)
                         return OperationResult.BuildSuccessResult("TRC20-Wallet Info", TRC20WalletInfo.result);
                     else

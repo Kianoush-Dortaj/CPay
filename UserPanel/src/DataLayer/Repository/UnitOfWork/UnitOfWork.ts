@@ -51,6 +51,8 @@ import { IERC20NetworkRepository } from '../ERC20Network/IERC20Network';
 import ERC20NetworkRepository from '../ERC20Network/ERC20Network';
 import WalletRepository from '../Wallet/WalletRepository';
 import { IWalletRepository } from '../Wallet/IWalletRepository';
+import { ITRC20NetworkRepository } from '../TRC20Network/ITRC20Network';
+import TRC20NetworkRepository from '../TRC20Network/TRC20Network';
 
 
 export default new class UnitOfWork implements IUnitOfWork {
@@ -79,6 +81,7 @@ export default new class UnitOfWork implements IUnitOfWork {
     UserActiveLevelRepository: IUserActiveLevelRepository;
     cpayNotification:CpayNotification;
     ERC20Network : IERC20NetworkRepository;
+    TRC20Network : ITRC20NetworkRepository;
     UserVerification : IUserVerificationRepository;
     WalletRepository : IWalletRepository;
     websocket: Websocket;
@@ -111,6 +114,7 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.cpayNotification = new CpayNotification();
         this.UserVerification = new UserVerificationRepository(); 
         this.ERC20Network = new ERC20NetworkRepository();
+        this.TRC20Network = new TRC20NetworkRepository();
         this.WalletRepository = new WalletRepository();
     }
 

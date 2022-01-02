@@ -3,26 +3,23 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const path=require('path');
+const path = require('path');
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const cookieParser = require("cookie-parser");
 var cors = require("cors");
 const TRC20Network = require('./network/trc-20');
+const CpayGrpc = require('./GRPC/utiles/grpc.config');
 
 module.exports = class Startup {
   constructor() {
 
     global.tronWeb = {};
-
+    
     TRC20Network.Initial();
-    TRC20Network.getBalance('TKCQ3J9wb2SGrzfANg7LfTapgRJR1E1EeG');
-    TRC20Network.createWallet();
-
+    CpayGrpc.Initial();
     this.CreateServer();
-    this.SetMongoose();
     this.SiteConfiguration();
-    this.ConfigRouter();
   }
   /**
      Config Server 
@@ -61,12 +58,5 @@ module.exports = class Startup {
       })
     );
     app.use(cookieParser("mysecretkey"));
-  }
-  /**
-   * Set Router
-   */
-
-  ConfigRouter() {
-    app.use(require("./routes/index"));
   }
 };

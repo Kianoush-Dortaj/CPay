@@ -16,6 +16,7 @@ import { IPermissionRepository } from "../Permission/IPermissionRepository";
 import { IRoleRepository } from "../Role/IRoleRepository";
 import { IRolePermissionRepository } from "../RolePermission/IRolePermissionRepository";
 import { ISettingRepository } from "../Setting/ISettingRepository";
+import { ITRC20NetworkRepository } from "../TRC20Network/ITRC20Network";
 import IUserRepository from "../User/IUserRepository";
 import { IUserActiveLevelRepository } from "../UserActiveLevel/IUserActiveLevelRepository";
 import { IUserActivityRepository } from "../UserActivity/IUserActivityRepository";
@@ -49,6 +50,7 @@ export interface IUnitOfWork {
     UserActiveLevelRepository: IUserActiveLevelRepository;
     UserVerification : IUserVerificationRepository;
     ERC20Network : IERC20NetworkRepository;
+    TRC20Network : ITRC20NetworkRepository;
     websocket: Websocket;
     WalletRepository : IWalletRepository;
 

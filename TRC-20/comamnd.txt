@@ -1,0 +1,4 @@
+bash grpc_tools_node_protoc \
+    --js_out=import_style=commonjs,binary:src/GRPC/service/ \
+    --grpc_out=grpc_js:src/GRPC/service/ \
+    --proto_path=./src/GRPC/proto ./src/GRPC/proto/*.proto

@@ -1,0 +1,24 @@
+
+syntax = "proto3";
+
+package cpay.trc20;
+
+service TRC20 {
+    rpc CreateWallet(EmptyRequest) returns (CreateWalletReposnse) {}
+}
+
+message EmptyRequest {
+ 
+}
+
+message CreateWalletReposnse {
+    OperationStatus operationStatus =1;
+    string operationMessage =2;
+    string walletAddress =3;
+    string privateKey =4 ;
+}
+
+enum OperationStatus {
+    SUCCESS =0 ;
+    FAIL = 1;
+}

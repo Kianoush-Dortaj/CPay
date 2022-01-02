@@ -10,7 +10,7 @@ module.exports = new (class TRC20Network {
         const solidityNode = 'https://api.shasta.trongrid.io';
         const eventServer = 'https://api.shasta.trongrid.io';
         const privateKey = '4b3479c301087f32fa429926a71f6daee4b2e199c64fac168a11303df4563282';
-        tronWeb = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
+        global.tronWeb = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
 
     }
 
