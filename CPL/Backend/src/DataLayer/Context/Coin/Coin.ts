@@ -19,10 +19,22 @@ const CoinSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    networks: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Network',
-    }],
+    networks: [
+        {
+            networkId:
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Network',
+            },
+            contractAddress: {
+                type: String,
+                require: false
+            },
+            contractAbi: {
+                type: String,
+                require: false
+            }
+        }],
     locals:
         [{
             lang: { type: String },

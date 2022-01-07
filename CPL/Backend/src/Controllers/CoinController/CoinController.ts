@@ -6,6 +6,7 @@ import * as fs from 'fs';
 import { ICoinLocalItem } from '../../DataLayer/Context/Coin/ICoinLocalItems';
 import { MultiLanguageSelect } from '../../DTO/Common/MultiSelectLang';
 import utilService from './../../Utilities/Util';
+import { NetworkInfos } from '../../DTO/Coin/NetworkInfoItems';
 
 export default new class CoinController extends BaseController {
 
@@ -17,33 +18,51 @@ export default new class CoinController extends BaseController {
     async CreateCoin(req: Request, res: Response, next: NextFunction) {
 
         let validationData = await this.ValidationAction(req, res);
+        let coinLocalItem: MultiLanguageSelect<ICoinLocalItem>[] = [];
+        let networkItemInfo: NetworkInfos[] = [];
 
         const { name, symbol, networks, isPublish } = req.body;
 
-        let coinLocalItem: MultiLanguageSelect<ICoinLocalItem>[] = [];
 
-        for (var i = 0; i < Infinity; i++) {
-            if (req.body[`locals[${i}].lang`]) {
-                coinLocalItem.push({
-                    lang: req.body[`locals[${i}].lang`],
-                    value: {
-                        name: req.body[`locals[${i}].value.name`],
-                        langId: req.body[`locals[${i}].value.langId`]
-                    }
-                });
-            } else {
-                break;
-            }
-        }
 
         if (!validationData.haveError) {
+
+
+            for (var i = 0; i < Infinity; i++) {
+                if (req.body[`locals[${i}].lang`]) {
+                    coinLocalItem.push({
+                        lang: req.body[`locals[${i}].lang`],
+                        value: {
+                            name: req.body[`locals[${i}].value.name`],
+                            langId: req.body[`locals[${i}].value.langId`]
+                        }
+                    });
+                } else {
+                    break;
+                }
+            }
+
+
+            for (var i = 0; i < Infinity; i++) {
+ 
+                if (req.body[`networks[${i}].networkId`]) {
+
+                    networkItemInfo.push({
+                        contractAbi: req.body[`networks[${i}].contractAbi`],
+                        contractAddress: req.body[`networks[${i}].contractAddress`],
+                        networkId: req.body[`networks[${i}].networkId`]
+                    });
+                } else {
+                    break;
+                }
+            }
 
             const createCoin = await UnitOfWork.CoinRepository.CreateCoin({
                 name,
                 symbol,
                 isPublish,
                 icon: req.file,
-                networks: networks,
+                networks: networkItemInfo,
                 locals: coinLocalItem
             });
 
@@ -67,10 +86,11 @@ export default new class CoinController extends BaseController {
         if (!validationData.haveError) {
 
             const CoinId = req.params.id;
-            const { name, symbol, networks, isPublish } = req.body;
+            const { name, symbol, isPublish } = req.body;
 
             let coinLocalItem: MultiLanguageSelect<ICoinLocalItem>[] = [];
-
+            let networkItemInfo: NetworkInfos[] = [];
+           
             for (var i = 0; i < Infinity; i++) {
                 if (req.body[`locals[${i}].lang`]) {
                     coinLocalItem.push({
@@ -85,6 +105,21 @@ export default new class CoinController extends BaseController {
                 }
             }
 
+
+            for (var i = 0; i < Infinity; i++) {
+ 
+                if (req.body[`networks[${i}].networkId`]) {
+
+                    networkItemInfo.push({
+                        contractAbi: req.body[`networks[${i}].contractAbi`],
+                        contractAddress: req.body[`networks[${i}].contractAddress`],
+                        networkId: req.body[`networks[${i}].networkId`]
+                    });
+                } else {
+                    break;
+                }
+            }
+
             const updateCoin = await UnitOfWork.CoinRepository.UpdateCoin(
                 {
                     id: CoinId,
@@ -92,7 +127,7 @@ export default new class CoinController extends BaseController {
                     symbol,
                     isPublish,
                     icon: req.file,
-                    networks: networks,
+                    networks: networkItemInfo,
                     locals: coinLocalItem
                 }
             );

@@ -17,6 +17,8 @@ import { MultiLanguageSelect } from '../../../DTO/Common/MultiSelectLang';
 import { GetAllCoinSelect } from '../../../DTO/Coin/GetAllCoinSelect';
 import UnitOfWork from '../UnitOfWork/UnitOfWork';
 import { GetNetworksForUpdateCurrencyPair } from '../../../DTO/Coin/GetNetworksForUpdateCurrencyPair';
+import { NetworkInfos } from '../../../DTO/Coin/NetworkInfoItems';
+import { GetCoinInfoForUpdateModel } from '../../../DTO/Coin/GetCoinInfoForUpdate';
 
 export default class CoinRepository implements ICoinRepository {
 
@@ -62,14 +64,14 @@ export default class CoinRepository implements ICoinRepository {
 
     }
 
-    async checkExsistNetwork(networks: string[]): Promise<OperationResult<boolean>> {
+    async checkExsistNetwork(networks: NetworkInfos[]): Promise<OperationResult<boolean>> {
         try {
             let hasError = false;
             const mapLoop = async () => {
 
-                const get = networks.map(async (res: string) => {
+                const get = networks.map(async (res: NetworkInfos) => {
 
-                    const data = await UnitOfWork.NetworkRepository.GetByIdNetwork(res);
+                    const data = await UnitOfWork.NetworkRepository.GetByIdNetwork(res.networkId);
 
                     if (!data.success) {
                         hasError = true;
@@ -120,8 +122,6 @@ export default class CoinRepository implements ICoinRepository {
                 avatarUrl = coinItem.result?.icon;
             }
 
-
-
             await CoinEntitie.updateOne(
                 { _id: item.id },
                 {
@@ -135,10 +135,11 @@ export default class CoinRepository implements ICoinRepository {
                     }
                 });
 
-            new Listen(ListenType.UpdateCurrencyPairs).listen({
-                data: '',
-                userId: ''
-            });
+
+            // new Listen(ListenType.UpdateCurrencyPairs).listen({
+            //     data: '',
+            //     userId: ''
+            // });
 
             return OperationResult.BuildSuccessResult("Success Update Coin", true);
 
@@ -277,19 +278,22 @@ export default class CoinRepository implements ICoinRepository {
             const networkSelectSelect = await UnitOfWork.NetworkRepository.
                 GetAllNetworkSelect();
 
-            networkSelectSelect.result?.forEach((data: any) => {
+            networkSelectSelect.result?.forEach((data: any, index: number) => {
 
                 let selected = false;
                 getCoinById.networks.forEach((element: any) => {
                     if (data.id.toString() === element.toString()) {
                         selected = true;
                     }
-                })
+                });
+
                 networkSelectModel.push({
                     id: data.id,
                     isSelected: selected,
-                    name: data.name
-                })
+                    name: data.name,
+                    contractAbi: getCoinById.networks[index]['contractAbi'],
+                    contractAddress: getCoinById.networks[index]['contractAddress']
+                });
 
             });
 
@@ -300,6 +304,42 @@ export default class CoinRepository implements ICoinRepository {
                 isPublish: getCoinById.isPublish,
                 icon: getCoinById.icon,
                 networks: networkSelectModel,
+                locals: getCoinById.locals
+            });
+
+        } catch (error: any) {
+
+            return OperationResult.BuildFailur(error.message);
+        }
+
+    }
+
+    /****
+    *
+    * Get ById For Update
+    *
+    ****/
+    async GetByIdCoinForUpdate(id: string): Promise<OperationResult<GetCoinInfoForUpdateModel>> {
+
+        try {
+
+            let networkSelectModel: GetNetworksForUpdateCurrencyPair[] = [];
+
+            const getCoinById = await CoinEntitie.findById({ _id: id });
+
+            if (!getCoinById) {
+
+                return OperationResult.BuildFailur("Can not find this Coin");
+
+            }
+
+            return OperationResult.BuildSuccessResult("Get All Coins", {
+                id: getCoinById._id,
+                name: getCoinById.name,
+                symbol: getCoinById.symbol,
+                isPublish: getCoinById.isPublish,
+                icon: getCoinById.icon,
+                networks: getCoinById.networks,
                 locals: getCoinById.locals
             });
 
