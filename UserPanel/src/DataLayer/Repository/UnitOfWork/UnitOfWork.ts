@@ -53,6 +53,12 @@ import WalletRepository from '../Wallet/WalletRepository';
 import { IWalletRepository } from '../Wallet/IWalletRepository';
 import { ITRC20NetworkRepository } from '../TRC20Network/ITRC20Network';
 import TRC20NetworkRepository from '../TRC20Network/TRC20Network';
+import { IPaymentGetway } from '../PaymentGetway/IPaymentGetway';
+import { PaymentGetway } from '../PaymentGetway/PaymentGetway';
+import { IFiatAssetRepository } from '../FiatAsset/IFiatAssetRepository';
+import FiatAssetRepository from '../FiatAsset/FiatAssetRepository';
+import { IFiatCurrencyRepository } from '../FiatCurrency/IFiatCurrencyRepository';
+import FiatCurrencyRepository from '../FiatCurrency/FiatCurrencyRepository';
 
 
 export default new class UnitOfWork implements IUnitOfWork {
@@ -79,12 +85,15 @@ export default new class UnitOfWork implements IUnitOfWork {
     RegisterUserRepository: IRegisterRepository;
     UserSettingRepository: IUserSettingRepository;
     UserActiveLevelRepository: IUserActiveLevelRepository;
-    cpayNotification:CpayNotification;
-    ERC20Network : IERC20NetworkRepository;
-    TRC20Network : ITRC20NetworkRepository;
-    UserVerification : IUserVerificationRepository;
-    WalletRepository : IWalletRepository;
+    cpayNotification: CpayNotification;
+    ERC20Network: IERC20NetworkRepository;
+    TRC20Network: ITRC20NetworkRepository;
+    UserVerification: IUserVerificationRepository;
+    WalletRepository: IWalletRepository;
     websocket: Websocket;
+    PaymentGetway: IPaymentGetway;
+    FiatAssetRepository: IFiatAssetRepository;
+    FiatCurrency: IFiatCurrencyRepository;
 
     constructor() {
 
@@ -112,10 +121,13 @@ export default new class UnitOfWork implements IUnitOfWork {
         this.UserSettingRepository = new UserSettingRepository();
         this.UserActiveLevelRepository = new UserActiveLevelRepository();
         this.cpayNotification = new CpayNotification();
-        this.UserVerification = new UserVerificationRepository(); 
+        this.UserVerification = new UserVerificationRepository();
         this.ERC20Network = new ERC20NetworkRepository();
         this.TRC20Network = new TRC20NetworkRepository();
         this.WalletRepository = new WalletRepository();
+        this.PaymentGetway = new PaymentGetway();
+        this.FiatAssetRepository = new FiatAssetRepository();
+        this.FiatCurrency = new FiatCurrencyRepository();
     }
 
 }

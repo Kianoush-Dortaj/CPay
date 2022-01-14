@@ -1,0 +1,29 @@
+
+syntax = "proto3";
+
+package cpay.tokenprice;
+
+service TokenPrice {
+
+    rpc GetPriceToken(Request) returns (Response) {}
+
+}
+
+
+message Request{
+    string fromSymbol=1;
+    string fromName=2;
+    string toSymbol=3;
+    string toName=4;
+}
+
+enum OperationStatus {
+    SUCCESS =0 ;
+    FAIL = 1;
+}
+
+message Response {
+    OperationStatus operationStatus =1;
+    string price=2;
+    string exchange=3;
+}

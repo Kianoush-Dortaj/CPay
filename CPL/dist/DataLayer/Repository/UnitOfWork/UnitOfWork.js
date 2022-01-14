@@ -1,0 +1,55 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const Websocket_1 = __importDefault(require("../../../Utilities/Websocket/Websocket"));
+const CoinRepository_1 = __importDefault(require("../Coin/CoinRepository"));
+const ComissionRepository_1 = __importDefault(require("../Comission/ComissionRepository"));
+const CurrencyPairRepository_1 = __importDefault(require("../CurrencyPair/CurrencyPairRepository"));
+const ExchangeRepository_1 = __importDefault(require("../Exchange/ExchangeRepository"));
+const GetwayTypeRepository_1 = __importDefault(require("../GetwayType/GetwayTypeRepository"));
+const JWTRepository_1 = __importDefault(require("../JWT/JWTRepository"));
+const LanguageRepository_1 = __importDefault(require("../Language/LanguageRepository"));
+const LoginRepository_1 = __importDefault(require("../Login/LoginRepository"));
+const NetworkRepository_1 = __importDefault(require("../Network/NetworkRepository"));
+const NotificationRepository_1 = require("../Notification/NotificationRepository");
+const PermissionRrepository_1 = __importDefault(require("../Permission/PermissionRrepository"));
+const RoleRepository_1 = __importDefault(require("../Role/RoleRepository"));
+const RolePermissionRepository_1 = __importDefault(require("../RolePermission/RolePermissionRepository"));
+const SettingRepository_1 = __importDefault(require("../Setting/SettingRepository"));
+const UserActivityRepository_1 = __importDefault(require("../UserActivity/UserActivityRepository"));
+const UserLevelRepository_1 = __importDefault(require("../UserLevel/UserLevelRepository"));
+const UserRoleRepository_1 = __importDefault(require("../UserRole/UserRoleRepository"));
+const AdminRepository_1 = require("../Admin/AdminRepository");
+const UserRepository_1 = require("../User/UserRepository");
+const CountryRepository_1 = __importDefault(require("../Country/CountryRepository"));
+const UserSettingRepository_1 = __importDefault(require("../UserVerification/UserSettingRepository"));
+const FiatCurrencyRepository_1 = __importDefault(require("../FiatCurrency/FiatCurrencyRepository"));
+exports.default = new class UnitOfWork {
+    constructor() {
+        this.adminRepository = new AdminRepository_1.AdminRepository();
+        this.jwtRepository = new JWTRepository_1.default();
+        this.LoginRepository = new LoginRepository_1.default();
+        this.RolePermissionRepository = new RolePermissionRepository_1.default();
+        this.NotificationRepository = new NotificationRepository_1.NotificationRepository();
+        this.websocket = new Websocket_1.default();
+        this.SettingRepository = new SettingRepository_1.default();
+        this.UserRoleRepository = new UserRoleRepository_1.default();
+        this.PermissionRepository = new PermissionRrepository_1.default();
+        this.RoleRepository = new RoleRepository_1.default();
+        this.CoinRepository = new CoinRepository_1.default();
+        this.CurrencyPairRepository = new CurrencyPairRepository_1.default();
+        this.ExchangeRepository = new ExchangeRepository_1.default();
+        this.UserActivityRepositiry = new UserActivityRepository_1.default();
+        this.UserLevelRepository = new UserLevelRepository_1.default();
+        this.ComissionRepository = new ComissionRepository_1.default();
+        this.NetworkRepository = new NetworkRepository_1.default();
+        this.LanguageRepository = new LanguageRepository_1.default();
+        this.GetwayTypeRepository = new GetwayTypeRepository_1.default();
+        this.userRepository = new UserRepository_1.UserRepository();
+        this.CountryRepository = new CountryRepository_1.default();
+        this.UserVerification = new UserSettingRepository_1.default();
+        this.FiatCurrency = new FiatCurrencyRepository_1.default();
+    }
+};

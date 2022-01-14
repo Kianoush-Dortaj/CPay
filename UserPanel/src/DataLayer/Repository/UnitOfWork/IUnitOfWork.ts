@@ -6,12 +6,15 @@ import { IComissionRepository } from "../Comission/IComissionRepository";
 import { ICurrencyPairRepository } from "../CurrencyPair/ICurrencyPairRepository";
 import { IERC20NetworkRepository } from "../ERC20Network/IERC20Network";
 import { IExchangeRepository } from "../Exchange/IExchangeRepository";
+import { IFiatAssetRepository } from "../FiatAsset/IFiatAssetRepository";
+import { IFiatCurrencyRepository } from "../FiatCurrency/IFiatCurrencyRepository";
 import { IGetwayTypeRepository } from "../GetwayType/IGetwayTypeRepository";
 import { IJWTRepository } from "../JWT/IJWTRepository";
 import { ILanguageRepository } from "../Language/ILanguageRepository";
 import { ILoginRepository } from "../Login/ILoginRepository";
 import { INetworkRepository } from "../Network/INetworkRepository";
 import { INotificationRepository } from "../Notification/INotificationRepository";
+import { IPaymentGetway } from "../PaymentGetway/IPaymentGetway";
 import { IPermissionRepository } from "../Permission/IPermissionRepository";
 import { IRoleRepository } from "../Role/IRoleRepository";
 import { IRolePermissionRepository } from "../RolePermission/IRolePermissionRepository";
@@ -52,6 +55,8 @@ export interface IUnitOfWork {
     ERC20Network : IERC20NetworkRepository;
     TRC20Network : ITRC20NetworkRepository;
     websocket: Websocket;
+    PaymentGetway : IPaymentGetway;
     WalletRepository : IWalletRepository;
-
+    FiatAssetRepository : IFiatAssetRepository;
+    FiatCurrency: IFiatCurrencyRepository;
 }

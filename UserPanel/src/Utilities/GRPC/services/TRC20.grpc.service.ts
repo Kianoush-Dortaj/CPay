@@ -1,5 +1,6 @@
 import { credentials, Metadata } from '@grpc/grpc-js';
-import { EmptyRequest, CreateWalletReposnse, TRC20Client } from "../models/TRC20";
+import { TRC20Client } from '../Protos/TRC20_grpc_pb';
+import { CreateWalletReposnse, EmptyRequest } from '../Protos/TRC20_pb';
 import { promisify } from 'util';
 
 class TRC20Service {

@@ -1,6 +1,9 @@
 import { credentials, Metadata } from '@grpc/grpc-js';
-import { EmptyRequest, CreateWalletReposnse, ERC20Client } from "../models/ERC20";
+// import { ERC20Client } from '../models/ERC20_grpc_pb';
+// import { EmptyRequest , CreateWalletReposnse } from '../models/ERC20_pb';
 import { promisify } from 'util';
+import { ERC20Client } from '../Protos/ERC20_grpc_pb';
+import { CreateWalletReposnse, EmptyRequest } from '../Protos/ERC20_pb';
 
 class ERC20Service {
 

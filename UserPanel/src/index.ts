@@ -13,6 +13,7 @@ import * as dotenv from 'dotenv';
 import Sms from './Utilities/SMS/Sms';
 import Email from './Utilities/Email/Email';
 import { CpayNotification } from './Utilities/Notification/Notification';
+import { FiatUtil } from './Utilities/Convert/Fiat/FiatUtil';
 
 declare global {
     var web3: Web3;
@@ -23,7 +24,7 @@ export default new class Startup {
     port = process.env.PORT || 1348;
 
     constructor() {
-        
+
         this.CreateServer();
         this.ConfigMidllware();
         this.ConfigDatabase();

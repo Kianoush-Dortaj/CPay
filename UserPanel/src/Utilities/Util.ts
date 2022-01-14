@@ -18,6 +18,11 @@ export default class UtilService {
         return Math.floor(Math.random() * (max - min)) + min;
     }
 
+    static genRanHex(size: number): string {
+        return [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+
+    }
+
     static convertEnumToArray(value: any): GetAllUserActivityModel[] {
 
         const map: GetAllUserActivityModel[] = [];
